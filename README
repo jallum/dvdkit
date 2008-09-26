@@ -1,0 +1,35 @@
+INTRODUCTION
+
+Hello and thanks for checking out DVDKit.
+
+DVDKit was originally part of RipIt, the simplest DVD ripper available for the 
+Macintosh, and is now available to the public.
+
+DVD players are complex beasts, and there's precious little publicly available
+documentation on how they work and why they do what they do.  DVDKit was my 
+attempt at gathering this mess into a coherent set of classes that could be 
+used to properly simulate a DVD player during normal operation.
+
+As part of RipIt, DVDKit has been extensively tested against more than 10,000
+different discs, with compatibility in excess of 99.6%.
+
+
+LEGAL
+
+DVDKit is copyrighted open-source software that is released under the GNU 
+Public License, version 2.0.  For details on the license, see the LICENSE file.
+
+
+SYSTEM REQUIREMENTS
+
+On Macintosh systems, DVDKit has been extensively tested on Mac OS X version 
+10.5 and greater, though there should be no major obstacles to compiling and
+running DVDKit on older versions of Mac OS X.
+
+
+AUTHOR
+
+Jason Allum (jallum@gmail.com)
+RipItApp.com
+Philadelphia, PA, USA
+http://ripitapp.com

@@ -1,0 +1,390 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 45;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		8DC2EF530486A6940098B216 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C1666FE841158C02AAC07 /* InfoPlist.strings */; };
+		8DC2EF570486A6940098B216 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7B1FEA5585E11CA2CBB /* Cocoa.framework */; };
+		F98A625A0E8C700300071926 /* DVDCellAddress.h in Headers */ = {isa = PBXBuildFile; fileRef = F98A62420E8C700300071926 /* DVDCellAddress.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		F98A625B0E8C700300071926 /* DVDCellAddress.m in Sources */ = {isa = PBXBuildFile; fileRef = F98A62430E8C700300071926 /* DVDCellAddress.m */; };
+		F98A625C0E8C700300071926 /* DVDCellPlayback.h in Headers */ = {isa = PBXBuildFile; fileRef = F98A62440E8C700300071926 /* DVDCellPlayback.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		F98A625D0E8C700300071926 /* DVDCellPlayback.m in Sources */ = {isa = PBXBuildFile; fileRef = F98A62450E8C700300071926 /* DVDCellPlayback.m */; };
+		F98A625E0E8C700300071926 /* DVDCellPosition.h in Headers */ = {isa = PBXBuildFile; fileRef = F98A62460E8C700300071926 /* DVDCellPosition.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		F98A625F0E8C700300071926 /* DVDCellPosition.m in Sources */ = {isa = PBXBuildFile; fileRef = F98A62470E8C700300071926 /* DVDCellPosition.m */; };
+		F98A62600E8C700300071926 /* DVDCommand+Private.h in Headers */ = {isa = PBXBuildFile; fileRef = F98A62480E8C700300071926 /* DVDCommand+Private.h */; };
+		F98A62610E8C700300071926 /* DVDCommand.h in Headers */ = {isa = PBXBuildFile; fileRef = F98A62490E8C700300071926 /* DVDCommand.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		F98A62620E8C700300071926 /* DVDCommand.m in Sources */ = {isa = PBXBuildFile; fileRef = F98A624A0E8C700300071926 /* DVDCommand.m */; };
+		F98A62630E8C700300071926 /* DVDKit.h in Headers */ = {isa = PBXBuildFile; fileRef = F98A624B0E8C700300071926 /* DVDKit.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		F98A62640E8C700300071926 /* DVDManagerInformation.h in Headers */ = {isa = PBXBuildFile; fileRef = F98A624C0E8C700300071926 /* DVDManagerInformation.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		F98A62650E8C700300071926 /* DVDManagerInformation.m in Sources */ = {isa = PBXBuildFile; fileRef = F98A624D0E8C700300071926 /* DVDManagerInformation.m */; };
+		F98A62660E8C700300071926 /* DVDPartOfTitle.h in Headers */ = {isa = PBXBuildFile; fileRef = F98A624E0E8C700300071926 /* DVDPartOfTitle.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		F98A62670E8C700300071926 /* DVDPartOfTitle.m in Sources */ = {isa = PBXBuildFile; fileRef = F98A624F0E8C700300071926 /* DVDPartOfTitle.m */; };
+		F98A62680E8C700300071926 /* DVDProgramChain.h in Headers */ = {isa = PBXBuildFile; fileRef = F98A62500E8C700300071926 /* DVDProgramChain.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		F98A62690E8C700300071926 /* DVDProgramChain.m in Sources */ = {isa = PBXBuildFile; fileRef = F98A62510E8C700300071926 /* DVDProgramChain.m */; };
+		F98A626A0E8C700300071926 /* DVDProgramChainSearchPointer.h in Headers */ = {isa = PBXBuildFile; fileRef = F98A62520E8C700300071926 /* DVDProgramChainSearchPointer.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		F98A626B0E8C700300071926 /* DVDProgramChainSearchPointer.m in Sources */ = {isa = PBXBuildFile; fileRef = F98A62530E8C700300071926 /* DVDProgramChainSearchPointer.m */; };
+		F98A626C0E8C700300071926 /* DVDTitleSet.h in Headers */ = {isa = PBXBuildFile; fileRef = F98A62540E8C700300071926 /* DVDTitleSet.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		F98A626D0E8C700300071926 /* DVDTitleSet.m in Sources */ = {isa = PBXBuildFile; fileRef = F98A62550E8C700300071926 /* DVDTitleSet.m */; };
+		F98A626E0E8C700300071926 /* DVDTitleTrackSearchPointer.h in Headers */ = {isa = PBXBuildFile; fileRef = F98A62560E8C700300071926 /* DVDTitleTrackSearchPointer.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		F98A626F0E8C700300071926 /* DVDTitleTrackSearchPointer.m in Sources */ = {isa = PBXBuildFile; fileRef = F98A62570E8C700300071926 /* DVDTitleTrackSearchPointer.m */; };
+		F98A62700E8C700300071926 /* DVDVirtualMachine.h in Headers */ = {isa = PBXBuildFile; fileRef = F98A62580E8C700300071926 /* DVDVirtualMachine.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		F98A62710E8C700300071926 /* DVDVirtualMachine.m in Sources */ = {isa = PBXBuildFile; fileRef = F98A62590E8C700300071926 /* DVDVirtualMachine.m */; };
+		F98A62F40E8C7E7F00071926 /* README in Resources */ = {isa = PBXBuildFile; fileRef = F98A62F30E8C7E7F00071926 /* README */; };
+		F98A63590E8C8E1200071926 /* LICENSE in Resources */ = {isa = PBXBuildFile; fileRef = F98A63580E8C8E1200071926 /* LICENSE */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		0867D69BFE84028FC02AAC07 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
+		0867D6A5FE840307C02AAC07 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = /System/Library/Frameworks/AppKit.framework; sourceTree = "<absolute>"; };
+		089C1667FE841158C02AAC07 /* English */ = {isa = PBXFileReference; fileEncoding = 10; lastKnownFileType = text.plist.strings; name = English; path = English.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		1058C7B1FEA5585E11CA2CBB /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = /System/Library/Frameworks/Cocoa.framework; sourceTree = "<absolute>"; };
+		32DBCF5E0370ADEE00C91783 /* DVDKit_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DVDKit_Prefix.pch; sourceTree = "<group>"; };
+		8DC2EF5A0486A6940098B216 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		8DC2EF5B0486A6940098B216 /* DVDKit.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = DVDKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		D2F7E79907B2D74100F64583 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = /System/Library/Frameworks/CoreData.framework; sourceTree = "<absolute>"; };
+		F98A62420E8C700300071926 /* DVDCellAddress.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DVDCellAddress.h; sourceTree = "<group>"; };
+		F98A62430E8C700300071926 /* DVDCellAddress.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DVDCellAddress.m; sourceTree = "<group>"; };
+		F98A62440E8C700300071926 /* DVDCellPlayback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DVDCellPlayback.h; sourceTree = "<group>"; };
+		F98A62450E8C700300071926 /* DVDCellPlayback.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DVDCellPlayback.m; sourceTree = "<group>"; };
+		F98A62460E8C700300071926 /* DVDCellPosition.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DVDCellPosition.h; sourceTree = "<group>"; };
+		F98A62470E8C700300071926 /* DVDCellPosition.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DVDCellPosition.m; sourceTree = "<group>"; };
+		F98A62480E8C700300071926 /* DVDCommand+Private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "DVDCommand+Private.h"; sourceTree = "<group>"; };
+		F98A62490E8C700300071926 /* DVDCommand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DVDCommand.h; sourceTree = "<group>"; };
+		F98A624A0E8C700300071926 /* DVDCommand.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DVDCommand.m; sourceTree = "<group>"; };
+		F98A624B0E8C700300071926 /* DVDKit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DVDKit.h; sourceTree = "<group>"; };
+		F98A624C0E8C700300071926 /* DVDManagerInformation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DVDManagerInformation.h; sourceTree = "<group>"; };
+		F98A624D0E8C700300071926 /* DVDManagerInformation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DVDManagerInformation.m; sourceTree = "<group>"; };
+		F98A624E0E8C700300071926 /* DVDPartOfTitle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DVDPartOfTitle.h; sourceTree = "<group>"; };
+		F98A624F0E8C700300071926 /* DVDPartOfTitle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DVDPartOfTitle.m; sourceTree = "<group>"; };
+		F98A62500E8C700300071926 /* DVDProgramChain.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DVDProgramChain.h; sourceTree = "<group>"; };
+		F98A62510E8C700300071926 /* DVDProgramChain.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DVDProgramChain.m; sourceTree = "<group>"; };
+		F98A62520E8C700300071926 /* DVDProgramChainSearchPointer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DVDProgramChainSearchPointer.h; sourceTree = "<group>"; };
+		F98A62530E8C700300071926 /* DVDProgramChainSearchPointer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DVDProgramChainSearchPointer.m; sourceTree = "<group>"; };
+		F98A62540E8C700300071926 /* DVDTitleSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DVDTitleSet.h; sourceTree = "<group>"; };
+		F98A62550E8C700300071926 /* DVDTitleSet.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DVDTitleSet.m; sourceTree = "<group>"; };
+		F98A62560E8C700300071926 /* DVDTitleTrackSearchPointer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DVDTitleTrackSearchPointer.h; sourceTree = "<group>"; };
+		F98A62570E8C700300071926 /* DVDTitleTrackSearchPointer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DVDTitleTrackSearchPointer.m; sourceTree = "<group>"; };
+		F98A62580E8C700300071926 /* DVDVirtualMachine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DVDVirtualMachine.h; sourceTree = "<group>"; };
+		F98A62590E8C700300071926 /* DVDVirtualMachine.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DVDVirtualMachine.m; sourceTree = "<group>"; };
+		F98A62F30E8C7E7F00071926 /* README */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README; sourceTree = "<group>"; };
+		F98A63580E8C8E1200071926 /* LICENSE */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		8DC2EF560486A6940098B216 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				8DC2EF570486A6940098B216 /* Cocoa.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		034768DFFF38A50411DB9C8B /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				8DC2EF5B0486A6940098B216 /* DVDKit.framework */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		0867D691FE84028FC02AAC07 /* DVDKit */ = {
+			isa = PBXGroup;
+			children = (
+				F98A62F30E8C7E7F00071926 /* README */,
+				F98A63580E8C8E1200071926 /* LICENSE */,
+				08FB77AEFE84172EC02AAC07 /* Source */,
+				32C88DFF0371C24200C91783 /* Other Sources */,
+				089C1665FE841158C02AAC07 /* Resources */,
+				0867D69AFE84028FC02AAC07 /* External Frameworks and Libraries */,
+				034768DFFF38A50411DB9C8B /* Products */,
+			);
+			name = DVDKit;
+			sourceTree = "<group>";
+		};
+		0867D69AFE84028FC02AAC07 /* External Frameworks and Libraries */ = {
+			isa = PBXGroup;
+			children = (
+				1058C7B0FEA5585E11CA2CBB /* Linked Frameworks */,
+				1058C7B2FEA5585E11CA2CBB /* Other Frameworks */,
+			);
+			name = "External Frameworks and Libraries";
+			sourceTree = "<group>";
+		};
+		089C1665FE841158C02AAC07 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				8DC2EF5A0486A6940098B216 /* Info.plist */,
+				089C1666FE841158C02AAC07 /* InfoPlist.strings */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		08FB77AEFE84172EC02AAC07 /* Source */ = {
+			isa = PBXGroup;
+			children = (
+				F98A624B0E8C700300071926 /* DVDKit.h */,
+				F98A62420E8C700300071926 /* DVDCellAddress.h */,
+				F98A62430E8C700300071926 /* DVDCellAddress.m */,
+				F98A62440E8C700300071926 /* DVDCellPlayback.h */,
+				F98A62450E8C700300071926 /* DVDCellPlayback.m */,
+				F98A62460E8C700300071926 /* DVDCellPosition.h */,
+				F98A62470E8C700300071926 /* DVDCellPosition.m */,
+				F98A62480E8C700300071926 /* DVDCommand+Private.h */,
+				F98A62490E8C700300071926 /* DVDCommand.h */,
+				F98A624A0E8C700300071926 /* DVDCommand.m */,
+				F98A624C0E8C700300071926 /* DVDManagerInformation.h */,
+				F98A624D0E8C700300071926 /* DVDManagerInformation.m */,
+				F98A624E0E8C700300071926 /* DVDPartOfTitle.h */,
+				F98A624F0E8C700300071926 /* DVDPartOfTitle.m */,
+				F98A62500E8C700300071926 /* DVDProgramChain.h */,
+				F98A62510E8C700300071926 /* DVDProgramChain.m */,
+				F98A62520E8C700300071926 /* DVDProgramChainSearchPointer.h */,
+				F98A62530E8C700300071926 /* DVDProgramChainSearchPointer.m */,
+				F98A62540E8C700300071926 /* DVDTitleSet.h */,
+				F98A62550E8C700300071926 /* DVDTitleSet.m */,
+				F98A62560E8C700300071926 /* DVDTitleTrackSearchPointer.h */,
+				F98A62570E8C700300071926 /* DVDTitleTrackSearchPointer.m */,
+				F98A62580E8C700300071926 /* DVDVirtualMachine.h */,
+				F98A62590E8C700300071926 /* DVDVirtualMachine.m */,
+			);
+			path = Source;
+			sourceTree = "<group>";
+		};
+		1058C7B0FEA5585E11CA2CBB /* Linked Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				1058C7B1FEA5585E11CA2CBB /* Cocoa.framework */,
+			);
+			name = "Linked Frameworks";
+			sourceTree = "<group>";
+		};
+		1058C7B2FEA5585E11CA2CBB /* Other Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				0867D6A5FE840307C02AAC07 /* AppKit.framework */,
+				D2F7E79907B2D74100F64583 /* CoreData.framework */,
+				0867D69BFE84028FC02AAC07 /* Foundation.framework */,
+			);
+			name = "Other Frameworks";
+			sourceTree = "<group>";
+		};
+		32C88DFF0371C24200C91783 /* Other Sources */ = {
+			isa = PBXGroup;
+			children = (
+				32DBCF5E0370ADEE00C91783 /* DVDKit_Prefix.pch */,
+			);
+			name = "Other Sources";
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+		8DC2EF500486A6940098B216 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F98A625A0E8C700300071926 /* DVDCellAddress.h in Headers */,
+				F98A625C0E8C700300071926 /* DVDCellPlayback.h in Headers */,
+				F98A625E0E8C700300071926 /* DVDCellPosition.h in Headers */,
+				F98A62600E8C700300071926 /* DVDCommand+Private.h in Headers */,
+				F98A62610E8C700300071926 /* DVDCommand.h in Headers */,
+				F98A62630E8C700300071926 /* DVDKit.h in Headers */,
+				F98A62640E8C700300071926 /* DVDManagerInformation.h in Headers */,
+				F98A62660E8C700300071926 /* DVDPartOfTitle.h in Headers */,
+				F98A62680E8C700300071926 /* DVDProgramChain.h in Headers */,
+				F98A626A0E8C700300071926 /* DVDProgramChainSearchPointer.h in Headers */,
+				F98A626C0E8C700300071926 /* DVDTitleSet.h in Headers */,
+				F98A626E0E8C700300071926 /* DVDTitleTrackSearchPointer.h in Headers */,
+				F98A62700E8C700300071926 /* DVDVirtualMachine.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
+/* Begin PBXNativeTarget section */
+		8DC2EF4F0486A6940098B216 /* DVDKit */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 1DEB91AD08733DA50010E9CD /* Build configuration list for PBXNativeTarget "DVDKit" */;
+			buildPhases = (
+				8DC2EF500486A6940098B216 /* Headers */,
+				8DC2EF520486A6940098B216 /* Resources */,
+				8DC2EF540486A6940098B216 /* Sources */,
+				8DC2EF560486A6940098B216 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = DVDKit;
+			productInstallPath = "$(HOME)/Library/Frameworks";
+			productName = DVDKit;
+			productReference = 8DC2EF5B0486A6940098B216 /* DVDKit.framework */;
+			productType = "com.apple.product-type.framework";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		0867D690FE84028FC02AAC07 /* Project object */ = {
+			isa = PBXProject;
+			buildConfigurationList = 1DEB91B108733DA50010E9CD /* Build configuration list for PBXProject "DVDKit" */;
+			compatibilityVersion = "Xcode 3.1";
+			hasScannedForEncodings = 1;
+			mainGroup = 0867D691FE84028FC02AAC07 /* DVDKit */;
+			productRefGroup = 034768DFFF38A50411DB9C8B /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				8DC2EF4F0486A6940098B216 /* DVDKit */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		8DC2EF520486A6940098B216 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				8DC2EF530486A6940098B216 /* InfoPlist.strings in Resources */,
+				F98A62F40E8C7E7F00071926 /* README in Resources */,
+				F98A63590E8C8E1200071926 /* LICENSE in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		8DC2EF540486A6940098B216 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F98A625B0E8C700300071926 /* DVDCellAddress.m in Sources */,
+				F98A625D0E8C700300071926 /* DVDCellPlayback.m in Sources */,
+				F98A625F0E8C700300071926 /* DVDCellPosition.m in Sources */,
+				F98A62620E8C700300071926 /* DVDCommand.m in Sources */,
+				F98A62650E8C700300071926 /* DVDManagerInformation.m in Sources */,
+				F98A62670E8C700300071926 /* DVDPartOfTitle.m in Sources */,
+				F98A62690E8C700300071926 /* DVDProgramChain.m in Sources */,
+				F98A626B0E8C700300071926 /* DVDProgramChainSearchPointer.m in Sources */,
+				F98A626D0E8C700300071926 /* DVDTitleSet.m in Sources */,
+				F98A626F0E8C700300071926 /* DVDTitleTrackSearchPointer.m in Sources */,
+				F98A62710E8C700300071926 /* DVDVirtualMachine.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXVariantGroup section */
+		089C1666FE841158C02AAC07 /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				089C1667FE841158C02AAC07 /* English */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		1DEB91AE08733DA50010E9CD /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(NATIVE_ARCH)";
+				COPY_PHASE_STRIP = NO;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				FRAMEWORK_VERSION = A;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = DVDKit_Prefix.pch;
+				GCC_VERSION = 4.2;
+				INFOPLIST_FILE = Resources/Info.plist;
+				INSTALL_PATH = "@executable_path/../Frameworks";
+				OTHER_CFLAGS = "-DDEBUG";
+				PRODUCT_NAME = DVDKit;
+				WRAPPER_EXTENSION = framework;
+			};
+			name = Debug;
+		};
+		1DEB91AF08733DA50010E9CD /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				FRAMEWORK_VERSION = A;
+				GCC_MODEL_TUNING = G5;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = DVDKit_Prefix.pch;
+				GCC_VERSION = 4.2;
+				INFOPLIST_FILE = Resources/Info.plist;
+				INSTALL_PATH = "@executable_path/../Frameworks";
+				OTHER_CFLAGS = "";
+				PRODUCT_NAME = DVDKit;
+				WRAPPER_EXTENSION = framework;
+			};
+			name = Release;
+		};
+		1DEB91B208733DA50010E9CD /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				GCC_C_LANGUAGE_STANDARD = c99;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PREBINDING = NO;
+				SDKROOT = macosx10.5;
+			};
+			name = Debug;
+		};
+		1DEB91B308733DA50010E9CD /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				GCC_C_LANGUAGE_STANDARD = c99;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				PREBINDING = NO;
+				SDKROOT = macosx10.5;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		1DEB91AD08733DA50010E9CD /* Build configuration list for PBXNativeTarget "DVDKit" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1DEB91AE08733DA50010E9CD /* Debug */,
+				1DEB91AF08733DA50010E9CD /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		1DEB91B108733DA50010E9CD /* Build configuration list for PBXProject "DVDKit" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1DEB91B208733DA50010E9CD /* Debug */,
+				1DEB91B308733DA50010E9CD /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 0867D690FE84028FC02AAC07 /* Project object */;
+}
