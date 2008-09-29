@@ -94,13 +94,12 @@
         if (tt_srpt && (tt_srpt <= vmgi_last_sector)) {
             const uint8_t* p = bytes + (tt_srpt << 11);
             uint16_t nr_of_srpts = OSReadBigInt16(p, 0);
-            uint32_t last_byte = MIN(vmgi_last_byte, OSReadBigInt32(p, 4));
             p += 8;
             const uint8_t* lp = p + (nr_of_srpts * 12);
             
             if (!nr_of_srpts || nr_of_srpts > 99) {
                 [NSException raise:@"DVDManagerInformation" format:@"%s(%d)", __FILE__, __LINE__];
-            } else if ((lp - p + 8 - 1) > last_byte) {
+            } else if ((lp - p + 8 - 1) > vmgi_last_byte) {
                 [NSException raise:@"DVDManagerInformation" format:@"%s(%d)", __FILE__, __LINE__];
             } 
             

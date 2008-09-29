@@ -423,7 +423,15 @@ enum {
     if (SPRM[4] != [titleInformation index]) {
         [NSException raise:@"DVDVirtualMachine" format:@"%s (%d)", __FILE__, __LINE__];
     }
-    DVDPartOfTitle* partOfTitle = [[[titleSet partOfTitleSearchTable] objectAtIndex:(ttn - 1)] objectAtIndex:(pttn - 1)];
+    NSArray* partOfTitleSearchTable = [titleSet partOfTitleSearchTable];
+    if (ttn > [partOfTitleSearchTable count]) {
+        [NSException raise:@"DVDVirtualMachine" format:@"%s (%d)", __FILE__, __LINE__];
+    }
+    NSArray* partOfTitleTable = [partOfTitleSearchTable objectAtIndex:(ttn - 1)];
+    if (pttn > [partOfTitleTable count]) {
+        [NSException raise:@"DVDVirtualMachine" format:@"%s (%d)", __FILE__, __LINE__];
+    }
+    DVDPartOfTitle* partOfTitle = [partOfTitleTable objectAtIndex:(pttn - 1)];
     resume.enabled &= (domain == VTS_DOMAIN);
     domain = VTS_DOMAIN;
     /**/
