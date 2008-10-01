@@ -53,5 +53,6 @@
 @property (readonly) uint32_t firstSector;
 @property (readonly) uint32_t lastSector;
 @property (readonly) uint8_t postCommand;
+@property (readonly) int blockMode;
 
 @end

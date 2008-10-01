@@ -64,4 +64,9 @@
     return [self retain];
 }
 
+- (int) blockMode
+{
+    return flags.values.block_mode;
+}
+
 @end

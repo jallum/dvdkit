@@ -253,7 +253,8 @@ enum {
                 
                 case PGC_PGN_SET: {
                     NSArray* programMap = [programChain programMap];
-                    if ([programMap count] >= programNumber) {
+                    NSArray* cellPlaybackTable = [programChain cellPlaybackTable];
+                    if (programNumber && (programNumber <= [programMap count]) && (cell <= [cellPlaybackTable count])) {
                         cell = [[programMap objectAtIndex:(programNumber - 1)] intValue];
                         state = PGC_CELL;
                     } else {
@@ -264,26 +265,30 @@ enum {
                 }
                 
                 case PGC_CELL: {
-                    if (domain == VTS_DOMAIN) {
-                        SPRM[7] = [DVDVirtualMachine partOfTitleForProgramNumber:programNumber usingSearchTable:[[titleSet partOfTitleSearchTable] objectAtIndex:(SPRM[5] - 1)]];
+                    NSArray* cellPlaybackTable = [programChain cellPlaybackTable];
+                    if (cell && cell <= [cellPlaybackTable count]) {
+                        if (domain == VTS_DOMAIN) {
+                            SPRM[7] = [DVDVirtualMachine partOfTitleForProgramNumber:programNumber usingSearchTable:[[titleSet partOfTitleSearchTable] objectAtIndex:(SPRM[5] - 1)]];
+                        }
+                        state = PGC_CELL_POST_COMMAND;
+                        return [[[cellPlaybackTable objectAtIndex:(cell - 1)] retain] autorelease];
+                    } else {
+                        cell = programNumber = 0;
+                        state = PGC_POST_COMMANDS;
                     }
-                    state = PGC_CELL_POST_COMMAND;
-                    return [[[[programChain cellPlaybackTable] objectAtIndex:(cell - 1)] retain] autorelease];
+                    break;
                 }
                 
                 case PGC_CELL_POST_COMMAND: {
-                    DVDCellPlayback* cellPlayback = [[programChain cellPlaybackTable] objectAtIndex:(cell - 1)];
+                    NSArray* cellPlaybackTable = [programChain cellPlaybackTable];
+                    DVDCellPlayback* cellPlayback = [cellPlaybackTable objectAtIndex:(cell - 1)];
                     int postCommand = [cellPlayback postCommand];
                     if (postCommand && (postCommand <= [[programChain cellCommands] count])) {
                         [[[programChain cellCommands] objectAtIndex:(postCommand - 1)] executeAgainstVirtualMachine:self];
                     }
                     if (state == PGC_CELL_POST_COMMAND) {
                         cell++;
-                        if (cell > [[programChain cellPlaybackTable] count]) {
-                            state = PGC_POST_COMMANDS;
-                        } else {
-                            state = PGC_CELL;
-                        }
+                        state = PGC_CELL;
                     }
                     break;
                 }
@@ -295,11 +300,13 @@ enum {
                             [[postCommands objectAtIndex:instructionCounter++] executeAgainstVirtualMachine:self];
                         }
                     }
-                    if (state == PGC_POST_COMMANDS || state == PGC_BREAK || (state == PGC_PGN_SET && programNumber >= [[programChain programMap] count])) {
+                    if (state == PGC_POST_COMMANDS || state == PGC_BREAK || (state == PGC_PGN_SET && (1 > programNumber || programNumber > [[programChain programMap] count]))) {
                         uint16_t nextProgramChainNumber = [programChain nextProgramChainNumber];
                         if (nextProgramChainNumber) {
                             SPRM[6] = nextProgramChainNumber;
-                            SPRM[7] = 1;
+                            if (domain == VTS_DOMAIN) {
+                                SPRM[7] = 1;
+                            }
                             state = PGC_CHANGED;
                         } else {
                             state = STOP;
@@ -570,7 +577,6 @@ enum {
 - (void) executeLinkPGCN:(uint16_t)pgcn
 {
     SPRM[6] = pgcn;
-    SPRM[7] = 1;
     state = PGC_CHANGED;
 }
 
