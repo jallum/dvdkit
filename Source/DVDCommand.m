@@ -701,7 +701,7 @@ static void appendLink(DVDCommand* command, NSMutableString* string, int optiona
         }
         
         case 6: {
-            [string appendFormat:@"LinkPGN %d (button %d)", [command bitsInRange:NSMakeRange(6, 7)]];
+            [string appendFormat:@"LinkPGN %d", [command bitsInRange:NSMakeRange(6, 7)]];
             int button = [command bitsInRange:NSMakeRange(15, 6)];
             if (button) {
                 [string appendFormat:@" (button %d)", button];
@@ -710,7 +710,7 @@ static void appendLink(DVDCommand* command, NSMutableString* string, int optiona
         }
         
         case 7: {
-            [string appendFormat:@"LinkCN %d (button %d)", [command bitsInRange:NSMakeRange(7, 8)]];
+            [string appendFormat:@"LinkCN %d", [command bitsInRange:NSMakeRange(7, 8)]];
             int button = [command bitsInRange:NSMakeRange(15, 6)];
             if (button) {
                 [string appendFormat:@" (button %d)", button];

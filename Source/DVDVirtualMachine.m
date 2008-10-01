@@ -36,7 +36,7 @@ enum {
     PGC_PROGRAM,
     PGC_CELL,
     PGC_PGN_SET,
-    PGC_CELL_POST_COMMAND,
+    PGC_CELL_POST,
     PGC_POST_COMMANDS,
 };
 
@@ -249,8 +249,7 @@ enum {
                 
                 case PGC_PGN_SET: {
                     NSArray* programMap = [programChain programMap];
-                    NSArray* cellPlaybackTable = [programChain cellPlaybackTable];
-                    if (programNumber && (programNumber <= [programMap count]) && (cell <= [cellPlaybackTable count])) {
+                    if (programNumber && (programNumber <= [programMap count])) {
                         cell = [[programMap objectAtIndex:(programNumber - 1)] intValue];
                         state = PGC_CELL;
                     } else {
@@ -261,28 +260,35 @@ enum {
                 }
                 
                 case PGC_CELL: {
+                    NSArray* programMap = [programChain programMap];
+                    int newProgramNumber = 0;
+                    int maxProgramNumber = [programMap count];
+                    while (newProgramNumber < maxProgramNumber && cell >= [[programMap objectAtIndex:newProgramNumber] intValue]) {
+                        newProgramNumber++;
+                    }
                     NSArray* cellPlaybackTable = [programChain cellPlaybackTable];
-                    if (cell && cell <= [cellPlaybackTable count]) {
+                    if (newProgramNumber == maxProgramNumber && cell > [cellPlaybackTable count]) {
+                        cell = programNumber = 0;
+                        state = PGC_POST_COMMANDS;
+                        break;
+                    } else {
+                        programNumber = newProgramNumber;
                         if (domain == VTS_DOMAIN) {
                             SPRM[7] = [DVDVirtualMachine partOfTitleForProgramNumber:programNumber usingSearchTable:[[titleSet partOfTitleSearchTable] objectAtIndex:(SPRM[5] - 1)]];
                         }
-                        state = PGC_CELL_POST_COMMAND;
+                        state = PGC_CELL_POST;
                         return [[[cellPlaybackTable objectAtIndex:(cell - 1)] retain] autorelease];
-                    } else {
-                        cell = programNumber = 0;
-                        state = PGC_POST_COMMANDS;
                     }
-                    break;
                 }
                 
-                case PGC_CELL_POST_COMMAND: {
+                case PGC_CELL_POST: {
                     NSArray* cellPlaybackTable = [programChain cellPlaybackTable];
                     DVDCellPlayback* cellPlayback = [cellPlaybackTable objectAtIndex:(cell - 1)];
                     int postCommand = [cellPlayback postCommand];
                     if (postCommand && (postCommand <= [[programChain cellCommands] count])) {
                         [[[programChain cellCommands] objectAtIndex:(postCommand - 1)] executeAgainstVirtualMachine:self];
                     }
-                    if (state == PGC_CELL_POST_COMMAND) {
+                    if (state == PGC_CELL_POST) {
                         cell++;
                         state = PGC_CELL;
                     }
@@ -300,9 +306,6 @@ enum {
                         uint16_t nextProgramChainNumber = [programChain nextProgramChainNumber];
                         if (nextProgramChainNumber) {
                             SPRM[6] = nextProgramChainNumber;
-                            if (domain == VTS_DOMAIN) {
-                                SPRM[7] = 1;
-                            }
                             state = PGC_CHANGED;
                         } else {
                             state = STOP;
@@ -312,7 +315,7 @@ enum {
                 }
             }
 
-            if (watchdog++ >= 10000) {
+            if (++watchdog == 10000) {
                 NSLog(@"Watchdog instruction count exceeded.  Stopping.");
                 state = STOP;
             }
@@ -612,7 +615,7 @@ enum {
 
 - (void) executeLinkNextCell
 {
-    state = PGC_CELL_POST_COMMAND;
+    state = PGC_CELL_POST;
 }
 
 - (void) executeLinkPrevCell
