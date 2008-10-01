@@ -35,4 +35,6 @@
 
 - (void) executeAgainstVirtualMachine:(DVDVirtualMachine*)virtualMachine;
 
+- (NSString*) description;
+
 @end

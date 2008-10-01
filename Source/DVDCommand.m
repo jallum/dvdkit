@@ -48,6 +48,9 @@
 
 - (void) executeAgainstVirtualMachine:(DVDVirtualMachine*)virtualMachine
 {
+#ifdef DEBUG
+    NSLog(@"%@", self);
+#endif
     uint8_t type = [self bitsInRange:NSMakeRange(63, 3)];
     if (type >= 7) {
         [NSException raise:@"DVDCommand" format:@"Unexpected type (%d)", type];
@@ -345,6 +348,21 @@
     }
 }
 
+static void appendMnemonic(DVDCommand* command, NSMutableString* string);
+
+- (NSString*) description
+{
+    NSMutableString* string = [NSMutableString string];
+    if (self->row >= 0) {
+        [string appendFormat:@"(%03d) ", row + 1];
+    } else {
+        [string appendString:@"      "];
+    }
+    [string appendFormat:@"%016llx | ", bits];
+    appendMnemonic(self, string);
+    return string;
+}
+
 @end
 
 @implementation DVDCommand (Private)
@@ -430,7 +448,518 @@
     [NSException raise:@"DVDCommand" format:@"%s(%d)", __FILE__, __LINE__];
     return 0; /* Never Reached */
 }
+
+static const char *cmp_op_table[] = {
+    NULL, "&", "==", "!=", ">=", ">", "<=", "<"
+};
+
+static const char *set_op_table[] = {
+    NULL, "=", "<->", "+=", "-=", "*=", "/=", "%=", "rnd", "&=", "|=", "^="
+};
+
+static const char *link_table[] = {
+    "LinkNoLink",  "LinkTopC",    "LinkNextC",   "LinkPrevC",
+    NULL,          "LinkTopPG",   "LinkNextPG",  "LinkPrevPG",
+    NULL,          "LinkTopPGC",  "LinkNextPGC", "LinkPrevPGC",
+    "LinkGoUpPGC", "LinkTailPGC", NULL,          NULL,
+    "RSM"
+};
+
+static const char *system_reg_table[] = {
+    "Menu Description Language Code",
+    "Audio Stream Number",
+    "Sub-picture Stream Number",
+    "Angle Number",
+    "Title Track Number",
+    "VTS Title Track Number",
+    "VTS PGC Number",
+    "PTT Number for One_Sequential_PGC_Title",
+    "Highlighted Button Number",
+    "Navigation Timer",
+    "Title PGC Number for Navigation Timer",
+    "Audio Mixing Mode for Karaoke",
+    "Country Code for Parental Management",
+    "Parental Level",
+    "Player Configurations for Video",
+    "Player Configurations for Audio",
+    "Initial Language Code for Audio",
+    "Initial Language Code Extension for Audio",
+    "Initial Language Code for Sub-picture",
+    "Initial Language Code Extension for Sub-picture",
+    "Player Regional Code",
+    "Reserved 21",
+    "Reserved 22",
+    "Reserved 23"
+};
+
+static void appendSystemRegister(uint16_t reg, NSMutableString* string) 
+{
+    [string appendFormat:@"%s (SRPM:%d)", system_reg_table[reg], reg];
+}
+
+static void appendGeneralRegister(uint8_t reg, NSMutableString* string) 
+{
+    [string appendFormat:@"g[%d]", reg];
+}
+
+static void appendRegister(uint8_t reg, NSMutableString* string) 
+{
+    if (reg & 0x80) {
+        appendSystemRegister(reg & 0x7f, string);
+    } else {
+        appendGeneralRegister(reg & 0x7f, string);
+    }
+}
+
+static void appendComparisonOp(uint8_t op, NSMutableString* string) 
+{
+    [string appendFormat:@" %s ", cmp_op_table[op]];
+}
+
+static void appendSetOp(uint8_t op, NSMutableString* string) 
+{
+    [string appendFormat:@" %s ", set_op_table[op]];
+}
+
+static void appendRegOrData1(DVDCommand* command, NSMutableString* string, int immediate, int start) 
+{
+    if (immediate) {
+        uint32_t i = [command bitsInRange:NSMakeRange(start, 16)];
+        [string appendFormat:@"0x%x", i];
+        if (isprint(i & 0xff) && isprint((i>>8) & 0xff)) {
+            [string appendFormat:@" (\"%c%c\")", (char)((i>>8) & 0xff), (char)(i & 0xff)];
+        }
+    } else {
+        appendRegister([command bitsInRange:NSMakeRange(start - 8, 8)], string);
+    }
+}
+
+static void appendRegOrData2(DVDCommand* command, NSMutableString* string, int immediate, int start) 
+{
+    if (immediate) {
+        [string appendFormat:@"0x%x", [command bitsInRange:NSMakeRange(start - 1, 7)]];
+    } else {
+        [string appendFormat:@"g[%d]", [command bitsInRange:NSMakeRange(start - 4, 4)]];
+    }
+}
+
+static void appendRegOrData3(DVDCommand* command, NSMutableString* string, int immediate, int start) 
+{
+    if (immediate) {
+        uint32_t i = [command bitsInRange:NSMakeRange(start, 16)];
+        [string appendFormat:@"0x%x", i];
+        if (isprint(i & 0xff) && isprint((i>>8) & 0xff)) {
+            [string appendFormat:@" (\"%c%c\")", (char)((i>>8) & 0xff), (char)(i & 0xff)];
+        }
+    } else {
+        appendRegister([command bitsInRange:NSMakeRange(start, 8)], string);
+    }
+}
+
+static void appendIf1(DVDCommand* command, NSMutableString* string) 
+{
+    uint8_t op = [command bitsInRange:NSMakeRange(54, 3)];
+    if (op) {
+        [string appendFormat:@"if ("];
+        appendGeneralRegister([command bitsInRange:NSMakeRange(39,8)], string);
+        appendComparisonOp(op, string);
+        appendRegOrData1(command, string, [command bitsInRange:NSMakeRange(55,1)], 31);
+        [string appendFormat:@") "];
+    }
+}
+
+static void appendIf2(DVDCommand* command, NSMutableString* string) 
+{
+    uint8_t op = [command bitsInRange:NSMakeRange(54, 3)];
+    if (op) {
+        [string appendFormat:@"if ("];
+        appendRegister([command bitsInRange:NSMakeRange(15, 8)], string);
+        appendComparisonOp(op, string);
+        appendRegister([command bitsInRange:NSMakeRange(7, 8)], string);
+        [string appendFormat:@") "];
+    }
+}
+
+static void appendIf3(DVDCommand* command, NSMutableString* string) 
+{
+    uint8_t op = [command bitsInRange:NSMakeRange(54, 3)];
     
+    if(op) {
+        [string appendFormat:@"if ("];
+        appendGeneralRegister([command bitsInRange:NSMakeRange(43, 4)], string);
+        appendComparisonOp(op, string);
+        appendRegOrData1(command, string, [command bitsInRange:NSMakeRange(55, 1)], 15);
+        [string appendFormat:@") "];
+    }
+}
+
+static void appendIf4(DVDCommand* command, NSMutableString* string) 
+{
+    uint8_t op = [command bitsInRange:NSMakeRange(54, 3)];
+    if (op) {
+        [string appendFormat:@"if ("];
+        appendGeneralRegister([command bitsInRange:NSMakeRange(51, 4)], string);
+        appendComparisonOp(op, string);
+        appendRegOrData1(command, string, [command bitsInRange:NSMakeRange(55, 1)], 31);
+        [string appendFormat:@") "];
+    }
+}
+
+static void appendIf5(DVDCommand* command, NSMutableString* string) 
+{
+    uint8_t op = [command bitsInRange:NSMakeRange(54, 3)];
+    int set_immediate = [command bitsInRange:NSMakeRange(60, 1)];
+    if (op) {
+        if (set_immediate) {
+            [string appendFormat:@"if ("];
+            appendGeneralRegister([command bitsInRange:NSMakeRange(31, 8)], string);
+            appendComparisonOp(op, string);
+            appendRegister([command bitsInRange:NSMakeRange(23, 8)], string);
+            [string appendFormat:@") "];
+        } else {
+            [string appendFormat:@"if ("];
+            appendGeneralRegister([command bitsInRange:NSMakeRange(39, 8)], string);
+            appendComparisonOp(op, string);
+            appendRegOrData1(command, string, [command bitsInRange:NSMakeRange(55, 1)], 31);
+            [string appendFormat:@") "];
+        }
+    }
+}
+
+static void appendSpecial(DVDCommand* command, NSMutableString* string) 
+{
+    uint8_t op = [command bitsInRange:NSMakeRange(51, 4)];
+    switch (op) {
+        case 0: {
+            [string appendFormat:@"Nop"];
+            break;
+        }
+            
+        case 1: {
+            [string appendFormat:@"Goto %d", [command bitsInRange:NSMakeRange(7, 8)]];
+            break;
+        }
+            
+        case 2: {
+            [string appendFormat:@"Break"];
+            break;
+        }
+
+        case 3: {
+            [string appendFormat:@"SetTmpPML %d, Goto %d", [command bitsInRange:NSMakeRange(11, 4)], [command bitsInRange:NSMakeRange(7, 8)]];
+            break;
+        }
+    }
+}
+
+static void appendLinkSub(DVDCommand* command, NSMutableString* string) 
+{
+    uint32_t linkop = [command bitsInRange:NSMakeRange(7, 8)];
+    uint32_t button = [command bitsInRange:NSMakeRange(15, 6)];
+    if (linkop < sizeof(link_table)/sizeof(char *) && link_table[linkop] != NULL) {
+        [string appendFormat:@"%s", link_table[linkop]];
+        if (button) {
+            [string appendFormat:@" (button %d)", button];
+        }
+    } else {
+        [string appendFormat:@"WARNING: Unknown linksub instruction (%i)", linkop];
+    }
+}
+
+static void appendLink(DVDCommand* command, NSMutableString* string, int optional) 
+{
+    uint8_t op = [command bitsInRange:NSMakeRange(51, 4)];
+    if (optional && op) {
+        [string appendFormat:@", "];
+    }
+    
+    switch(op) {
+        case 0: {
+            if (!optional) {
+                [string appendFormat:@"WARNING: NOP (link)!"];
+            }
+            break;
+        }
+    
+        case 1: {
+            appendLinkSub(command, string);
+            break;
+        }
+
+        case 4: {
+            [string appendFormat:@"LinkPGCN %d", [command bitsInRange:NSMakeRange(14, 15)]];
+            break;
+        }
+        
+        case 5: {
+            [string appendFormat:@"LinkPTT %d", [command bitsInRange:NSMakeRange(9, 10)]];
+            int button = [command bitsInRange:NSMakeRange(15, 6)];
+            if (button) {
+                [string appendFormat:@" (button %d)", button];
+            }
+            break;
+        }
+        
+        case 6: {
+            [string appendFormat:@"LinkPGN %d (button %d)", [command bitsInRange:NSMakeRange(6, 7)]];
+            int button = [command bitsInRange:NSMakeRange(15, 6)];
+            if (button) {
+                [string appendFormat:@" (button %d)", button];
+            }
+            break;
+        }
+        
+        case 7: {
+            [string appendFormat:@"LinkCN %d (button %d)", [command bitsInRange:NSMakeRange(7, 8)]];
+            int button = [command bitsInRange:NSMakeRange(15, 6)];
+            if (button) {
+                [string appendFormat:@" (button %d)", button];
+            }
+            break;
+        }
+        
+        default: {
+            [string appendFormat:@"WARNING: Unknown link instruction"];
+        }
+    }
+}
+
+static void appendJump(DVDCommand* command, NSMutableString* string) 
+{
+    switch ([command bitsInRange:NSMakeRange(51, 4)]) {
+        case 1: {
+            [string appendFormat:@"Exit"];
+            break;
+        }
+
+        case 2: {
+            [string appendFormat:@"JumpTT %d", [command bitsInRange:NSMakeRange(22, 7)]];
+            break;
+        }
+
+        case 3: {
+            [string appendFormat:@"JumpVTS_TT %d", [command bitsInRange:NSMakeRange(22, 7)]];
+            break;
+        }
+            
+        case 5: {
+            [string appendFormat:@"JumpVTS_PTT %d:%d", [command bitsInRange:NSMakeRange(22, 7)], [command bitsInRange:NSMakeRange(41, 10)]];
+            break;
+        }
+            
+        case 6: {
+            switch([command bitsInRange:NSMakeRange(23, 2)]) {
+                case 0: {
+                    [string appendFormat:@"JumpSS FP"];
+                    break;
+                }
+                    
+                case 1: {
+                    [string appendFormat:@"JumpSS VMGM (menu %d)", [command bitsInRange:NSMakeRange(19, 4)]];
+                    break;
+                }
+                    
+                case 2: {
+                    [string appendFormat:@"JumpSS VTSM (vts %d, title %d, menu %d)", [command bitsInRange:NSMakeRange(30, 7)], [command bitsInRange:NSMakeRange(38, 7)], [command bitsInRange:NSMakeRange(19, 4)]];
+                    break;
+                }
+                    
+                case 3: {
+                    [string appendFormat:@"JumpSS VMGM (pgc %d)", [command bitsInRange:NSMakeRange(46, 15)]];
+                    break;
+                }
+            }
+            break;
+        }
+
+        case 8: {
+            switch([command bitsInRange:NSMakeRange(23, 2)]) {
+                case 0:
+                    [string appendFormat:@"CallSS FP (rsm_cell %d)", [command bitsInRange:NSMakeRange(31, 8)]];
+                    break;
+                case 1:
+                    [string appendFormat:@"CallSS VMGM (menu %d, rsm_cell %d)", [command bitsInRange:NSMakeRange(19, 4)], [command bitsInRange:NSMakeRange(31, 8)]];
+                    break;
+                case 2:
+                    [string appendFormat:@"CallSS VTSM (menu %d, rsm_cell %d)", [command bitsInRange:NSMakeRange(19, 4)], [command bitsInRange:NSMakeRange(31, 8)]];
+                    break;
+                case 3: {
+                    [string appendFormat:@"CallSS VMGM (pgc %d, rsm_cell %d)", [command bitsInRange:NSMakeRange(46, 15)], [command bitsInRange:NSMakeRange(31, 8)]];
+                    break;
+                }
+            }
+            break;
+        }
+
+        default: {
+            [string appendFormat:@"WARNING: Unknown Jump/Call instruction"];
+        }
+    }
+}
+
+static void appendSystemSet(DVDCommand* command, NSMutableString* string) 
+{
+    switch ([command bitsInRange:NSMakeRange(59, 4)]) {
+        case 1: {
+            for (int i = 1; i <= 3; i++) {
+                if ([command bitsInRange:NSMakeRange(47 - (i*8), 1)]) {
+                    appendSystemRegister(i, string);
+                    [string appendFormat:@" = "];
+                    appendRegOrData2(command, string, [command bitsInRange:NSMakeRange(60, 1)], 47 - (i*8) );
+                    [string appendFormat:@" "];
+                }
+            }
+            break;
+        }
+    
+        case 2: {
+            appendSystemRegister(9, string);
+            [string appendFormat:@" = "];
+            appendRegOrData1(command, string, [command bitsInRange:NSMakeRange(60, 1)], 47);
+            [string appendFormat:@" "];
+            appendSystemRegister(10, string);
+            [string appendFormat:@" = %d", [command bitsInRange:NSMakeRange(30, 15)]]; /*  ?? */
+            break;
+        }
+
+        case 3: {
+            [string appendFormat:@"SetMode "];
+            if ([command bitsInRange:NSMakeRange(23, 1)]) {
+                [string appendFormat:@"Counter "];
+            } else {
+                [string appendFormat:@"Register "];
+            }
+            appendGeneralRegister([command bitsInRange:NSMakeRange(19, 4)], string);
+            appendSetOp(0x1, string);
+            appendRegOrData1(command, string, [command bitsInRange:NSMakeRange(60, 1)], 47);
+            break;
+        }
+            
+        case 6: {
+            appendSystemRegister(8, string);
+            if ([command bitsInRange:NSMakeRange(60, 1)]) {
+                [string appendFormat:@" = 0x%x", [command bitsInRange:NSMakeRange(31, 16)]];
+                int button = [command bitsInRange:NSMakeRange(31, 6)];
+                if (button) {
+                    [string appendFormat:@" (button %d)", button];
+                }
+            } else {
+                [string appendFormat:@" = g[%d]", [command bitsInRange:NSMakeRange(19, 4)]];
+            }
+            break;
+        }
+            
+        default: {
+            [string appendFormat:@"WARNING: Unknown system set instruction (%i)", [command bitsInRange:NSMakeRange(59, 4)]];
+        }
+    }
+}
+
+static void appendSet1(DVDCommand* command, NSMutableString* string) 
+{
+    uint8_t set_op = [command bitsInRange:NSMakeRange(59, 4)];
+    if (set_op) {
+        appendGeneralRegister([command bitsInRange:NSMakeRange(35, 4)], string);
+        appendSetOp(set_op, string);
+        appendRegOrData1(command, string, [command bitsInRange:NSMakeRange(60, 1)], 31);
+    } else {
+        [string appendFormat:@"NOP"];
+    }
+}
+
+static void appendSet2(DVDCommand* command, NSMutableString* string) 
+{
+    uint8_t set_op = [command bitsInRange:NSMakeRange(59, 4)];
+    if (set_op) {
+        appendGeneralRegister([command bitsInRange:NSMakeRange(51, 4)], string);
+        appendSetOp(set_op, string);
+        appendRegOrData1(command, string, [command bitsInRange:NSMakeRange(60, 1)], 47);
+    } else {
+        [string appendFormat:@"NOP"];
+    }
+}
+
+static void appendSet3(DVDCommand* command, NSMutableString* string) 
+{
+    uint8_t set_op = [command bitsInRange:NSMakeRange(59, 4)];
+    if (set_op) {
+        appendGeneralRegister([command bitsInRange:NSMakeRange(51, 4)], string);
+        appendSetOp(set_op, string);
+        appendRegOrData3(command, string, [command bitsInRange:NSMakeRange(60, 1)], 47);
+    } else {
+        [string appendFormat:@"NOP"];
+    }
+}
+
+void appendMnemonic(DVDCommand* command, NSMutableString* string)
+{
+    switch ([command bitsInRange:NSMakeRange(63,3)]) {
+        case 0: {
+            appendIf1(command, string);
+            appendSpecial(command, string);
+            break;
+        }
+
+        case 1: {
+            if([command bitsInRange:NSMakeRange(60,1)]) {
+                appendIf2(command, string);
+                appendJump(command, string);
+            } else {
+                appendIf1(command, string);
+                appendLink(command, string, 0);
+            }
+            break;
+        }
+
+        case 2: {
+            appendIf2(command, string);
+            appendSystemSet(command, string);
+            appendLink(command, string, 1);
+            break;
+        }
+
+        case 3: {
+            appendIf3(command, string);
+            appendSet1(command, string);
+            appendLink(command, string, 1);
+            break;
+            
+        }
+
+        case 4: {
+            appendSet2(command, string);
+            [string appendString:@", "];
+            appendIf4(command, string);
+            appendLinkSub(command, string);
+            break;
+        }
+
+        case 5: {
+            appendIf5(command, string);
+            [string appendString:@"{ "];
+            appendSet3(command, string);
+            [string appendString:@", "];
+            appendLinkSub(command, string);
+            [string appendString:@" }"];
+            break;
+        }
+
+        case 6: {
+            appendIf5(command, string);
+            [string appendString:@"{ "];
+            appendSet3(command, string);
+            [string appendString:@" } "];
+            appendLinkSub(command, string);
+            break;
+        }
+            
+        default: {
+            [string appendFormat:@"WARNING: Unknown instruction type (%i)", [command bitsInRange:NSMakeRange(63, 3)]];
+            break;
+        }
+    }
+}
+
 @end
 
 @implementation DVDVirtualMachine (DVDCommand)
