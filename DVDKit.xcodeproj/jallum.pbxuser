@@ -75,6 +75,10 @@
 			F971B1750E93E528009ABC4C /* PBXTextBookmark */ = F971B1750E93E528009ABC4C /* PBXTextBookmark */;
 			F971B1760E93E528009ABC4C /* PBXTextBookmark */ = F971B1760E93E528009ABC4C /* PBXTextBookmark */;
 			F971B1770E93E528009ABC4C /* PBXTextBookmark */ = F971B1770E93E528009ABC4C /* PBXTextBookmark */;
+			F971B17F0E93E7CE009ABC4C /* PBXTextBookmark */ = F971B17F0E93E7CE009ABC4C /* PBXTextBookmark */;
+			F971B1800E93E7CE009ABC4C /* PBXTextBookmark */ = F971B1800E93E7CE009ABC4C /* PBXTextBookmark */;
+			F971B1810E93E7CE009ABC4C /* PBXTextBookmark */ = F971B1810E93E7CE009ABC4C /* PBXTextBookmark */;
+			F971B1820E93E7CE009ABC4C /* PBXTextBookmark */ = F971B1820E93E7CE009ABC4C /* PBXTextBookmark */;
 			F98A627C0E8C70C500071926 /* PBXTextBookmark */ = F98A627C0E8C70C500071926 /* PBXTextBookmark */;
 			F98A62FC0E8C7E8800071926 /* PBXTextBookmark */ = F98A62FC0E8C7E8800071926 /* PBXTextBookmark */;
 			F98A62FD0E8C7E8800071926 /* PBXTextBookmark */ = F98A62FD0E8C7E8800071926 /* PBXTextBookmark */;
@@ -193,7 +197,7 @@
 		comments = "error: request for member 'blockType' in something not a structure or union";
 		fRef = F98A62590E8C700300071926 /* DVDVirtualMachine.m */;
 		rLen = 0;
-		rLoc = 291;
+		rLoc = 287;
 		rType = 1;
 	};
 	F971B13A0E93E10F009ABC4C /* PBXTextBookmark */ = {
@@ -211,7 +215,7 @@
 		fRef = F98A62590E8C700300071926 /* DVDVirtualMachine.m */;
 		name = "DVDVirtualMachine.m: 289";
 		rLen = 0;
-		rLoc = 9608;
+		rLoc = 9525;
 		rType = 0;
 		vrLen = 4633;
 		vrLoc = 6816;
@@ -251,7 +255,7 @@
 		fRef = F98A62590E8C700300071926 /* DVDVirtualMachine.m */;
 		name = "DVDVirtualMachine.m: 287";
 		rLen = 0;
-		rLoc = 9608;
+		rLoc = 9525;
 		rType = 0;
 		vrLen = 4764;
 		vrLoc = 6790;
@@ -261,7 +265,7 @@
 		fRef = F98A62590E8C700300071926 /* DVDVirtualMachine.m */;
 		name = "DVDVirtualMachine.m: 26";
 		rLen = 5;
-		rLoc = 946;
+		rLoc = 921;
 		rType = 0;
 		vrLen = 2580;
 		vrLoc = 0;
@@ -281,7 +285,7 @@
 		fRef = F98A62590E8C700300071926 /* DVDVirtualMachine.m */;
 		name = "DVDVirtualMachine.m: 26";
 		rLen = 5;
-		rLoc = 946;
+		rLoc = 921;
 		rType = 0;
 		vrLen = 2580;
 		vrLoc = 0;
@@ -295,6 +299,46 @@
 		rType = 0;
 		vrLen = 2176;
 		vrLoc = 22436;
+	};
+	F971B17F0E93E7CE009ABC4C /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = F98A624A0E8C700300071926 /* DVDCommand.m */;
+		name = "DVDCommand.m: 474";
+		rLen = 0;
+		rLoc = 23628;
+		rType = 0;
+		vrLen = 2176;
+		vrLoc = 22436;
+	};
+	F971B1800E93E7CE009ABC4C /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = F98A62590E8C700300071926 /* DVDVirtualMachine.m */;
+		name = "DVDVirtualMachine.m: 26";
+		rLen = 5;
+		rLoc = 921;
+		rType = 0;
+		vrLen = 2580;
+		vrLoc = 0;
+	};
+	F971B1810E93E7CE009ABC4C /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = F98A624A0E8C700300071926 /* DVDCommand.m */;
+		name = "DVDCommand.m: 474";
+		rLen = 0;
+		rLoc = 23628;
+		rType = 0;
+		vrLen = 2176;
+		vrLoc = 22436;
+	};
+	F971B1820E93E7CE009ABC4C /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = F98A62590E8C700300071926 /* DVDVirtualMachine.m */;
+		name = "DVDVirtualMachine.m: 199";
+		rLen = 0;
+		rLoc = 5304;
+		rType = 0;
+		vrLen = 3119;
+		vrLoc = 3924;
 	};
 	F98A62400E8C6FA700071926 /* Source Control */ = {
 		isa = PBXSourceControlManager;
@@ -470,9 +514,9 @@
 	};
 	F98A62590E8C700300071926 /* DVDVirtualMachine.m */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {1279, 8814}}";
-			sepNavSelRange = "{946, 5}";
-			sepNavVisRange = "{0, 2580}";
+			sepNavIntBoundsRect = "{{0, 0}, {1161, 9399}}";
+			sepNavSelRange = "{5304, 0}";
+			sepNavVisRange = "{3924, 3119}";
 		};
 	};
 	F98A627C0E8C70C500071926 /* PBXTextBookmark */ = {
@@ -777,7 +821,7 @@
 		fRef = F98A62590E8C700300071926 /* DVDVirtualMachine.m */;
 		name = "DVDVirtualMachine.m: 594";
 		rLen = 0;
-		rLoc = 18539;
+		rLoc = 18456;
 		rType = 0;
 		vrLen = 1845;
 		vrLoc = 17115;

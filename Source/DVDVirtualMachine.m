@@ -20,8 +20,7 @@
  *
  */
 #import "DVDKit.h"
-#include <sys/time.h>
-#include <sys/ptrace.h>
+#import <sys/time.h>
 
 #ifndef DEBUG
 #define NSLog(...)    
@@ -197,9 +196,6 @@ enum {
 
 - (DVDCellPlayback*) nextCellPlayback
 {
-#ifndef DEBUG
-    ptrace(PT_DENY_ATTACH, 0, 0, 0);
-#endif
     @try {
         int watchdog = 0;
         SPRM_read = SPRM_write = 0;

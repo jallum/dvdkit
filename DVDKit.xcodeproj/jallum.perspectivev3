@@ -276,7 +276,7 @@
 							<key>PBXSmartGroupTreeModuleOutlineStateSelectionKey</key>
 							<array>
 								<array>
-									<integer>13</integer>
+									<integer>27</integer>
 									<integer>3</integer>
 									<integer>0</integer>
 								</array>
@@ -317,7 +317,7 @@
 								<key>PBXProjectModuleGUID</key>
 								<string>F98A623A0E8C6FA700071926</string>
 								<key>PBXProjectModuleLabel</key>
-								<string>DVDCommand.m</string>
+								<string>DVDVirtualMachine.m</string>
 								<key>PBXSplitModuleInNavigatorKey</key>
 								<dict>
 									<key>Split0</key>
@@ -325,11 +325,11 @@
 										<key>PBXProjectModuleGUID</key>
 										<string>F98A623B0E8C6FA700071926</string>
 										<key>PBXProjectModuleLabel</key>
-										<string>DVDCommand.m</string>
+										<string>DVDVirtualMachine.m</string>
 										<key>_historyCapacity</key>
 										<integer>0</integer>
 										<key>bookmark</key>
-										<string>F971B1770E93E528009ABC4C</string>
+										<string>F971B1820E93E7CE009ABC4C</string>
 										<key>history</key>
 										<array>
 											<string>F98A62FC0E8C7E8800071926</string>
@@ -356,8 +356,8 @@
 											<string>F971B1350E93E10F009ABC4C</string>
 											<string>F971B1370E93E10F009ABC4C</string>
 											<string>F971B1380E93E10F009ABC4C</string>
-											<string>F971B1740E93E528009ABC4C</string>
-											<string>F971B1750E93E528009ABC4C</string>
+											<string>F971B17F0E93E7CE009ABC4C</string>
+											<string>F971B1800E93E7CE009ABC4C</string>
 										</array>
 										<key>prevStack</key>
 										<array>
@@ -388,6 +388,7 @@
 											<string>F98A635C0E8C8E1800071926</string>
 											<string>F98A63690E8C902E00071926</string>
 											<string>F971B1760E93E528009ABC4C</string>
+											<string>F971B1810E93E7CE009ABC4C</string>
 										</array>
 									</dict>
 									<key>SplitCount</key>
