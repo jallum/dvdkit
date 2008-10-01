@@ -427,11 +427,11 @@ enum {
         [NSException raise:@"DVDVirtualMachine" format:@"%s (%d)", __FILE__, __LINE__];
     }
     NSArray* partOfTitleSearchTable = [titleSet partOfTitleSearchTable];
-    if (ttn > [partOfTitleSearchTable count]) {
+    if (!ttn || ttn > [partOfTitleSearchTable count]) {
         [NSException raise:@"DVDVirtualMachine" format:@"%s (%d)", __FILE__, __LINE__];
     }
     NSArray* partOfTitleTable = [partOfTitleSearchTable objectAtIndex:(ttn - 1)];
-    if (pttn > [partOfTitleTable count]) {
+    if (!pttn || pttn > [partOfTitleTable count]) {
         [NSException raise:@"DVDVirtualMachine" format:@"%s (%d)", __FILE__, __LINE__];
     }
     DVDPartOfTitle* partOfTitle = [partOfTitleTable objectAtIndex:(pttn - 1)];
