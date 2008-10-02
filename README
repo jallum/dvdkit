@@ -19,6 +19,9 @@ LEGAL
 DVDKit is copyrighted open-source software that is released under the GNU 
 Public License, version 2.0.  For details on the license, see the LICENSE file.
 
+*NOTE* That we're using the GPL, and *not* the LGPL:  Linking this framework
+to your project *requires* that your project also be licensed under the GPL.
+
 
 SYSTEM REQUIREMENTS
 
