@@ -9,7 +9,7 @@
  * the Free Software Foundation; either version 2 of the License, or
  * (at your option) any later version.
  * 
- * libdvdnav is distributed in the hope that it will be useful,
+ * DVDKit is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
@@ -21,6 +21,8 @@
  */
 #import "DVDKit.h"
 #import <sys/time.h>
+
+NSString* const DVDVirtualMachineException = @"DVDVirtualMachine";
 
 #ifndef DEBUG
 #define NSLog(...)    
@@ -85,7 +87,7 @@ enum {
         dataSource = [_dataSource retain];
         videoManagerInformation = [dataSource videoManagerInformation];
         if (!videoManagerInformation) {
-            [NSException raise:@"DVDVirtualMachine" format:@"Video manager information is required"];
+            [NSException raise:DVDVirtualMachineException format:@"Video manager information is required"];
         }
 
         bzero(SPRM, sizeof(SPRM));
@@ -329,7 +331,7 @@ enum {
 - (uint16_t) peekGeneralPurposeRegister:(uint8_t)index
 {
     if (index >= 16) {
-        [NSException raise:@"DVDVirtualMachine" format:@"%s (%d)", __FILE__, __LINE__];
+        [NSException raise:DVDVirtualMachineException format:@"%s (%d)", __FILE__, __LINE__];
     }
     return GPRM[index];
 }
@@ -337,7 +339,7 @@ enum {
 - (uint16_t) generalPurposeRegister:(uint8_t)index
 {
     if (index >= 16) {
-        [NSException raise:@"DVDVirtualMachine" format:@"%s (%d)", __FILE__, __LINE__];
+        [NSException raise:DVDVirtualMachineException format:@"%s (%d)", __FILE__, __LINE__];
     }
     GPRM_read |= (1 << index);
     return GPRM[index];
@@ -346,7 +348,7 @@ enum {
 - (uint16_t) peekSystemParameterRegister:(uint8_t)index
 {
     if (index >= 24) {
-        [NSException raise:@"DVDVirtualMachine" format:@"%s (%d)", __FILE__, __LINE__];
+        [NSException raise:DVDVirtualMachineException format:@"%s (%d)", __FILE__, __LINE__];
     }
     return SPRM[index];
 }
@@ -354,7 +356,7 @@ enum {
 - (uint16_t) systemParameterRegister:(uint8_t)index
 {
     if (index >= 24) {
-        [NSException raise:@"DVDVirtualMachine" format:@"%s (%d)", __FILE__, __LINE__];
+        [NSException raise:DVDVirtualMachineException format:@"%s (%d)", __FILE__, __LINE__];
     }
     SPRM_read |= (1 << index);
     return SPRM[index];
@@ -363,7 +365,7 @@ enum {
 - (void) setValue:(uint16_t)value forGeneralPurposeRegister:(uint8_t)index
 {
     if (index >= 16) {
-        [NSException raise:@"DVDVirtualMachine" format:@"%s (%d)", __FILE__, __LINE__];
+        [NSException raise:DVDVirtualMachineException format:@"%s (%d)", __FILE__, __LINE__];
     }
     GPRM_write |= (1 << index);
     GPRM[index] = value & 0xFFFF;
@@ -372,7 +374,7 @@ enum {
 - (void) setValue:(uint16_t)value forSystemParameterRegister:(uint8_t)index
 {
     if (index >= 24) {
-        [NSException raise:@"DVDVirtualMachine" format:@"%s (%d)", __FILE__, __LINE__];
+        [NSException raise:DVDVirtualMachineException format:@"%s (%d)", __FILE__, __LINE__];
     }
     SPRM_write |= (1 << index);
     SPRM[index] = value & 0xFFFF;
@@ -381,7 +383,7 @@ enum {
 - (void) setMode:(BOOL)mode forGeneralPurposeRegister:(uint8_t)index
 {
     if (index >= 16) {
-        [NSException raise:@"DVDVirtualMachine" format:@"%s (%d)", __FILE__, __LINE__];
+        [NSException raise:DVDVirtualMachineException format:@"%s (%d)", __FILE__, __LINE__];
     }
     /* Do I need to implement this? */
 }
@@ -427,15 +429,15 @@ enum {
 - (void) executeJumpVTS_PTT:(uint8_t)ttn pttn:(uint16_t)pttn
 {
     if (SPRM[4] != [titleInformation index]) {
-        [NSException raise:@"DVDVirtualMachine" format:@"%s (%d)", __FILE__, __LINE__];
+        [NSException raise:DVDVirtualMachineException format:@"%s (%d)", __FILE__, __LINE__];
     }
     NSArray* partOfTitleSearchTable = [titleSet partOfTitleSearchTable];
     if (!ttn || ttn > [partOfTitleSearchTable count]) {
-        [NSException raise:@"DVDVirtualMachine" format:@"%s (%d)", __FILE__, __LINE__];
+        [NSException raise:DVDVirtualMachineException format:@"%s (%d)", __FILE__, __LINE__];
     }
     NSArray* partOfTitleTable = [partOfTitleSearchTable objectAtIndex:(ttn - 1)];
     if (!pttn || pttn > [partOfTitleTable count]) {
-        [NSException raise:@"DVDVirtualMachine" format:@"%s (%d)", __FILE__, __LINE__];
+        [NSException raise:DVDVirtualMachineException format:@"%s (%d)", __FILE__, __LINE__];
     }
     DVDPartOfTitle* partOfTitle = [partOfTitleTable objectAtIndex:(pttn - 1)];
     resume.enabled &= (domain == VTS_DOMAIN);
@@ -478,7 +480,7 @@ enum {
         }
     }
     if (!foundSearchPointer) {
-        [NSException raise:@"DVDVirtualMachine" format:@"%s (%d)", __FILE__, __LINE__];
+        [NSException raise:DVDVirtualMachineException format:@"%s (%d)", __FILE__, __LINE__];
     }
     /**/
     SPRM[4] = [titleInformation index];
@@ -503,7 +505,7 @@ enum {
         }
     }
     if (!foundSearchPointer) {
-        [NSException raise:@"DVDVirtualMachine" format:@"%s (%d)", __FILE__, __LINE__];
+        [NSException raise:DVDVirtualMachineException format:@"%s (%d)", __FILE__, __LINE__];
     }
     [titleSet release];
     titleSet = nil;
@@ -582,10 +584,10 @@ enum {
 - (void) executeLinkPTTN:(uint16_t)pttn
 {
     if (domain != VTS_DOMAIN) {
-        [NSException raise:@"DVDVirtualMachine" format:@"%s (%d)", __FILE__, __LINE__];
+        [NSException raise:DVDVirtualMachineException format:@"%s (%d)", __FILE__, __LINE__];
     }
     if (!titleSet) {
-        [NSException raise:@"DVDVirtualMachine" format:@"%s (%d)", __FILE__, __LINE__];
+        [NSException raise:DVDVirtualMachineException format:@"%s (%d)", __FILE__, __LINE__];
     }
     DVDPartOfTitle* partOfTitle = [[[titleSet partOfTitleSearchTable] objectAtIndex:(SPRM[5] - 1)] objectAtIndex:(pttn - 1)];
     SPRM[6] = [partOfTitle programChainNumber];
@@ -720,7 +722,7 @@ enum {
             return [videoManagerInformation menuProgramChainInformationTableForLanguageCode:SPRM[0]];
         }
     }
-    [NSException raise:@"DVDVirtualMachine" format:@"%s (%d)", __FILE__, __LINE__];
+    [NSException raise:DVDVirtualMachineException format:@"%s (%d)", __FILE__, __LINE__];
     return nil; /* Not Reached */
 }
 

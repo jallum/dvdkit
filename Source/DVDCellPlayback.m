@@ -9,7 +9,7 @@
  * the Free Software Foundation; either version 2 of the License, or
  * (at your option) any later version.
  * 
- * libdvdnav is distributed in the hope that it will be useful,
+ * DVDKit is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
@@ -20,6 +20,8 @@
  *
  */
 #import "DVDKit.h"
+
+NSString* const DVDCellPlaybackException = @"DVDCellPlayback";
 
 @implementation DVDCellPlayback
 @synthesize firstSector;
@@ -51,9 +53,9 @@
         lastSector = OSReadBigInt32(bytes, 20);
         
         if (lastVideoObjectUnitStartSector > lastVideoObjectUnitStartSector) {
-            [NSException raise:@"Ripper" format:@"%s(%d)", __FILE__, __LINE__];
+            [NSException raise:DVDCellPlaybackException format:@"%s(%d)", __FILE__, __LINE__];
         } else if (lastVideoObjectUnitStartSector > lastSector) {
-            [NSException raise:@"Ripper" format:@"%s(%d)", __FILE__, __LINE__];
+            [NSException raise:DVDCellPlaybackException format:@"%s(%d)", __FILE__, __LINE__];
         }
     }
     return self;

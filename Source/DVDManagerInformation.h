@@ -9,7 +9,7 @@
  * the Free Software Foundation; either version 2 of the License, or
  * (at your option) any later version.
  * 
- * libdvdnav is distributed in the hope that it will be useful,
+ * DVDKit is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
@@ -50,3 +50,5 @@
 - (DVDTitleTrackSearchPointer*) titleTrackSearchPointerForTitleSet:(uint16_t)vts track:(uint8_t)ttn;
 - (NSArray*) menuProgramChainInformationTableForLanguageCode:(uint16_t)languageCode;
 @end
+
+extern NSString* const DVDManagerInformationException;

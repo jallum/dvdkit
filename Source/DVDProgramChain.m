@@ -9,7 +9,7 @@
  * the Free Software Foundation; either version 2 of the License, or
  * (at your option) any later version.
  * 
- * libdvdnav is distributed in the hope that it will be useful,
+ * DVDKit is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
@@ -20,6 +20,8 @@
  *
  */
 #import "DVDKit.h"
+
+NSString* const DVDProgramChainException = @"DVDProgramChain";
 
 @implementation DVDProgramChain
 @synthesize prohibitedUserOperations;
@@ -51,7 +53,7 @@ static NSArray* NO_ELEMENTS;
     if (self = [super init]) {
         const uint8_t* bytes = [data bytes];
         if (0 != OSReadBigInt16(bytes, 0)) {
-            [NSException raise:@"Ripper" format:@"%s(%d)", __FILE__, __LINE__];
+            [NSException raise:DVDProgramChainException format:@"%s(%d)", __FILE__, __LINE__];
         }
 
         nr_of_programs = bytes[2];
@@ -63,7 +65,7 @@ static NSArray* NO_ELEMENTS;
         prohibitedUserOperations.bits = OSReadBigInt32(bytes, 8);
         
         if (nr_of_cells < nr_of_programs) {
-            [NSException raise:@"Ripper" format:@"%s(%d)", __FILE__, __LINE__];
+            [NSException raise:DVDProgramChainException format:@"%s(%d)", __FILE__, __LINE__];
         }
 
         for (int i = 0; i < 8; i++) {
@@ -92,14 +94,14 @@ static NSArray* NO_ELEMENTS;
         if (!nr_of_programs) {
             if (still_time || pg_playback_mode || program_map_offset || cell_playback_offset || cell_position_offset) {
 #ifdef STRICT
-                [NSException raise:@"Ripper" format:@"%s(%d)", __FILE__, __LINE__];
+                [NSException raise:DVDProgramChainException format:@"%s(%d)", __FILE__, __LINE__];
 #else
                 still_time = pg_playback_mode = program_map_offset = cell_playback_offset = cell_position_offset = 0;
 #endif
             }
         } else {
             if (!program_map_offset || !cell_playback_offset || !cell_position_offset) {
-                [NSException raise:@"Ripper" format:@"%s(%d)", __FILE__, __LINE__];
+                [NSException raise:DVDProgramChainException format:@"%s(%d)", __FILE__, __LINE__];
             }
         }
 
@@ -114,7 +116,7 @@ static NSArray* NO_ELEMENTS;
             uint16_t last_byte = OSReadBigInt16(p, 6); 
             
             if (((8 + (8 * (nr_of_pre_commands + nr_of_post_commands + nr_of_cell_commands)))-1) > last_byte) {
-                [NSException raise:@"Ripper" format:@"%s(%d)", __FILE__, __LINE__];
+                [NSException raise:DVDProgramChainException format:@"%s(%d)", __FILE__, __LINE__];
             }
             p += 8;
             

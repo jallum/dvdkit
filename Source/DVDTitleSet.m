@@ -9,7 +9,7 @@
  * the Free Software Foundation; either version 2 of the License, or
  * (at your option) any later version.
  * 
- * libdvdnav is distributed in the hope that it will be useful,
+ * DVDKit is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
@@ -20,6 +20,8 @@
  *
  */
 #import "DVDKit.h"
+
+NSString* const DVDTitleSetException = @"DVDTitleSet";
 
 @interface DVDTitleSet (Private)
 - (NSArray*) parsePGCITfromData:(NSData*)data offset:(uint32_t)_offset;
@@ -42,9 +44,9 @@
     if (self = [super init]) {
         const uint8_t* bytes = [data bytes];
         if ([data length] < 224) {
-            [NSException raise:@"DVDTitleSet" format:@"Video Manager Information (.IFO) data appears to be truncated."];
+            [NSException raise:DVDTitleSetException format:@"Video Manager Information (.IFO) data appears to be truncated."];
         } else if (0 != memcmp("DVDVIDEO-VTS", bytes, 12)) {
-            [NSException raise:@"DVDTitleSet" format:@"Invalid signature in the Video Manager Information (.IFO) data."];
+            [NSException raise:DVDTitleSetException format:@"Invalid signature in the Video Manager Information (.IFO) data."];
         }
 
         index = _index;
@@ -76,7 +78,7 @@
             p += 8;
             
             if (!nr_of_srpts || nr_of_srpts > 99) {
-                [NSException raise:@"DVDTitleSet" format:@"%s(%d)", __FILE__, __LINE__];
+                [NSException raise:DVDTitleSetException format:@"%s(%d)", __FILE__, __LINE__];
             }
             
             partOfTitleSearchTable = [NSMutableArray arrayWithCapacity:nr_of_srpts];
@@ -102,7 +104,7 @@
             uint16_t nr_of_c_adts = (lp - p) / 12;
             
             if ((lp - p) % 12) {
-                [NSException raise:@"DVDTitleSet" format:@"%s(%d)", __FILE__, __LINE__];
+                [NSException raise:DVDTitleSetException format:@"%s(%d)", __FILE__, __LINE__];
             } 
             
             menuCellAddressTable = [NSMutableArray arrayWithCapacity:nr_of_c_adts];
@@ -122,7 +124,7 @@
             vtsmVobuAdMap_nr = (lp - p) / 4;
 
             if ((lp - p) % 4) {
-                [NSException raise:@"DVDTitleSet" format:@"%s(%d)", __FILE__, __LINE__];
+                [NSException raise:DVDTitleSetException format:@"%s(%d)", __FILE__, __LINE__];
             }
             
             vtsmVobuAdMap = calloc(vtsmVobuAdMap_nr, 4);
@@ -141,7 +143,7 @@
             uint16_t nr_of_c_adts = (lp - p) / 12;
             
             if ((lp - p) % 12) {
-                [NSException raise:@"DVDTitleSet" format:@"%s(%d)", __FILE__, __LINE__];
+                [NSException raise:DVDTitleSetException format:@"%s(%d)", __FILE__, __LINE__];
             } 
             
             cellAddressTable = [NSMutableArray arrayWithCapacity:nr_of_c_adts];
@@ -161,7 +163,7 @@
             vtsVobuAdMap_nr = (lp - p) / 4;
 
             if ((lp - p) % 4) {
-                [NSException raise:@"DVDTitleSet" format:@"%s(%d)", __FILE__, __LINE__];
+                [NSException raise:DVDTitleSetException format:@"%s(%d)", __FILE__, __LINE__];
             }
             
             vtsVobuAdMap = calloc(vtsVobuAdMap_nr, 4);
@@ -186,7 +188,7 @@
             p += 8;
 
             if (!nr_of_lus || nr_of_lus > 100) {
-                [NSException raise:@"DVDTitleSet" format:@"%s(%d)", __FILE__, __LINE__];
+                [NSException raise:DVDTitleSetException format:@"%s(%d)", __FILE__, __LINE__];
             }
 
             menuProgramChainInformationTablesByLanguage = [NSMutableDictionary dictionaryWithCapacity:nr_of_lus];
@@ -195,7 +197,7 @@
                 uint32_t pgcit_start_byte = OSReadBigInt32(p, 4);
 
                 if ((pgcit_start_byte + 8 - 1) > last_byte) {
-                    [NSException raise:@"DVDTitleSet" format:@"%s(%d)", __FILE__, __LINE__];
+                    [NSException raise:DVDTitleSetException format:@"%s(%d)", __FILE__, __LINE__];
                 }
                 
                 [menuProgramChainInformationTablesByLanguage setObject:[self parsePGCITfromData:data offset:(vtsm_pgci_ut << 11) + pgcit_start_byte] forKey:[NSNumber numberWithShort:languageCode]];
@@ -245,7 +247,7 @@
     p += 8;
 
     if ((_offset + last_byte) >= [data length]) {
-        [NSException raise:@"DVDTitleSet" format:@"%s(%d)", __FILE__, __LINE__];
+        [NSException raise:DVDTitleSetException format:@"%s(%d)", __FILE__, __LINE__];
     }
 
     NSMutableArray* pgcit = [NSMutableArray arrayWithCapacity:nr_of_pgci_srp];
@@ -255,7 +257,7 @@
         uint32_t pgc_start_byte = OSReadBigInt32(p, 4);
 
         if ((pgc_start_byte + 8) >= last_byte) {
-            [NSException raise:@"DVDTitleSet" format:@"%s(%d)", __FILE__, __LINE__];
+            [NSException raise:DVDTitleSetException format:@"%s(%d)", __FILE__, __LINE__];
         }
         
         [pgcit addObject:[DVDProgramChainSearchPointer programChainSearchPointerWithEntryId:entry_id parentalMask:ptl_id_mask programChain:[DVDProgramChain programChainWithData:[data subdataWithRange:NSMakeRange(_offset + pgc_start_byte, (last_byte - pgc_start_byte) + 1)]]]];

@@ -9,7 +9,7 @@
  * the Free Software Foundation; either version 2 of the License, or
  * (at your option) any later version.
  * 
- * libdvdnav is distributed in the hope that it will be useful,
+ * DVDKit is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
@@ -21,6 +21,8 @@
  */
 #import "DVDKit.h"
 #import "DVDCommand+Private.h"
+
+NSString* const DVDCommandException = @"DVDCommand";
 
 @implementation DVDCommand
 
@@ -52,9 +54,7 @@
     NSLog(@"%@", self);
 #endif
     uint8_t type = [self bitsInRange:NSMakeRange(63, 3)];
-    if (type >= 7) {
-        [NSException raise:@"DVDCommand" format:@"Unexpected type (%d)", type];
-    } else switch (type) {
+    switch (type) {
         case 0: {
             uint8_t command = [self bitsInRange:NSMakeRange(51, 4)];
             uint8_t comparison = [self bitsInRange:NSMakeRange(54, 3)];
@@ -359,7 +359,13 @@ static void appendMnemonic(DVDCommand* command, NSMutableString* string);
         [string appendString:@"      "];
     }
     [string appendFormat:@"%016llx | ", bits];
-    appendMnemonic(self, string);
+    int length = [string length];
+    @try {
+        appendMnemonic(self, string);
+    } @catch (id exception) {
+        [string deleteCharactersInRange:NSMakeRange(length, [string length] - length)];
+        [string appendString:@"<INVALID INSTRUCTION>"];
+    }
     return string;
 }
 
@@ -403,7 +409,7 @@ static void appendMnemonic(DVDCommand* command, NSMutableString* string);
             return value1 < value2;
         }
     }
-    [NSException raise:@"DVDCommand" format:@"%s(%d)", __FILE__, __LINE__];
+    [NSException raise:DVDCommandException format:@"%s(%d)", __FILE__, __LINE__];
     return 0; /* Never Reached */
 }
 
@@ -445,7 +451,7 @@ static void appendMnemonic(DVDCommand* command, NSMutableString* string);
             return value1 ^ value2;
         }
     }
-    [NSException raise:@"DVDCommand" format:@"%s(%d)", __FILE__, __LINE__];
+    [NSException raise:DVDCommandException format:@"%s(%d)", __FILE__, __LINE__];
     return 0; /* Never Reached */
 }
 
@@ -550,6 +556,8 @@ static void appendRegOrData3(DVDCommand* command, NSMutableString* string, int i
         [string appendFormat:@"0x%x", i];
         if (isprint(i & 0xff) && isprint((i>>8) & 0xff)) {
             [string appendFormat:@" (\"%c%c\")", (char)((i>>8) & 0xff), (char)(i & 0xff)];
+        } else {
+            [NSException raise:DVDCommandException format:@"%s(%d)", __FILE__, __LINE__];
         }
     } else {
         appendRegister([command bitsInRange:NSMakeRange(start, 8)], string);
@@ -582,9 +590,8 @@ static void appendIf2(DVDCommand* command, NSMutableString* string)
 
 static void appendIf3(DVDCommand* command, NSMutableString* string) 
 {
-    uint8_t op = [command bitsInRange:NSMakeRange(54, 3)];
-    
-    if(op) {
+    uint8_t op = [command bitsInRange:NSMakeRange(54, 3)];    
+    if (op) {
         [string appendFormat:@"if ("];
         appendGeneralRegister([command bitsInRange:NSMakeRange(43, 4)], string);
         appendComparisonOp(op, string);
@@ -649,6 +656,10 @@ static void appendSpecial(DVDCommand* command, NSMutableString* string)
             [string appendFormat:@"SetTmpPML %d, Goto %d", [command bitsInRange:NSMakeRange(11, 4)], [command bitsInRange:NSMakeRange(7, 8)]];
             break;
         }
+            
+        default: {
+            [NSException raise:DVDCommandException format:@"%s(%d)", __FILE__, __LINE__];
+        }
     }
 }
 
@@ -662,7 +673,7 @@ static void appendLinkSub(DVDCommand* command, NSMutableString* string)
             [string appendFormat:@" (button %d)", button];
         }
     } else {
-        [string appendFormat:@"WARNING: Unknown linksub instruction (%i)", linkop];
+        [NSException raise:DVDCommandException format:@"%s(%d)", __FILE__, __LINE__];
     }
 }
 
@@ -673,10 +684,10 @@ static void appendLink(DVDCommand* command, NSMutableString* string, int optiona
         [string appendFormat:@", "];
     }
     
-    switch(op) {
+    switch (op) {
         case 0: {
             if (!optional) {
-                [string appendFormat:@"WARNING: NOP (link)!"];
+                [NSException raise:DVDCommandException format:@"%s(%d)", __FILE__, __LINE__];
             }
             break;
         }
@@ -719,7 +730,7 @@ static void appendLink(DVDCommand* command, NSMutableString* string, int optiona
         }
         
         default: {
-            [string appendFormat:@"WARNING: Unknown link instruction"];
+            [NSException raise:DVDCommandException format:@"%s(%d)", __FILE__, __LINE__];
         }
     }
 }
@@ -748,7 +759,7 @@ static void appendJump(DVDCommand* command, NSMutableString* string)
         }
             
         case 6: {
-            switch([command bitsInRange:NSMakeRange(23, 2)]) {
+            switch ([command bitsInRange:NSMakeRange(23, 2)]) {
                 case 0: {
                     [string appendFormat:@"JumpSS FP"];
                     break;
@@ -768,31 +779,45 @@ static void appendJump(DVDCommand* command, NSMutableString* string)
                     [string appendFormat:@"JumpSS VMGM (pgc %d)", [command bitsInRange:NSMakeRange(46, 15)]];
                     break;
                 }
+
+                default: {
+                    [NSException raise:DVDCommandException format:@"%s(%d)", __FILE__, __LINE__];
+                }
             }
             break;
         }
 
         case 8: {
-            switch([command bitsInRange:NSMakeRange(23, 2)]) {
-                case 0:
+            switch ([command bitsInRange:NSMakeRange(23, 2)]) {
+                case 0: {
                     [string appendFormat:@"CallSS FP (rsm_cell %d)", [command bitsInRange:NSMakeRange(31, 8)]];
                     break;
-                case 1:
+                }
+
+                case 1: {
                     [string appendFormat:@"CallSS VMGM (menu %d, rsm_cell %d)", [command bitsInRange:NSMakeRange(19, 4)], [command bitsInRange:NSMakeRange(31, 8)]];
                     break;
-                case 2:
+                }
+
+                case 2: {
                     [string appendFormat:@"CallSS VTSM (menu %d, rsm_cell %d)", [command bitsInRange:NSMakeRange(19, 4)], [command bitsInRange:NSMakeRange(31, 8)]];
                     break;
+                }
+                    
                 case 3: {
                     [string appendFormat:@"CallSS VMGM (pgc %d, rsm_cell %d)", [command bitsInRange:NSMakeRange(46, 15)], [command bitsInRange:NSMakeRange(31, 8)]];
                     break;
+                }
+
+                default: {
+                    [NSException raise:DVDCommandException format:@"%s(%d)", __FILE__, __LINE__];
                 }
             }
             break;
         }
 
         default: {
-            [string appendFormat:@"WARNING: Unknown Jump/Call instruction"];
+            [NSException raise:DVDCommandException format:@"%s(%d)", __FILE__, __LINE__];
         }
     }
 }
@@ -850,7 +875,7 @@ static void appendSystemSet(DVDCommand* command, NSMutableString* string)
         }
             
         default: {
-            [string appendFormat:@"WARNING: Unknown system set instruction (%i)", [command bitsInRange:NSMakeRange(59, 4)]];
+            [NSException raise:DVDCommandException format:@"%s(%d)", __FILE__, __LINE__];
         }
     }
 }
@@ -954,8 +979,7 @@ void appendMnemonic(DVDCommand* command, NSMutableString* string)
         }
             
         default: {
-            [string appendFormat:@"WARNING: Unknown instruction type (%i)", [command bitsInRange:NSMakeRange(63, 3)]];
-            break;
+            [NSException raise:DVDCommandException format:@"%s(%d)", __FILE__, __LINE__];
         }
     }
 }
@@ -971,7 +995,7 @@ void appendMnemonic(DVDCommand* command, NSMutableString* string)
     } else if ((rn >= 0x80) && (rn <= 0x97)) {
         return [self systemParameterRegister:rn - 0x80];
     } else {
-        [NSException raise:@"DVDCommand" format:@"%s(%d)", __FILE__, __LINE__];
+        [NSException raise:DVDCommandException format:@"%s(%d)", __FILE__, __LINE__];
         return 0; /* Never Reached */
     }
 }
@@ -983,7 +1007,7 @@ void appendMnemonic(DVDCommand* command, NSMutableString* string)
     } else if ((rn >= 0x80) && (rn <= 0x97)) {
         [self setValue:value forSystemParameterRegister:rn - 0x80];
     } else {
-        [NSException raise:@"DVDCommand" format:@"%s(%d)", __FILE__, __LINE__];
+        [NSException raise:DVDCommandException format:@"%s(%d)", __FILE__, __LINE__];
     }
 }
 
@@ -1001,46 +1025,57 @@ void appendMnemonic(DVDCommand* command, NSMutableString* string)
             [self executeLinkTopCell];
             break;
         }
+
         case 0x02: {
             [self executeLinkNextCell];
             break;
         }
+        
         case 0x03: {
             [self executeLinkPrevCell];
             break;
         }
+        
         case 0x05: {
             [self executeLinkTopPG];
             break;
         }
+        
         case 0x06: {
             [self executeLinkNextPG];
             break;
         }
+        
         case 0x07: {
             [self executeLinkPrevPG];
             break;
         }
+        
         case 0x09: {
             [self executeLinkTopPGC];
             break;
         }
+        
         case 0x0A: {
             [self executeLinkNextPGC];
             break;
         }
+        
         case 0x0B: {
             [self executeLinkPrevPGC];
             break;
         }
+        
         case 0x0C: {
             [self executeLinkGoUpPGC];
             break;
         }
+        
         case 0x0D: {
             [self executeLinkTailPGC];
             break;
         }
+        
         case 0x10: {
             [self executeRSM];
             break;
