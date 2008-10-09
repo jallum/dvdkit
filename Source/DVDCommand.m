@@ -379,7 +379,7 @@ static void appendMnemonic(DVDCommand* command, NSMutableString* string);
     NSAssert(range.length > 0 && range.length < 32, @"Valid range is 1-31");
     NSAssert(range.location < 64, @"Valid range is 0-63");
     NSAssert(offset < 64, @"Valid range is 0-63"); // If we overflow, we'll be *greater* than 63.
-    uint64_t m = (1 << range.length) - 1;
+    uint64_t m = (1L << range.length) - 1;
     mask |= m << offset;
     return (bits >> offset) & m;
 }

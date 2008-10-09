@@ -36,33 +36,76 @@ typedef struct {
 typedef union {
     uint32_t bits;
     struct {
-        uint32_t time_play_or_search : 1,       //  0
-        ptt_play_or_search : 1,                 //  1
-        title_play : 1,                         //  2
-        stop : 1,                               //  3
-        go_up : 1,                              //  4
-        time_or_ptt_search : 1,                 //  5
-        top_pg_or_prev_pg_search : 1,           //  6
-        next_pg_search : 1,                     //  7
-        forward_scan : 1,                       //  8
-        backward_scan : 1,                      //  9
-        menu_call_title : 1,                    //  10
-        menu_call_root : 1,                     //  11
-        menu_call_subpicture : 1,               //  12
-        menu_call_audio : 1,                    //  13
-        menu_call_angle : 1,                    //  14
-        menu_call_ptt : 1,                      //  15
-        resume : 1,                             //  16
-        button_select_or_activate : 1,          //  17
-        still_off : 1,                          //  18
-        pause_on : 1,                           //  19
-        audio_stream_change : 1,                //  20
-        subpicture_stream_change : 1,           //  21
-        angle_change : 1,                       //  22
-        karaoke_audio_mix_change : 1,           //  23
-        video_presentation_mode_change : 1      //  24
-        ;
-    } values;
+#if BYTE_ORDER == LITTLE_ENDIAN
+        /* 0 - 7 */ 
+        unsigned int title_or_time_play             : 1;
+        unsigned int chapter_search_or_play         : 1;
+        unsigned int title_play                     : 1;
+        unsigned int stop                           : 1;
+        unsigned int go_up                          : 1;
+        unsigned int time_or_chapter_search         : 1;
+        unsigned int prev_or_top_pg_search          : 1;
+        unsigned int next_pg_search                 : 1;
+        
+        /* 8 - 15 */
+        unsigned int forward_scan                   : 1;
+        unsigned int backward_scan                  : 1;
+        unsigned int title_menu_call                : 1;
+        unsigned int root_menu_call                 : 1;
+        unsigned int subpic_menu_call               : 1;
+        unsigned int audio_menu_call                : 1;
+        unsigned int angle_menu_call                : 1;
+        unsigned int chapter_menu_call              : 1;
+        
+        /* 16 - 23 */
+        unsigned int resume                         : 1;
+        unsigned int button_select_or_activate      : 1;
+        unsigned int still_off                      : 1;
+        unsigned int pause_on                       : 1;
+        unsigned int audio_stream_change            : 1;
+        unsigned int subpic_stream_change           : 1;
+        unsigned int angle_change                   : 1;
+        unsigned int karaoke_audio_pres_mode_change : 1;
+        
+        /* 24 - 31 */
+        unsigned int video_pres_mode_change         : 1;
+        unsigned int zero                           : 7;
+#else
+        /* 31 - 24 */
+        unsigned int zero                           : 7;
+        unsigned int video_pres_mode_change         : 1;
+        
+        /* 23 - 16 */
+        unsigned int karaoke_audio_pres_mode_change : 1;
+        unsigned int angle_change                   : 1;
+        unsigned int subpic_stream_change           : 1;
+        unsigned int audio_stream_change            : 1;
+        unsigned int pause_on                       : 1;
+        unsigned int still_off                      : 1;
+        unsigned int button_select_or_activate      : 1;
+        unsigned int resume                         : 1;
+
+        /* 15 - 8 */
+        unsigned int chapter_menu_call              : 1;
+        unsigned int angle_menu_call                : 1;
+        unsigned int audio_menu_call                : 1;
+        unsigned int subpic_menu_call               : 1;
+        unsigned int root_menu_call                 : 1;
+        unsigned int title_menu_call                : 1;
+        unsigned int backward_scan                  : 1;
+        unsigned int forward_scan                   : 1;
+        
+        /* 7 - 0 */ 
+        unsigned int next_pg_search                 : 1;
+        unsigned int prev_or_top_pg_search          : 1;
+        unsigned int time_or_chapter_search         : 1;
+        unsigned int go_up                          : 1;
+        unsigned int stop                           : 1;
+        unsigned int title_play                     : 1;
+        unsigned int chapter_search_or_play         : 1;
+        unsigned int title_or_time_play             : 1;
+#endif
+    } __attribute__ ((packed)) values;
 } __attribute__ ((packed)) dvd_user_ops_t;
 
 
