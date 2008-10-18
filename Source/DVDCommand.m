@@ -54,7 +54,9 @@ NSString* const DVDCommandException = @"DVDCommand";
     NSLog(@"%@", self);
 #endif
     uint8_t type = [self bitsInRange:NSMakeRange(63, 3)];
-    switch (type) {
+    if (type > 6) {
+        [NSException raise:DVDCommandException format:@"%s(%d)", __FILE__, __LINE__];
+    } else switch (type) {
         case 0: {
             uint8_t command = [self bitsInRange:NSMakeRange(51, 4)];
             uint8_t comparison = [self bitsInRange:NSMakeRange(54, 3)];
@@ -63,13 +65,19 @@ NSString* const DVDCommandException = @"DVDCommand";
                     [virtualMachine executeGoto:[self bitsInRange:NSMakeRange(7, 8)]];
                     break;
                 }
+                
                 case 2: {
                     [virtualMachine executeBreak];
                     break;
                 }
+
                 case 3: {
                     [virtualMachine setTmpPML:[self bitsInRange:NSMakeRange(11, 4)] line:[self bitsInRange:NSMakeRange(7, 8)]];
                     break;
+                }
+                    
+                default: {
+                    [NSException raise:DVDCommandException format:@"%s(%d)", __FILE__, __LINE__];
                 }
             }
             break;
@@ -84,32 +92,39 @@ NSString* const DVDCommandException = @"DVDCommand";
                         [virtualMachine stop];
                         break;
                     }
+                        
                     case 2: {
                         [virtualMachine executeJumpTT:[self bitsInRange:NSMakeRange(23, 8)]];
                         break;
                     }
+                        
                     case 3: {
                         [virtualMachine executeJumpVTS_TT:[self bitsInRange:NSMakeRange(23, 8)]];
                         break;
                     }
+                        
                     case 5: {
                         [virtualMachine executeJumpVTS_PTT:[self bitsInRange:NSMakeRange(23, 8)] pttn:[self bitsInRange:NSMakeRange(43, 12)]];
                         break;
                     }
+                        
                     case 6: {
                         switch ([self bitsInRange:NSMakeRange(23, 2)]) {
                             case 0: {
                                 [virtualMachine executeJumpSS_FP];
                                 break;
                             }
+                        
                             case 1: {
                                 [virtualMachine executeJumpSS_VMGM_menu:[self bitsInRange:NSMakeRange(20, 5)]];
                                 break;
                             }
+                            
                             case 2: {
                                 [virtualMachine executeJumpSS_VTSM_menu:[self bitsInRange:NSMakeRange(20, 5)] vts:[self bitsInRange:NSMakeRange(31, 8)] ttn:[self bitsInRange:NSMakeRange(39, 8)]];
                                 break;
                             }
+                            
                             case 3: {
                                 [virtualMachine executeJumpSS_VMGM_pgcn:[self bitsInRange:NSMakeRange(47, 16)]];
                                 break;
@@ -117,26 +132,34 @@ NSString* const DVDCommandException = @"DVDCommand";
                         }
                         break;
                     }
+                        
                     case 8: {
                         switch ([self bitsInRange:NSMakeRange(23, 2)]) {
                             case 0: {
                                 [virtualMachine executeCallSS_FP];
                                 break;
                             }
+                            
                             case 1: {
                                 [virtualMachine executeCallSS_VMGM_menu:[self bitsInRange:NSMakeRange(20, 5)] resumeCell:[self bitsInRange:NSMakeRange(31, 8)]];
                                 break;
                             }
+                            
                             case 2: {
                                 [virtualMachine executeCallSS_VTSM_menu:[self bitsInRange:NSMakeRange(20, 5)] resumeCell:[self bitsInRange:NSMakeRange(31, 8)]];
                                 break;
                             }
+                            
                             case 3: {
                                 [virtualMachine executeCallSS_VMGM_pgcn:[self bitsInRange:NSMakeRange(47, 16)] resumeCell:[self bitsInRange:NSMakeRange(31, 8)]];
                                 break;
                             }
                         }
                         break;
+                    }
+                        
+                    default: {
+                        [NSException raise:DVDCommandException format:@"%s(%d)", __FILE__, __LINE__];
                     }
                 }
             } else {
@@ -146,24 +169,32 @@ NSString* const DVDCommandException = @"DVDCommand";
                         [virtualMachine conditionallySetHighlightedButton:[self bitsInRange:NSMakeRange(15, 6)]];
                         break;
                     }
+                        
                     case 4: {
                         [virtualMachine executeLinkPGCN:[self bitsInRange:NSMakeRange(15, 16)]];
                         break;
                     }
+                        
                     case 5: {
                         [virtualMachine executeLinkPTTN:[self bitsInRange:NSMakeRange(9, 10)]];
                         [virtualMachine conditionallySetHighlightedButton:[self bitsInRange:NSMakeRange(15, 6)]];
                         break;
                     }
+                        
                     case 6: {
                         [virtualMachine executeLinkPGN:[self bitsInRange:NSMakeRange(7, 8)]];
                         [virtualMachine conditionallySetHighlightedButton:[self bitsInRange:NSMakeRange(15, 6)]];
                         break;
                     }
+                        
                     case 7: {
                         [virtualMachine executeLinkCell:[self bitsInRange:NSMakeRange(7, 8)]];
                         [virtualMachine conditionallySetHighlightedButton:[self bitsInRange:NSMakeRange(15, 6)]];
                         break;
+                    }
+                        
+                    default: {
+                        [NSException raise:DVDCommandException format:@"%s(%d)", __FILE__, __LINE__];
                     }
                 }
             }
@@ -180,54 +211,76 @@ NSString* const DVDCommandException = @"DVDCommand";
                         if ([self bitsInRange:NSMakeRange(39, 1)]) {
                             [virtualMachine setValue:(direct) ? [self bitsInRange:NSMakeRange(38, 7)] : [virtualMachine generalPurposeRegister:[self bitsInRange:NSMakeRange(35, 4)]] forSystemParameterRegister:1];
                         }
+                        
                         if ([self bitsInRange:NSMakeRange(31, 1)]) {
                             [virtualMachine setValue:(direct) ? [self bitsInRange:NSMakeRange(30, 7)] : [virtualMachine generalPurposeRegister:[self bitsInRange:NSMakeRange(27, 4)]] forSystemParameterRegister:2];
                         }
+                        
                         if ([self bitsInRange:NSMakeRange(23, 1)]) {
                             [virtualMachine setValue:(direct) ? [self bitsInRange:NSMakeRange(22, 7)] : [virtualMachine generalPurposeRegister:[self bitsInRange:NSMakeRange(19, 4)]] forSystemParameterRegister:3];
                         }
                         break;
                     }
+                        
                     case 2: {
                         [virtualMachine setValue:(direct) ? [self bitsInRange:NSMakeRange(47, 16)] : [virtualMachine registerForCode:[self bitsInRange:NSMakeRange(39, 8)]] forSystemParameterRegister:9];
                         [virtualMachine setValue:[self bitsInRange:NSMakeRange(31, 16)] forSystemParameterRegister:10];
                         break;
                     }
+                        
                     case 3: {
                         uint8_t index = [self bitsInRange:NSMakeRange(19, 4)];
                         [virtualMachine setMode:[self bitsInRange:NSMakeRange(23, 1)] forGeneralPurposeRegister:index];
                         [virtualMachine setValue:(direct) ? [self bitsInRange:NSMakeRange(47, 16)] : [virtualMachine registerForCode:[self bitsInRange:NSMakeRange(39, 8)]] forGeneralPurposeRegister:index];
                         break;
                     }
+                        
                     case 6: {
                         [virtualMachine setValue:(direct) ? [self bitsInRange:NSMakeRange(31, 16)] : [virtualMachine generalPurposeRegister:[self bitsInRange:NSMakeRange(19, 4)]] forSystemParameterRegister:8];
                         break;
                     }
+                        
+                    default: {
+                        [NSException raise:DVDCommandException format:@"%s(%d)", __FILE__, __LINE__];
+                    }
                 }
                 if (!comparison) switch ([self bitsInRange:NSMakeRange(51, 4)]) {
+                    case 0: {
+                        /* NOP */
+                        break;
+                    }
+
                     case 1: {
                         [virtualMachine executeLinkSubset:[self bitsInRange:NSMakeRange(4, 5)]];
                         [virtualMachine conditionallySetHighlightedButton:[self bitsInRange:NSMakeRange(15, 6)]];
                         break;
                     }
+                        
                     case 4: {
                         [virtualMachine executeLinkPGCN:[self bitsInRange:NSMakeRange(15, 16)]];
                         break;
                     }
+                        
                     case 5: {
                         [virtualMachine executeLinkPTTN:[self bitsInRange:NSMakeRange(9, 10)]];
                         [virtualMachine conditionallySetHighlightedButton:[self bitsInRange:NSMakeRange(15, 6)]];
                         break;
                     }
+                        
                     case 6: {
                         [virtualMachine executeLinkPGN:[self bitsInRange:NSMakeRange(7, 8)]];
                         [virtualMachine conditionallySetHighlightedButton:[self bitsInRange:NSMakeRange(15, 6)]];
                         break;
                     }
+                        
                     case 7: {
                         [virtualMachine executeLinkCell:[self bitsInRange:NSMakeRange(7, 8)]];
                         [virtualMachine conditionallySetHighlightedButton:[self bitsInRange:NSMakeRange(15, 6)]];
                         break;
+                    }
+                        
+                    default: {
+                        [NSException raise:DVDCommandException format:@"%s(%d)", __FILE__, __LINE__];
                     }
                 }
             }
@@ -250,29 +303,42 @@ NSString* const DVDCommandException = @"DVDCommand";
                 }
                 if (!comparison) {
                     switch ([self bitsInRange:NSMakeRange(51, 4)]) {
+                        case 0: {
+                            /* NOP */
+                            break;
+                        }
+                            
                         case 1: {
                             [virtualMachine executeLinkSubset:[self bitsInRange:NSMakeRange(4, 5)]];
                             [virtualMachine conditionallySetHighlightedButton:[self bitsInRange:NSMakeRange(15, 6)]];
                             break;
                         }
+                            
                         case 4: {
                             [virtualMachine executeLinkPGCN:[self bitsInRange:NSMakeRange(15, 16)]];
                             break;
                         }
+                            
                         case 5: {
                             [virtualMachine executeLinkPTTN:[self bitsInRange:NSMakeRange(9, 10)]];
                             [virtualMachine conditionallySetHighlightedButton:[self bitsInRange:NSMakeRange(15, 6)]];
                             break;
                         }
+                            
                         case 6: {
                             [virtualMachine executeLinkPGN:[self bitsInRange:NSMakeRange(7, 8)]];
                             [virtualMachine conditionallySetHighlightedButton:[self bitsInRange:NSMakeRange(15, 6)]];
                             break;
                         }
+                            
                         case 7: {
                             [virtualMachine executeLinkCell:[self bitsInRange:NSMakeRange(7, 8)]];
                             [virtualMachine conditionallySetHighlightedButton:[self bitsInRange:NSMakeRange(15, 6)]];
                             break;
+                        }
+                            
+                        default: {
+                            [NSException raise:DVDCommandException format:@"%s(%d)", __FILE__, __LINE__];
                         }
                     }
                 }
@@ -299,7 +365,7 @@ NSString* const DVDCommandException = @"DVDCommand";
                 [virtualMachine executeLinkSubset:[self bitsInRange:NSMakeRange(4, 5)]];
                 [virtualMachine conditionallySetHighlightedButton:[self bitsInRange:NSMakeRange(15, 6)]];
             }
-              break;
+            break;
         }
         
         case 5: {
@@ -344,6 +410,10 @@ NSString* const DVDCommandException = @"DVDCommand";
             [virtualMachine executeLinkSubset:[self bitsInRange:NSMakeRange(4, 5)]];
             [virtualMachine conditionallySetHighlightedButton:[self bitsInRange:NSMakeRange(15, 6)]];
             break;
+        }
+                
+        default: {
+            [NSException raise:DVDCommandException format:@"%s(%d)", __FILE__, __LINE__];
         }
     }
 }
