@@ -43,7 +43,9 @@ NSString* const DVDTitleSetException = @"DVDTitleSet";
     NSAssert(_index > 0 && _index < 100, @"Valid range of title set index is 1-99");
     if (self = [super init]) {
         const uint8_t* bytes = [data bytes];
-        if ([data length] < 224) {
+        if (bytes == NULL) {
+            [NSException raise:DVDTitleSetException format:@"Video Manager Information (.IFO) data appears to be corrupted (Reason #%d).", __LINE__];
+        } else if ([data length] < 224) {
             [NSException raise:DVDTitleSetException format:@"Video Manager Information (.IFO) data appears to be truncated."];
         } else if (0 != memcmp("DVDVIDEO-VTS", bytes, 12)) {
             [NSException raise:DVDTitleSetException format:@"Invalid signature in the Video Manager Information (.IFO) data."];
