@@ -100,7 +100,7 @@ NSString* const DVDTitleSetException = @"DVDTitleSet";
          */
         if (vtsm_c_adt && (vtsm_c_adt <= vtsi_last_sector)) {
             const uint8_t* p = bytes + (vtsm_c_adt << 11);
-            uint32_t last_byte = MIN(vtsi_last_byte, OSReadBigInt32(p, 4));
+            uint32_t last_byte = MIN(vtsi_last_byte - (vtsm_c_adt << 11), OSReadBigInt32(p, 4));
             const uint8_t* lp = p + last_byte + 1;
             p += 8;
             uint16_t nr_of_c_adts = (lp - p) / 12;
@@ -120,7 +120,7 @@ NSString* const DVDTitleSetException = @"DVDTitleSet";
          */
         if (vtsm_vobu_admap && (vtsm_vobu_admap <= vtsi_last_sector)) {
             const uint8_t* p = bytes + (vtsm_vobu_admap << 11);
-            uint32_t last_byte = MIN(vtsi_last_byte, OSReadBigInt32(p, 0));
+            uint32_t last_byte = MIN(vtsi_last_byte - (vtsm_vobu_admap << 11), OSReadBigInt32(p, 0));
             const uint8_t* lp = p + last_byte + 1;
             p += 4;
             vtsmVobuAdMap_nr = (lp - p) / 4;
@@ -139,7 +139,7 @@ NSString* const DVDTitleSetException = @"DVDTitleSet";
          */
         if (vts_c_adt && (vts_c_adt <= vtsi_last_sector)) {
             const uint8_t* p = bytes + (vts_c_adt << 11);
-            uint32_t last_byte = MIN(vtsi_last_byte, OSReadBigInt32(p, 4));
+            uint32_t last_byte = MIN(vtsi_last_byte - (vts_c_adt << 11), OSReadBigInt32(p, 4));
             const uint8_t* lp = p + last_byte + 1;
             p += 8;
             uint16_t nr_of_c_adts = (lp - p) / 12;
@@ -159,7 +159,7 @@ NSString* const DVDTitleSetException = @"DVDTitleSet";
          */
         if (vts_vobu_admap && (vts_vobu_admap <= vtsi_last_sector)) {
             const uint8_t* p = bytes + (vts_vobu_admap << 11);
-            uint32_t last_byte = MIN(vtsi_last_byte, OSReadBigInt32(p, 0));
+            uint32_t last_byte = MIN(vtsi_last_byte - (vts_vobu_admap << 11), OSReadBigInt32(p, 0));
             const uint8_t* lp = p + last_byte + 1;
             p += 4;
             vtsVobuAdMap_nr = (lp - p) / 4;
@@ -186,7 +186,7 @@ NSString* const DVDTitleSetException = @"DVDTitleSet";
             const uint8_t* bp = bytes + (vtsm_pgci_ut << 11);
             const uint8_t* p = bp;
             uint16_t nr_of_lus = OSReadBigInt16(p, 0);
-            uint32_t last_byte = MIN(vtsi_last_byte, OSReadBigInt32(p, 4));
+            uint32_t last_byte = MIN(vtsi_last_byte - (vtsm_pgci_ut << 11), OSReadBigInt32(p, 4));
             p += 8;
 
             if (!nr_of_lus || nr_of_lus > 100) {
