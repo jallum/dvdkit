@@ -46,7 +46,7 @@
         uint32_t REGS[5];
     } resume;
     /**/
-    DVDManagerInformation* videoManagerInformation;
+    DVDManagerInformation* managerInformation;
     int state;
     /**/
     dvd_domain_t domain;
@@ -56,6 +56,7 @@
     int instructionCounter;
     DVDTitleTrackSearchPointer* titleInformation;
     int cell;
+    id delegate;
     id userInfo;
 }
 
@@ -67,6 +68,7 @@
 @property (readonly) DVDTitleSet* titleSet;
 @property (readonly) dvd_domain_t domain;
 @property (readonly) BOOL trackingRegisterUsage;
+@property (retain) id delegate;
 @property (retain) id userInfo;
 
 - (id) state;
@@ -122,9 +124,15 @@
 
 @end
 
-@interface NSObject (VirtualMachineDataSource)
+@interface NSObject (DVDVirtualMachineDataSource)
 
-- (DVDManagerInformation*) videoManagerInformation;
+- (DVDManagerInformation*) managerInformation;
 - (DVDTitleSet*) titleSetAtIndex:(NSInteger)index;
+
+@end
+
+@interface NSObject (DVDVirtualMachineDelegate)
+
+- (void) virtualMachine:(DVDVirtualMachine*)virtualMachine didExecuteCommand:(DVDCommand*)command;
 
 @end

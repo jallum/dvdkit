@@ -35,6 +35,7 @@
 		F98A62710E8C700300071926 /* DVDVirtualMachine.m in Sources */ = {isa = PBXBuildFile; fileRef = F98A62590E8C700300071926 /* DVDVirtualMachine.m */; };
 		F98A62F40E8C7E7F00071926 /* README in Resources */ = {isa = PBXBuildFile; fileRef = F98A62F30E8C7E7F00071926 /* README */; };
 		F98A63590E8C8E1200071926 /* LICENSE in Resources */ = {isa = PBXBuildFile; fileRef = F98A63580E8C8E1200071926 /* LICENSE */; };
+		F9A9D9220EE5916E00D2F1AC /* DVDKit+Private.h in Headers */ = {isa = PBXBuildFile; fileRef = F9A9D9210EE5916E00D2F1AC /* DVDKit+Private.h */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -71,6 +72,7 @@
 		F98A62590E8C700300071926 /* DVDVirtualMachine.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DVDVirtualMachine.m; sourceTree = "<group>"; };
 		F98A62F30E8C7E7F00071926 /* README */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README; sourceTree = "<group>"; };
 		F98A63580E8C8E1200071926 /* LICENSE */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
+		F9A9D9210EE5916E00D2F1AC /* DVDKit+Private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "DVDKit+Private.h"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -128,6 +130,7 @@
 			isa = PBXGroup;
 			children = (
 				F98A624B0E8C700300071926 /* DVDKit.h */,
+				F9A9D9210EE5916E00D2F1AC /* DVDKit+Private.h */,
 				F98A62420E8C700300071926 /* DVDCellAddress.h */,
 				F98A62430E8C700300071926 /* DVDCellAddress.m */,
 				F98A62440E8C700300071926 /* DVDCellPlayback.h */,
@@ -193,6 +196,7 @@
 				F98A626C0E8C700300071926 /* DVDTitleSet.h in Headers */,
 				F98A626E0E8C700300071926 /* DVDTitleTrackSearchPointer.h in Headers */,
 				F98A62700E8C700300071926 /* DVDVirtualMachine.h in Headers */,
+				F9A9D9220EE5916E00D2F1AC /* DVDKit+Private.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

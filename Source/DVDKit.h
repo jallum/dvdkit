@@ -21,6 +21,13 @@
  */
 #import <Foundation/Foundation.h>
 
+@protocol DVDDataSource
+
+- (NSData*) requestDataOfLength:(uint32_t)length fromOffset:(uint32_t)offset;
+
+@end
+
+
 typedef struct {
     uint8_t hour;
     uint8_t minute;

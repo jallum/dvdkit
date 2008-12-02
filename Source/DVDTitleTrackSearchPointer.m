@@ -20,13 +20,14 @@
  *
  */
 #import "DVDKit.h"
+#import "DVDKit+Private.h"
 
 @implementation DVDTitleTrackSearchPointer
-@synthesize angles;
 @synthesize index;
+@synthesize angles;
 @synthesize titleSetNumber;
 @synthesize trackNumber;
-@synthesize partsOfTitle;
+
 
 + (id) partOfTitleSearchPointerWithData:(NSData*)data index:(uint16_t)index
 {
@@ -37,33 +38,30 @@
 {
     NSAssert(data, @"Shouldn't be nil");
     if (self = [super init]) {
-        const uint8_t* bytes = [data bytes];
-
         index = _index;
-        pb_ty.value = bytes[0];
-        angles = bytes[1];
-        uint16_t nr_of_ptts = OSReadBigInt16(bytes, 2);
-        parental_id = OSReadBigInt16(bytes, 4);
-        titleSetNumber = bytes[6];
-        trackNumber = bytes[7];
-        title_set_sector = OSReadBigInt32(bytes, 8);
+        const title_info_t* title_info = [data bytes]; 
         
-        partsOfTitle = [NSMutableArray arrayWithCapacity:nr_of_ptts];
-        for (const uint8_t* p = bytes + 12, *lp = p + (nr_of_ptts * 4); p < lp; p += 4) {
-            uint16_t pgcn = OSReadBigInt16(p, 0);
-            uint16_t pgn = OSReadBigInt16(p, 2);
-            [partsOfTitle addObject:[DVDPartOfTitle partOfTitleWithProgramChain:pgcn program:pgn]];
-        }
-        
-        [partsOfTitle retain];
+        title_set_nr = title_info->title_set_nr;
+        vts_ttn = title_info->vts_ttn;
+        nr_of_angles = title_info->nr_of_angles;
     }
     return self;
 }
 
-- (void) dealloc
+
+- (uint8_t) titleSetNumber
 {
-    [partsOfTitle release];
-    [super dealloc];
+    return title_set_nr;
+}
+
+- (uint8_t) trackNumber
+{
+    return vts_ttn;
+}
+
+- (uint8_t) angles
+{
+    return nr_of_angles;
 }
 
 @end

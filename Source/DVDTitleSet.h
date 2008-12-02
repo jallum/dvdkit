@@ -27,6 +27,7 @@
     NSMutableArray* partOfTitleSearchTable;
     NSMutableArray* menuCellAddressTable;
     NSMutableArray* cellAddressTable;
+    CFBitVectorRef* vtsmVobuAdMap_;
     uint32_t vtsmVobuAdMap_nr;
     uint32_t* vtsmVobuAdMap;
     uint32_t vtsVobuAdMap_nr;

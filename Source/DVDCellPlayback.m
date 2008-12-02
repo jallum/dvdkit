@@ -26,7 +26,7 @@ NSString* const DVDCellPlaybackException = @"DVDCellPlayback";
 @implementation DVDCellPlayback
 @synthesize firstSector;
 @synthesize lastSector;
-@synthesize postCommand;
+@synthesize postCommandIndex;
 
 + (id) cellPlaybackWithData:(NSData*)data
 {
@@ -42,7 +42,7 @@ NSString* const DVDCellPlaybackException = @"DVDCellPlayback";
         
         flags.bits = OSReadBigInt16(bytes, 0);
         stillTime = bytes[2];
-        postCommand = bytes[3];
+        postCommandIndex = bytes[3];
         playbackTime.hour = bytes[4];
         playbackTime.minute = bytes[5];
         playbackTime.second = bytes[6];

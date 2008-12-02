@@ -44,11 +44,14 @@ enum {
 
 @interface DVDVirtualMachine (Private)
 @property (readonly) NSArray* pgcit;
+- (void) executeCommand:(DVDCommand*)command;
+- (void) executeCommands:(NSArray*)commands withState:(int)_state;
 @end
 
 @implementation DVDVirtualMachine
 @synthesize titleSet;
 @synthesize domain;
+@synthesize delegate;
 @synthesize userInfo;
 @synthesize prohibitedUserOperations;
 
@@ -85,8 +88,8 @@ enum {
     NSAssert(_dataSource, @"Shouldn't be nil");
     if (self = [super init]) {
         dataSource = [_dataSource retain];
-        videoManagerInformation = [dataSource videoManagerInformation];
-        if (!videoManagerInformation) {
+        managerInformation = [dataSource managerInformation];
+        if (!managerInformation) {
             [NSException raise:DVDVirtualMachineException format:@"Video manager information is required"];
         }
 
@@ -114,7 +117,7 @@ enum {
 - (void) dealloc
 {
     [dataSource release];
-    [videoManagerInformation release];
+    [managerInformation release];
     [titleSet release];
     [programChain release];
     [titleInformation release];
@@ -127,13 +130,21 @@ enum {
     DVDVirtualMachine* copy = NSCopyObject(self, 0, zone);
     if (copy) {
         [copy->dataSource retain];
-        [copy->videoManagerInformation retain];
+        [copy->managerInformation retain];
         [copy->titleSet retain];
         [copy->programChain retain];
         [copy->titleInformation retain];
         [copy->userInfo retain];
     }
     return copy;
+}
+
+- (void) setDelegate:(id)_delegate
+{
+    if (delegate != _delegate) {
+        [delegate release];
+        delegate = [_delegate retain];
+    }
 }
 
 - (dvd_user_ops_t) prohibitedUserOperations
@@ -207,7 +218,7 @@ enum {
                 case FIRST_PLAY: {
                     domain = FP_DOMAIN;
                     [programChain release];
-                    programChain = [[videoManagerInformation firstPlayProgramChain] retain];
+                    programChain = [[managerInformation firstPlayProgramChain] retain];
                     [titleSet release];
                     titleSet = nil;
                     state = PGC_START;
@@ -227,12 +238,7 @@ enum {
                 }
                 
                 case PGC_PRE_COMMANDS: {
-                    NSArray* preCommands = [programChain preCommands];
-                    if (preCommands && [preCommands count]) {
-                        for (instructionCounter = 0; (state == PGC_PRE_COMMANDS) && instructionCounter < [preCommands count]; ) {
-                            [[preCommands objectAtIndex:instructionCounter++] executeAgainstVirtualMachine:self];
-                        }
-                    }
+                    [self executeCommands:[programChain preCommands] withState:PGC_PRE_COMMANDS];
                     if (state == PGC_PRE_COMMANDS || state == PGC_BREAK) {
                         state = PGC_PROGRAM;
                     }
@@ -264,7 +270,7 @@ enum {
                 case PGC_CELL: {
                     NSArray* programMap = [programChain programMap];
                     int newProgramNumber = 0;
-                    int maxProgramNumber = [programMap count];
+                    const int maxProgramNumber = [programMap count];
                     while (newProgramNumber < maxProgramNumber && cell >= [[programMap objectAtIndex:newProgramNumber] intValue]) {
                         newProgramNumber++;
                     }
@@ -286,9 +292,10 @@ enum {
                 case PGC_CELL_POST: {
                     NSArray* cellPlaybackTable = [programChain cellPlaybackTable];
                     DVDCellPlayback* cellPlayback = [cellPlaybackTable objectAtIndex:(cell - 1)];
-                    int postCommand = [cellPlayback postCommand];
-                    if (postCommand && (postCommand <= [[programChain cellCommands] count])) {
-                        [[[programChain cellCommands] objectAtIndex:(postCommand - 1)] executeAgainstVirtualMachine:self];
+                    const int index = [cellPlayback postCommandIndex];
+                    NSArray* cellCommands = [programChain cellCommands];
+                    if (index && (index <= [cellCommands count])) {
+                        [self executeCommand:[cellCommands objectAtIndex:(index - 1)]];
                     }
                     if (state == PGC_CELL_POST) {
                         cell++;
@@ -298,12 +305,7 @@ enum {
                 }
 
                 case PGC_POST_COMMANDS: {
-                    NSArray* postCommands = [programChain postCommands];
-                    if (postCommands && [postCommands count]) {
-                        for (instructionCounter = 0; (state == PGC_POST_COMMANDS) && instructionCounter < [postCommands count]; ) {
-                            [[postCommands objectAtIndex:instructionCounter++] executeAgainstVirtualMachine:self];
-                        }
-                    }
+                    [self executeCommands:[programChain postCommands] withState:PGC_POST_COMMANDS];
                     if (state == PGC_POST_COMMANDS || state == PGC_BREAK || (state == PGC_PGN_SET && (1 > programNumber || programNumber > [[programChain programMap] count]))) {
                         uint16_t nextProgramChainNumber = [programChain nextProgramChainNumber];
                         if (nextProgramChainNumber) {
@@ -410,7 +412,7 @@ enum {
 - (void) executeJumpTT:(uint8_t)tt
 {
     [titleInformation release];
-    titleInformation = [[[videoManagerInformation titleTrackSearchPointerTable] objectAtIndex:(tt - 1)] retain];
+    titleInformation = [[[managerInformation titleTrackSearchPointerTable] objectAtIndex:(tt - 1)] retain];
     SPRM[4] = [titleInformation index];
     uint16_t vts = [titleInformation titleSetNumber];
     uint16_t ttn = [titleInformation trackNumber];
@@ -467,7 +469,7 @@ enum {
         vts = [titleSet index];
     }
     [titleInformation release];
-    titleInformation = [[videoManagerInformation titleTrackSearchPointerForTitleSet:vts track:ttn] retain];
+    titleInformation = [[managerInformation titleTrackSearchPointerForTitleSet:vts track:ttn] retain];
     resume.enabled &= (domain == VTSM_DOMAIN);
     domain = VTSM_DOMAIN;
     DVDProgramChainSearchPointer* foundSearchPointer = nil;
@@ -719,11 +721,24 @@ enum {
         }
         case VMGM_DOMAIN:
         case FP_DOMAIN: {
-            return [videoManagerInformation menuProgramChainInformationTableForLanguageCode:SPRM[0]];
+            return [managerInformation menuProgramChainInformationTableForLanguageCode:SPRM[0]];
         }
     }
     [NSException raise:DVDVirtualMachineException format:@"%s (%d)", __FILE__, __LINE__];
     return nil; /* Not Reached */
+}
+
+- (void) executeCommand:(DVDCommand*)command
+{
+    [command executeAgainstVirtualMachine:self];
+}
+
+- (void) executeCommands:(NSArray*)commands withState:(int)_state
+{
+    const int maxCommand = [commands count];
+    for (instructionCounter = 0; (state == _state) && instructionCounter < maxCommand; ) {
+        [self executeCommand:[commands objectAtIndex:instructionCounter++]];
+    }
 }
 
 @end

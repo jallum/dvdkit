@@ -24,7 +24,6 @@
 @class DVDTitleTrackSearchPointer;
 
 @interface DVDManagerInformation : NSObject {
-    uint32_t lastSector;
     uint16_t specificationVersion;
     uint32_t categoryAndMask;
     uint16_t numberOfVolumes;
@@ -35,13 +34,15 @@
     /**/
     DVDProgramChain* firstPlayProgramChain;
     NSMutableArray* titleTrackSearchPointerTable;
-    NSMutableArray* cellAddressTable;
     NSMutableDictionary* menuProgramChainInformationTablesByLanguage;
+    NSData* textData;
+    NSMutableArray* cellAddressTable;
+    NSData* menuVobuAddressMap;
 }
 
-+ (id) managerInformationWithData:(NSData*)data;
++ (id) managerInformationWithDataSource:(id<DVDDataSource>)dataSource;
 
-- (id) initWithData:(NSData*)data;
+- (id) initWithDataSource:(id<DVDDataSource>)dataSource;
 
 @property (readonly) DVDProgramChain* firstPlayProgramChain;
 @property (readonly) NSArray* titleTrackSearchPointerTable;
@@ -52,3 +53,5 @@
 @end
 
 extern NSString* const DVDManagerInformationException;
+
+

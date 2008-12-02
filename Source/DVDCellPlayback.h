@@ -38,7 +38,7 @@
         } values;
     } __attribute__ ((packed)) flags;
     uint8_t stillTime;
-    uint8_t postCommand;
+    uint8_t postCommandIndex;
     dvd_time_t playbackTime;
     uint32_t firstSector;
     uint32_t firstInterleavingUnitSector;
@@ -52,7 +52,7 @@
 
 @property (readonly) uint32_t firstSector;
 @property (readonly) uint32_t lastSector;
-@property (readonly) uint8_t postCommand;
+@property (readonly) uint8_t postCommandIndex;
 @property (readonly) int blockMode;
 
 @end

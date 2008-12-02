@@ -21,15 +21,11 @@
  */
 
 @interface DVDTitleTrackSearchPointer : NSObject {
-    uint16_t index;
-    dvd_playback_type_t pb_ty;
-    uint8_t  angles;
-    uint16_t parental_id;
-    uint8_t  titleSetNumber;
-    uint8_t  trackNumber;
-    uint32_t title_set_sector;
+    uint8_t title_set_nr;
+    uint8_t vts_ttn;
+    uint8_t nr_of_angles;
     /**/
-    NSMutableArray* partsOfTitle;
+    uint16_t index;
 }
 
 + (id) partOfTitleSearchPointerWithData:(NSData*)data index:(uint16_t)index;
@@ -40,6 +36,5 @@
 @property (readonly) uint8_t trackNumber;
 @property (readonly) uint16_t index;
 @property (readonly) uint8_t angles;
-@property (readonly) NSArray* partsOfTitle;
 
 @end

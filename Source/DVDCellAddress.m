@@ -20,8 +20,14 @@
  *
  */
 #import "DVDKit.h"
+#import "DVDKit+Private.h"
 
 @implementation DVDCellAddress
+@synthesize vob_id;
+@synthesize cell_id;
+@synthesize start_sector;
+@synthesize last_sector;
+
 
 + (id) cellAddressWithData:(NSData*)data
 {
@@ -30,15 +36,13 @@
 
 - (id) initWithData:(NSData*)data
 {
-    NSAssert(data, @"Shouldn't be nil");
-    NSAssert([data length] == 12, @"Must be 12 bytes");
+    NSAssert(data && [data length] == sizeof(cell_adr_t), @"wtf?");
     if (self = [super init]) {
-        const uint8_t* bytes = [data bytes];
-
-        vob_id = OSReadBigInt16(bytes, 0);
-        cell_id = bytes[2];
-        start_sector = OSReadBigInt32(bytes, 4);
-        last_sector = OSReadBigInt32(bytes, 8);
+        const cell_adr_t* cell_adr = [data bytes];
+        vob_id = OSReadBigInt16(&cell_adr->vob_id, 0);
+        cell_id = cell_adr->cell_id;
+        start_sector = OSReadBigInt32(&cell_adr->start_sector, 0);
+        last_sector = OSReadBigInt32(&cell_adr->last_sector, 0);
     }
     return self;
 }
