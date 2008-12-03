@@ -3,7 +3,8 @@ typedef struct vmgm_video_attr_t vmgm_video_attr_t;
 struct vmgm_video_attr_t {
     uint16_t 
 #ifdef LITTLE_ENDIAN
-    permitted_df : 2,
+    allow_automatic_letterbox : 1,
+    allow_automatic_panandscan : 1,
     display_aspect_ratio : 2,
     video_format : 2,
     mpeg_version : 2,
@@ -20,7 +21,8 @@ struct vmgm_video_attr_t {
     mpeg_version : 2,
     video_format : 2,
     display_aspect_ratio : 2,
-    permitted_df : 2,
+    allow_automatic_panandscan : 1,
+    allow_automatic_letterbox : 1,
     /**/
     line21_cc_1 : 1,
     line21_cc_2 : 1,
@@ -62,6 +64,7 @@ struct vmgm_audio_attr_t {
     uint8_t code_extension;
     uint8_t __zero_2;
     union {
+        uint8_t value;
         struct {
             uint8_t
 #ifdef LITTLE_ENDIAN
@@ -136,7 +139,7 @@ struct vmgi_mat_t {
     uint32_t tt_srpt;           
     uint32_t vmgm_pgci_ut;      
     uint32_t ptl_mait;
-    uint32_t vts_atrt;
+    uint32_t vmg_vts_atrt;
     uint32_t txtdt_mgi;         
     uint32_t vmgm_c_adt;        
     uint32_t vmgm_vobu_admap;   
@@ -224,7 +227,19 @@ struct cell_adr_t {
     uint32_t last_sector;
 } __attribute__ ((packed));
 
+typedef struct vts_atrt_t vmg_vts_atrt_t;
+struct vts_atrt_t {
+    uint16_t nr_of_vtss;
+    uint16_t __zero_1;
+    uint32_t last_byte;
+} __attribute__ ((packed));
 
+typedef struct ptl_mait_t ptl_mait_t;
+struct ptl_mait_t {
+    uint16_t nr_of_countries;
+    uint16_t nr_of_vtss;
+    uint32_t last_byte;
+} __attribute__ ((packed));
 
 
 

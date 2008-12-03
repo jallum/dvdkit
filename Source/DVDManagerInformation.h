@@ -20,6 +20,8 @@
  *
  */
 
+@class DVDVideoAttributes;
+@class DVDSubpictureAttributes;
 @class DVDProgramChain;
 @class DVDTitleTrackSearchPointer;
 
@@ -30,14 +32,26 @@
     uint16_t volumeNumber;
     uint8_t side;
     uint16_t numberOfTitleSets;
-    uint64_t positionCode;
+    uint64_t pointOfSaleCode;
+    /**/
+    uint32_t vmgm_vobs;
+    uint8_t nr_of_vmgm_audio_streams;
+    uint16_t nr_of_vmgm_subp_streams;
+    /**/
+    DVDVideoAttributes* menuVideoAttributes;
+    NSArray* menuAudioAttributes;
+    DVDSubpictureAttributes* menuSubpictureAttributes; 
     /**/
     DVDProgramChain* firstPlayProgramChain;
     NSMutableArray* titleTrackSearchPointerTable;
+    NSData* parentalManagementInformationTable;
+    NSData* titleSetAttributeTable;
     NSMutableDictionary* menuProgramChainInformationTablesByLanguage;
     NSData* textData;
     NSMutableArray* cellAddressTable;
     NSData* menuVobuAddressMap;
+    /**/
+    NSArray* sectionOrder;
 }
 
 + (id) managerInformationWithDataSource:(id<DVDDataSource>)dataSource;

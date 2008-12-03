@@ -49,15 +49,22 @@ NSString* const DVDManagerInformationException = @"DVDManagerInformation";
         }
         
         
+        /*
+         */
         specificationVersion = OSReadBigInt16(&vmgi_mat->specification_version, 0);
         categoryAndMask = OSReadBigInt32(&vmgi_mat->vmg_category, 0);
         numberOfVolumes = OSReadBigInt16(&vmgi_mat->vmg_nr_of_volumes, 0);
         volumeNumber = OSReadBigInt16(&vmgi_mat->vmg_this_volume_nr, 0);
         side = vmgi_mat->disc_side;
         numberOfTitleSets = OSReadBigInt16(&vmgi_mat->vmg_nr_of_title_sets, 0);
-        positionCode = OSReadBigInt64(&vmgi_mat->vmg_pos_code, 0);
+        pointOfSaleCode = OSReadBigInt64(&vmgi_mat->vmg_pos_code, 0);
+        vmgm_vobs = OSReadBigInt32(&vmgi_mat->vmgm_vobs, 0);
+        nr_of_vmgm_audio_streams = vmgi_mat->nr_of_vmgm_audio_streams;
+        nr_of_vmgm_subp_streams = OSReadBigInt16(&vmgi_mat->nr_of_vmgm_subp_streams, 0);
         
         
+        /*
+         */
         uint32_t vmgi_last_byte = 1 + OSReadBigInt32(&vmgi_mat->vmgi_last_byte, 0);
         uint32_t vmgi_last_sector = 1 + OSReadBigInt32(&vmgi_mat->vmgi_last_sector, 0);
         
@@ -74,6 +81,18 @@ NSString* const DVDManagerInformationException = @"DVDManagerInformation";
             [NSException raise:DVDManagerInformationException format:@"%s(%d)", __FILE__, __LINE__];
         } else if (0 == numberOfTitleSets) {
             [NSException raise:DVDManagerInformationException format:@"%s(%d)", __FILE__, __LINE__];
+        }
+
+        
+        /*  Video/Audio/Subpicture Attributes
+         */
+        menuVideoAttributes = [DVDVideoAttributes videoAttributesWithData:[NSData dataWithBytesNoCopy:(void*)&vmgi_mat->vmgm_video_attr length:sizeof(vmgm_video_attr_t)]];
+        if (nr_of_vmgm_audio_streams) {
+            NSMutableArray* table = [NSMutableArray array];
+            for (int i = 0, iMax = MIN(8, nr_of_vmgm_audio_streams); i < iMax; i++) {
+                [table addObject:[DVDAudioAttributes audioAttributesWithData:[NSData dataWithBytesNoCopy:(void*)&vmgi_mat->vmgm_audio_attr[i] length:sizeof(vmgm_audio_attr_t)]]];
+            }
+            menuAudioAttributes = [table retain];
         }
         
         
@@ -93,11 +112,13 @@ NSString* const DVDManagerInformationException = @"DVDManagerInformation";
             [NSException raise:DVDManagerInformationException format:@"%s(%d)", __FILE__, __LINE__];
         }
         
+        NSMutableDictionary* sectionOrdering = [NSMutableDictionary dictionary];
         
         /*  Title/Track Search Pointer Table.
          */
         uint32_t offset_of_tt_srpt = OSReadBigInt32(&vmgi_mat->tt_srpt, 0);
         if (offset_of_tt_srpt && (offset_of_tt_srpt <= vmgi_last_sector)) {
+            [sectionOrdering setObject:@"tt_srpt" forKey:[NSNumber numberWithUnsignedInt:offset_of_tt_srpt]];
             NSData* data = [dataSource requestDataOfLength:1 << 11 fromOffset:offset_of_tt_srpt << 11];
             NSAssert(data && ([data length] == 1 << 11), @"wtf?"); 
             const tt_srpt_t* tt_srpt = [data bytes];
@@ -129,11 +150,66 @@ NSString* const DVDManagerInformationException = @"DVDManagerInformation";
             titleTrackSearchPointerTable = [table retain];
         }
         
+
+        /*  Parental Management Information Table
+         */
+        uint32_t offset_of_ptl_mait = OSReadBigInt32(&vmgi_mat->ptl_mait, 0);
+        if (offset_of_ptl_mait && (offset_of_ptl_mait <= vmgi_last_sector)) {
+            [sectionOrdering setObject:@"ptl_mait" forKey:[NSNumber numberWithUnsignedInt:offset_of_ptl_mait]];
+            NSData* data = [dataSource requestDataOfLength:1 << 11 fromOffset:offset_of_ptl_mait << 11];
+            NSAssert(data && ([data length] == 1 << 11), @"wtf?"); 
+            const ptl_mait_t* ptl_mait = [data bytes];
+//            uint16_t nr_of_vtss = OSReadBigInt16(&vmg_vts_atrt->nr_of_vtss, 0);
+            uint32_t last_byte = 1 + OSReadBigInt32(&ptl_mait->last_byte, 0);
+            
+            /*  Have we already read all that we need?  */
+            if (last_byte > [data length]) {
+                data = [dataSource requestDataOfLength:last_byte fromOffset:(offset_of_ptl_mait << 11)];
+            } else {
+                data = [data subdataWithRange:NSMakeRange(0, last_byte)];
+            }
+            
+            /*  
+             *  TODO: Additional Decoding  
+             */
+            
+            /*  Retain the table  */
+            parentalManagementInformationTable = [[data subdataWithRange:NSMakeRange(sizeof(ptl_mait_t), last_byte - sizeof(ptl_mait_t))] retain];
+        }
+        
+        
+        /*  Video Title Set Attribute Table
+         */
+        uint32_t offset_of_vmg_vts_atrt = OSReadBigInt32(&vmgi_mat->vmg_vts_atrt, 0);
+        if (offset_of_vmg_vts_atrt && (offset_of_vmg_vts_atrt <= vmgi_last_sector)) {
+            [sectionOrdering setObject:@"vmg_vts_atrt" forKey:[NSNumber numberWithUnsignedInt:offset_of_vmg_vts_atrt]];
+            NSData* data = [dataSource requestDataOfLength:1 << 11 fromOffset:offset_of_vmg_vts_atrt << 11];
+            NSAssert(data && ([data length] == 1 << 11), @"wtf?"); 
+            const vmg_vts_atrt_t* vmg_vts_atrt = [data bytes];
+//            uint16_t nr_of_vtss = OSReadBigInt16(&vmg_vts_atrt->nr_of_vtss, 0);
+            uint32_t last_byte = 1 + OSReadBigInt32(&vmg_vts_atrt->last_byte, 0);
+
+            /*  Have we already read all that we need?  */
+            if (last_byte > [data length]) {
+                data = [dataSource requestDataOfLength:last_byte fromOffset:(offset_of_vmg_vts_atrt << 11)];
+            } else {
+                data = [data subdataWithRange:NSMakeRange(0, last_byte)];
+            }
+            
+            /*  
+             *  TODO: Additional Decoding  
+             */
+            
+            /*  Retain the table  */
+            titleSetAttributeTable = [[data subdataWithRange:NSMakeRange(sizeof(vmg_vts_atrt_t), last_byte - sizeof(vmg_vts_atrt_t))] retain];
+        }
+            
         
         /*  Menu Program Chain Information Map (by language)
          */
         uint32_t offset_of_vmgm_pgci_ut = OSReadBigInt32(&vmgi_mat->vmgm_pgci_ut, 0);
         if (offset_of_vmgm_pgci_ut && (offset_of_vmgm_pgci_ut <= vmgi_last_sector)) {
+            [sectionOrdering setObject:@"vmgm_pgci_ut" forKey:[NSNumber numberWithUnsignedInt:offset_of_vmgm_pgci_ut]];
             NSData* data = [dataSource requestDataOfLength:1 << 11 fromOffset:offset_of_vmgm_pgci_ut << 11];
             NSAssert(data && ([data length] == 1 << 11), @"wtf?"); 
             const vmgm_pgci_ut_t* vmgm_pgci_ut = [data bytes];
@@ -191,6 +267,7 @@ NSString* const DVDManagerInformationException = @"DVDManagerInformation";
          */
         uint32_t offset_of_txtdt_mgi = OSReadBigInt32(&vmgi_mat->txtdt_mgi, 0);
         if (offset_of_txtdt_mgi && (offset_of_txtdt_mgi <= vmgi_last_sector)) {
+            [sectionOrdering setObject:@"txtdt_mgi" forKey:[NSNumber numberWithUnsignedInt:offset_of_txtdt_mgi]];
             NSData* data = [dataSource requestDataOfLength:1 << 11 fromOffset:offset_of_txtdt_mgi << 11];
             uint32_t last_byte = 1 + OSReadBigInt32([data bytes], 0);
             
@@ -200,6 +277,10 @@ NSString* const DVDManagerInformationException = @"DVDManagerInformation";
             } else {
                 data = [data subdataWithRange:NSMakeRange(0, last_byte)];
             }
+
+            /*  
+             *  TODO: Additional Decoding  
+             */
             
             /*  Retain the table  */
             textData = [[data subdataWithRange:NSMakeRange(4, last_byte - 4)] retain]; 
@@ -210,6 +291,7 @@ NSString* const DVDManagerInformationException = @"DVDManagerInformation";
          */
         uint32_t offset_of_vmgm_c_adt = OSReadBigInt32(&vmgi_mat->vmgm_c_adt, 0);
         if (offset_of_vmgm_c_adt && (offset_of_vmgm_c_adt <= vmgi_last_sector)) {
+            [sectionOrdering setObject:@"vmgm_c_adt" forKey:[NSNumber numberWithUnsignedInt:offset_of_vmgm_c_adt]];
             NSData* data = [dataSource requestDataOfLength:1 << 11 fromOffset:offset_of_vmgm_c_adt << 11];
             const vmgm_c_adt_t* vmgm_c_adt = [data bytes];
             uint16_t nr_of_c_adts = OSReadBigInt16(&vmgm_c_adt->nr_of_c_adts, 0);
@@ -229,8 +311,8 @@ NSString* const DVDManagerInformationException = @"DVDManagerInformation";
             
             /*  Parse the table  */
             NSMutableArray* table = [NSMutableArray arrayWithCapacity:nr_of_c_adts];
-            for (int i = 1, p = sizeof(vmgm_c_adt_t); i <= nr_of_c_adts; i++, p += 12) {
-                [table addObject:[DVDCellAddress cellAddressWithData:[data subdataWithRange:NSMakeRange(p, 12)]]];
+            for (int i = 1, p = sizeof(vmgm_c_adt_t); i <= nr_of_c_adts; i++, p += sizeof(cell_adr_t)) {
+                [table addObject:[DVDCellAddress cellAddressWithData:[data subdataWithRange:NSMakeRange(p, sizeof(cell_adr_t))]]];
             }
             if (nr_of_c_adts != [table count]) {
                 [NSException raise:DVDManagerInformationException format:@"%s(%d)", __FILE__, __LINE__];
@@ -241,9 +323,10 @@ NSString* const DVDManagerInformationException = @"DVDManagerInformation";
         
         /*  Menu VOBU Address Map
          */
-        uint32_t vmgm_vobu_admap = OSReadBigInt32(&vmgi_mat->vmgm_vobu_admap, 0);
-        if (vmgm_vobu_admap && (vmgm_vobu_admap <= vmgi_last_sector)) {
-            NSData* data = [dataSource requestDataOfLength:1 << 11 fromOffset:vmgm_vobu_admap << 11];
+        uint32_t offset_of_vmgm_vobu_admap = OSReadBigInt32(&vmgi_mat->vmgm_vobu_admap, 0);
+        if (offset_of_vmgm_vobu_admap && (offset_of_vmgm_vobu_admap <= vmgi_last_sector)) {
+            [sectionOrdering setObject:@"vmgm_vobu_admap" forKey:[NSNumber numberWithUnsignedInt:offset_of_vmgm_vobu_admap]];
+            NSData* data = [dataSource requestDataOfLength:1 << 11 fromOffset:offset_of_vmgm_vobu_admap << 11];
             uint32_t last_byte = 1 + OSReadBigInt32([data bytes], 0);
             
             /*  Have we already read all that we need?  */
@@ -253,18 +336,35 @@ NSString* const DVDManagerInformationException = @"DVDManagerInformation";
                 data = [data subdataWithRange:NSMakeRange(0, last_byte)];
             }
 
+            /*  
+             *  TODO: Additional Decoding  
+             */
+            
             /*  Retain the table  */
             menuVobuAddressMap = [[data subdataWithRange:NSMakeRange(4, last_byte - 4)] retain];
         }
+     
+
+        /*  Using the information gathered while reading, determine the order
+         *  that the sections should be written in, should we choose to do so
+         *  at a later point.
+         */
+        sectionOrder = [sectionOrdering objectsForKeys:[sectionOrdering keysSortedByValueUsingSelector:@selector(compare:)] notFoundMarker:[NSNull null]];
     }
     return self;     
 }
 
 - (void) dealloc
 {
-    [firstPlayProgramChain release];
-    [titleTrackSearchPointerTable release];
-    [cellAddressTable release];
+    [firstPlayProgramChain retain];
+    [titleTrackSearchPointerTable retain];
+    [parentalManagementInformationTable retain];
+    [titleSetAttributeTable retain];
+    [menuProgramChainInformationTablesByLanguage retain];
+    [textData retain];
+    [cellAddressTable retain];
+    [menuVobuAddressMap retain];
+    [sectionOrder retain];
     [super dealloc];
 }
 

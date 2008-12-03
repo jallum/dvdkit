@@ -36,6 +36,12 @@
 		F98A62F40E8C7E7F00071926 /* README in Resources */ = {isa = PBXBuildFile; fileRef = F98A62F30E8C7E7F00071926 /* README */; };
 		F98A63590E8C8E1200071926 /* LICENSE in Resources */ = {isa = PBXBuildFile; fileRef = F98A63580E8C8E1200071926 /* LICENSE */; };
 		F9A9D9220EE5916E00D2F1AC /* DVDKit+Private.h in Headers */ = {isa = PBXBuildFile; fileRef = F9A9D9210EE5916E00D2F1AC /* DVDKit+Private.h */; };
+		F9A9DB720EE6E13C00D2F1AC /* DVDVideoAttributes.h in Headers */ = {isa = PBXBuildFile; fileRef = F9A9DB700EE6E13C00D2F1AC /* DVDVideoAttributes.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		F9A9DB730EE6E13C00D2F1AC /* DVDVideoAttributes.m in Sources */ = {isa = PBXBuildFile; fileRef = F9A9DB710EE6E13C00D2F1AC /* DVDVideoAttributes.m */; };
+		F9A9DB760EE6E15000D2F1AC /* DVDAudioAttributes.h in Headers */ = {isa = PBXBuildFile; fileRef = F9A9DB740EE6E15000D2F1AC /* DVDAudioAttributes.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		F9A9DB770EE6E15000D2F1AC /* DVDAudioAttributes.m in Sources */ = {isa = PBXBuildFile; fileRef = F9A9DB750EE6E15000D2F1AC /* DVDAudioAttributes.m */; };
+		F9A9DB7A0EE6E17700D2F1AC /* DVDSubpictureAttributes.h in Headers */ = {isa = PBXBuildFile; fileRef = F9A9DB780EE6E17700D2F1AC /* DVDSubpictureAttributes.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		F9A9DB7B0EE6E17700D2F1AC /* DVDSubpictureAttributes.m in Sources */ = {isa = PBXBuildFile; fileRef = F9A9DB790EE6E17700D2F1AC /* DVDSubpictureAttributes.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -73,6 +79,12 @@
 		F98A62F30E8C7E7F00071926 /* README */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README; sourceTree = "<group>"; };
 		F98A63580E8C8E1200071926 /* LICENSE */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
 		F9A9D9210EE5916E00D2F1AC /* DVDKit+Private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "DVDKit+Private.h"; sourceTree = "<group>"; };
+		F9A9DB700EE6E13C00D2F1AC /* DVDVideoAttributes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DVDVideoAttributes.h; sourceTree = "<group>"; };
+		F9A9DB710EE6E13C00D2F1AC /* DVDVideoAttributes.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DVDVideoAttributes.m; sourceTree = "<group>"; };
+		F9A9DB740EE6E15000D2F1AC /* DVDAudioAttributes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DVDAudioAttributes.h; sourceTree = "<group>"; };
+		F9A9DB750EE6E15000D2F1AC /* DVDAudioAttributes.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DVDAudioAttributes.m; sourceTree = "<group>"; };
+		F9A9DB780EE6E17700D2F1AC /* DVDSubpictureAttributes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DVDSubpictureAttributes.h; sourceTree = "<group>"; };
+		F9A9DB790EE6E17700D2F1AC /* DVDSubpictureAttributes.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DVDSubpictureAttributes.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -154,6 +166,12 @@
 				F98A62570E8C700300071926 /* DVDTitleTrackSearchPointer.m */,
 				F98A62580E8C700300071926 /* DVDVirtualMachine.h */,
 				F98A62590E8C700300071926 /* DVDVirtualMachine.m */,
+				F9A9DB700EE6E13C00D2F1AC /* DVDVideoAttributes.h */,
+				F9A9DB710EE6E13C00D2F1AC /* DVDVideoAttributes.m */,
+				F9A9DB740EE6E15000D2F1AC /* DVDAudioAttributes.h */,
+				F9A9DB750EE6E15000D2F1AC /* DVDAudioAttributes.m */,
+				F9A9DB780EE6E17700D2F1AC /* DVDSubpictureAttributes.h */,
+				F9A9DB790EE6E17700D2F1AC /* DVDSubpictureAttributes.m */,
 			);
 			path = Source;
 			sourceTree = "<group>";
@@ -197,6 +215,9 @@
 				F98A626E0E8C700300071926 /* DVDTitleTrackSearchPointer.h in Headers */,
 				F98A62700E8C700300071926 /* DVDVirtualMachine.h in Headers */,
 				F9A9D9220EE5916E00D2F1AC /* DVDKit+Private.h in Headers */,
+				F9A9DB720EE6E13C00D2F1AC /* DVDVideoAttributes.h in Headers */,
+				F9A9DB760EE6E15000D2F1AC /* DVDAudioAttributes.h in Headers */,
+				F9A9DB7A0EE6E17700D2F1AC /* DVDSubpictureAttributes.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -269,6 +290,9 @@
 				F98A626D0E8C700300071926 /* DVDTitleSet.m in Sources */,
 				F98A626F0E8C700300071926 /* DVDTitleTrackSearchPointer.m in Sources */,
 				F98A62710E8C700300071926 /* DVDVirtualMachine.m in Sources */,
+				F9A9DB730EE6E13C00D2F1AC /* DVDVideoAttributes.m in Sources */,
+				F9A9DB770EE6E15000D2F1AC /* DVDAudioAttributes.m in Sources */,
+				F9A9DB7B0EE6E17700D2F1AC /* DVDSubpictureAttributes.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

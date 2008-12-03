@@ -148,3 +148,6 @@ typedef enum {
 #import "DVDCellPosition.h"
 #import "DVDPartOfTitle.h"
 #import "DVDTitleTrackSearchPointer.h"
+#import "DVDVideoAttributes.h"
+#import "DVDSubpictureAttributes.h"
+#import "DVDAudioAttributes.h"
