@@ -31,6 +31,7 @@ NSString* const DVDManagerInformationException = @"DVDManagerInformation";
 @implementation DVDManagerInformation
 @synthesize firstPlayProgramChain;
 @synthesize titleTrackSearchPointerTable;
+@synthesize menuProgramChainInformationTablesByLanguage;
 
 + (id) managerInformationWithDataSource:(id<DVDDataSource>)dataSource
 {
