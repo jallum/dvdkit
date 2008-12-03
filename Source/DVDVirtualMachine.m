@@ -93,18 +93,17 @@ enum {
         bzero(SPRM, sizeof(SPRM));
         bzero(GPRM, sizeof(GPRM));
 
-        SPRM[0]  = ('e'<<8)|'n'; /* Player Menu Languange code */
-        SPRM[1]  = 15;           /* 15 == NONE */
-        SPRM[2]  = 62;           /* 62 == NONE */
+        SPRM[0]  = 0x656E;          /* Player Menu Languange code */
+        SPRM[1]  = 15;              /* 15 == NONE */
+        SPRM[2]  = 62;              /* 62 == NONE */
         SPRM[3]  = 1;
         SPRM[7]  = 1;
         SPRM[8]  = 1 << 10;
-        SPRM[12] = ('U'<<8)|'S'; /* Parental Management Country Code */
-        SPRM[13] = 15;           /* Parental Level */
-        SPRM[14] = 0xC00;        /* Try Pan&Scan */
-        SPRM[16] = ('e'<<8)|'n'; /* Initial Language Code for Audio */
-        SPRM[18] = ('e'<<8)|'n'; /* Initial Language Code for Spu */
-        SPRM[20] = 0;            /* Player Regional Code Mask */
+        SPRM[12] = ('U'<<8)|'S';    /* Parental Management Country Code */
+        SPRM[13] = 15;              /* Parental Level */
+        SPRM[14] = 0x0C00;          /* Try Pan&Scan */
+        SPRM[16] = 0x656E;          /* Initial Language Code for Audio */
+        SPRM[18] = 0x656E;          /* Initial Language Code for Spu */
 
         state = FIRST_PLAY;
     }

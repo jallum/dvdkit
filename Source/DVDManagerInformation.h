@@ -45,6 +45,7 @@
 
 @property (readonly) DVDProgramChain* firstPlayProgramChain;
 @property (readonly) NSArray* titleTrackSearchPointerTable;
+@property (readonly) NSMutableDictionary* menuProgramChainInformationTablesByLanguage;
 @property (readonly) uint16_t regionMask;
 
 - (DVDTitleTrackSearchPointer*) titleTrackSearchPointerForTitleSet:(uint16_t)vts track:(uint8_t)ttn;
