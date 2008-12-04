@@ -483,10 +483,16 @@ static NSArray* ALL_SECTIONS;
         }
         return nil;
     }
+    OSWriteBigInt32(&vmgi_mat.first_play_pgc, 0, [data length]);
+    //
+    //  TODO: Encode and append first play program chain to data.
+    //
+    OSWriteBigInt32(&vmgi_mat.vmgi_last_byte, 0, [data length]);
     uint32_t amountToAlign = 0x800 - ([data length] & 0x07FF);
     if (amountToAlign != 0x800) {
         [data increaseLengthBy:amountToAlign];
     }
+    OSWriteBigInt32(&vmgi_mat.vmgi_last_sector, 0, ([data length] >> 1) - 1);
         
     
     /*  Determine the proper order, and then write out the various sections.
@@ -546,7 +552,7 @@ static NSArray* ALL_SECTIONS;
                 continue;
             }
             
-            // TODO:  Encode textData
+            // TODO:  Encode cellAddressTable
 
             OSWriteBigInt32(&vmgi_mat.vmgm_c_adt, 0, offsetOfSection);
         } else if (menuVobuAddressMap && [section isEqualToString:kDKManagerInformationSection_VMGM_VOBU_ADMAP]) {
@@ -559,18 +565,20 @@ static NSArray* ALL_SECTIONS;
             OSWriteBigInt32(&vmgi_mat.vmgm_vobu_admap, 0, offsetOfSection);
         } else {
             if (_error) {
-                /* TODO: Build Error */
+                /* TODO: Build Error: Invalid section name. */
                 *_error = nil;
             }
         }
         
         if (!sectionData) {
             if (_error) {
-                /* TODO: Build Error */
+                /* TODO: Build Error: */
                 *_error = nil;
             }
         }
         
+        /*  Pad the data to align with the next sector.
+         */
         [data appendData:sectionData];
         uint32_t amountToAlign = 0x800 - ([data length] & 0x07FF);
         if (amountToAlign != 0x800) {
