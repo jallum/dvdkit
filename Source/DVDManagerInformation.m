@@ -500,25 +500,61 @@ static NSArray* ALL_SECTIONS;
     for (NSString* section in sectionOrder) {
         NSAssert([data length] & 0x07FF == 0, @"Sections not sector-aligned?");
         uint32_t offsetOfSection = [data length];
-        if (titleTrackSearchPointerTable && [section isEqualToString:kDKManagerInformationSection_TT_SRPT]) {
+        NSData* sectionData = nil;
+        if ([section isEqualToString:kDKManagerInformationSection_TT_SRPT]) {
+            if (![titleTrackSearchPointerTable count]) {
+                continue;
+            }
+            
+            //  TODO: Encode titleTrackSearchPointerTable
             
             OSWriteBigInt32(&vmgi_mat.tt_srpt, 0, offsetOfSection);
-        } else if (parentalManagementInformationTable && [section isEqualToString:kDKManagerInformationSection_PTL_MAIT]) {
+        } else if ([section isEqualToString:kDKManagerInformationSection_PTL_MAIT]) {
+            if (![parentalManagementInformationTable length]) {
+                continue;
+            }
             
-            OSWriteBigInt32(&vmgi_mat.ptl_mait, 0, offsetOfSection);
-        } else if (titleSetAttributeTable && [section isEqualToString:kDKManagerInformationSection_VMG_VTS_ATRT]) { 
+            // TODO:  Encode parentalManagementInformationTable
 
+            OSWriteBigInt32(&vmgi_mat.ptl_mait, 0, offsetOfSection);
+        } else if ([section isEqualToString:kDKManagerInformationSection_VMG_VTS_ATRT]) { 
+            if (![titleSetAttributeTable length]) {
+                continue;
+            }
+            
+            // TODO:  Encode titleSetAttributeTable
+            
             OSWriteBigInt32(&vmgi_mat.vmg_vts_atrt, 0, offsetOfSection);
-        } else if (menuProgramChainInformationTablesByLanguage && [section isEqualToString:kDKManagerInformationSection_VMGM_PGCI_UT]) {
-        
+        } else if ([section isEqualToString:kDKManagerInformationSection_VMGM_PGCI_UT]) {
+            if (![menuProgramChainInformationTablesByLanguage count]) {
+                continue;
+            }
+            
+            // TODO:  Encode menuProgramChainInformationTablesByLanguage
+            
             OSWriteBigInt32(&vmgi_mat.vmgm_pgci_ut, 0, offsetOfSection);
         } else if (textData && [section isEqualToString:kDKManagerInformationSection_TXTDT_MGI]) {
-        
+            if (![textData length]) {
+                continue;
+            }
+            
+            // TODO:  Encode textData
+            
             OSWriteBigInt32(&vmgi_mat.txtdt_mgi, 0, offsetOfSection);
         } else if (cellAddressTable && [section isEqualToString:kDKManagerInformationSection_VMGM_C_ADT]) {
-        
+            if (![cellAddressTable count]) {
+                continue;
+            }
+            
+            // TODO:  Encode textData
+
             OSWriteBigInt32(&vmgi_mat.vmgm_c_adt, 0, offsetOfSection);
         } else if (menuVobuAddressMap && [section isEqualToString:kDKManagerInformationSection_VMGM_VOBU_ADMAP]) {
+            if (![menuVobuAddressMap length]) {
+                continue;
+            }
+            
+            //  TODO: Encode menuVobuAddressMap
             
             OSWriteBigInt32(&vmgi_mat.vmgm_vobu_admap, 0, offsetOfSection);
         } else {
@@ -526,6 +562,19 @@ static NSArray* ALL_SECTIONS;
                 /* TODO: Build Error */
                 *_error = nil;
             }
+        }
+        
+        if (!sectionData) {
+            if (_error) {
+                /* TODO: Build Error */
+                *_error = nil;
+            }
+        }
+        
+        [data appendData:sectionData];
+        uint32_t amountToAlign = 0x800 - ([data length] & 0x07FF);
+        if (amountToAlign != 0x800) {
+            [data increaseLengthBy:amountToAlign];
         }
     }
     
