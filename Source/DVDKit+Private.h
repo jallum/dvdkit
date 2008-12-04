@@ -100,7 +100,7 @@ typedef struct vmgm_subp_attr_t vmgm_subp_attr_t;
 struct vmgm_subp_attr_t {
     uint8_t
 #ifdef LITTLE_ENDIAN
-    type : 2,
+    lang_type : 2,
     __zero_1 : 3,
     code_mode : 3;
 #else

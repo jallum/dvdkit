@@ -24,6 +24,16 @@
 
 NSString* const DVDManagerInformationException = @"DVDManagerInformation";
 
+NSString* const kDKManagerInformationSection_TT_SRPT          = @"tt_srpt";
+NSString* const kDKManagerInformationSection_PTL_MAIT         = @"ptl_mait";
+NSString* const kDKManagerInformationSection_VMG_VTS_ATRT     = @"vmg_vts_atrt";
+NSString* const kDKManagerInformationSection_VMGM_PGCI_UT     = @"vmgm_pgci_ut";
+NSString* const kDKManagerInformationSection_TXTDT_MGI        = @"txtdt_mgi";
+NSString* const kDKManagerInformationSection_VMGM_C_ADT       = @"vmgm_c_adt";
+NSString* const kDKManagerInformationSection_VMGM_VOBU_ADMAP  = @"vmgm_vobu_admap";
+
+static NSArray* ALL_SECTIONS;
+
 @interface DVDManagerInformation (Private)
 - (NSArray*) parsePGCITfromData:(NSData*)data offset:(uint32_t)_offset;
 @end
@@ -32,6 +42,22 @@ NSString* const DVDManagerInformationException = @"DVDManagerInformation";
 @synthesize firstPlayProgramChain;
 @synthesize titleTrackSearchPointerTable;
 @synthesize menuProgramChainInformationTablesByLanguage;
+
++ (void) initialize
+{
+    if (self == [DVDManagerInformation class]) {
+        ALL_SECTIONS = [[NSArray alloc] initWithObjects:
+            kDKManagerInformationSection_TT_SRPT,
+            kDKManagerInformationSection_PTL_MAIT,
+            kDKManagerInformationSection_VMG_VTS_ATRT, 
+            kDKManagerInformationSection_VMGM_PGCI_UT,
+            kDKManagerInformationSection_TXTDT_MGI,
+            kDKManagerInformationSection_VMGM_C_ADT,
+            kDKManagerInformationSection_VMGM_VOBU_ADMAP,
+            nil
+        ];
+    }
+}
 
 + (id) managerInformationWithDataSource:(id<DVDDataSource>)dataSource
 {
@@ -42,6 +68,7 @@ NSString* const DVDManagerInformationException = @"DVDManagerInformation";
 {
     NSAssert(dataSource, @"Shouldn't be nil");
     if (self = [super init]) {
+        NSMutableDictionary* sectionOrdering = [NSMutableDictionary dictionary];
         NSData* header = [dataSource requestDataOfLength:1 << 11 fromOffset:0];
         NSAssert(header && ([header length] == 1 << 11), @"wtf?");
         const vmgi_mat_t* vmgi_mat = [header bytes];
@@ -60,8 +87,6 @@ NSString* const DVDManagerInformationException = @"DVDManagerInformation";
         numberOfTitleSets = OSReadBigInt16(&vmgi_mat->vmg_nr_of_title_sets, 0);
         pointOfSaleCode = OSReadBigInt64(&vmgi_mat->vmg_pos_code, 0);
         vmgm_vobs = OSReadBigInt32(&vmgi_mat->vmgm_vobs, 0);
-        nr_of_vmgm_audio_streams = vmgi_mat->nr_of_vmgm_audio_streams;
-        nr_of_vmgm_subp_streams = OSReadBigInt16(&vmgi_mat->nr_of_vmgm_subp_streams, 0);
         
         
         /*
@@ -88,12 +113,17 @@ NSString* const DVDManagerInformationException = @"DVDManagerInformation";
         /*  Video/Audio/Subpicture Attributes
          */
         menuVideoAttributes = [DVDVideoAttributes videoAttributesWithData:[NSData dataWithBytesNoCopy:(void*)&vmgi_mat->vmgm_video_attr length:sizeof(vmgm_video_attr_t)]];
+        uint8_t nr_of_vmgm_audio_streams = vmgi_mat->nr_of_vmgm_audio_streams;
         if (nr_of_vmgm_audio_streams) {
             NSMutableArray* table = [NSMutableArray array];
             for (int i = 0, iMax = MIN(8, nr_of_vmgm_audio_streams); i < iMax; i++) {
                 [table addObject:[DVDAudioAttributes audioAttributesWithData:[NSData dataWithBytesNoCopy:(void*)&vmgi_mat->vmgm_audio_attr[i] length:sizeof(vmgm_audio_attr_t)]]];
             }
             menuAudioAttributes = [table retain];
+        }
+        uint16_t nr_of_vmgm_subp_streams = OSReadBigInt16(&vmgi_mat->nr_of_vmgm_subp_streams, 0);
+        if (nr_of_vmgm_subp_streams) {
+            menuSubpictureAttributes = [DVDSubpictureAttributes subpictureAttributesWithData:[NSData dataWithBytesNoCopy:(void*)&vmgi_mat->vmgm_subp_attr length:sizeof(vmgm_subp_attr_t)]];
         }
         
         
@@ -113,13 +143,12 @@ NSString* const DVDManagerInformationException = @"DVDManagerInformation";
             [NSException raise:DVDManagerInformationException format:@"%s(%d)", __FILE__, __LINE__];
         }
         
-        NSMutableDictionary* sectionOrdering = [NSMutableDictionary dictionary];
         
         /*  Title/Track Search Pointer Table.
          */
         uint32_t offset_of_tt_srpt = OSReadBigInt32(&vmgi_mat->tt_srpt, 0);
         if (offset_of_tt_srpt && (offset_of_tt_srpt <= vmgi_last_sector)) {
-            [sectionOrdering setObject:@"tt_srpt" forKey:[NSNumber numberWithUnsignedInt:offset_of_tt_srpt]];
+            [sectionOrdering setObject:kDKManagerInformationSection_TT_SRPT forKey:[NSNumber numberWithUnsignedInt:offset_of_tt_srpt]];
             NSData* data = [dataSource requestDataOfLength:1 << 11 fromOffset:offset_of_tt_srpt << 11];
             NSAssert(data && ([data length] == 1 << 11), @"wtf?"); 
             const tt_srpt_t* tt_srpt = [data bytes];
@@ -156,7 +185,7 @@ NSString* const DVDManagerInformationException = @"DVDManagerInformation";
          */
         uint32_t offset_of_ptl_mait = OSReadBigInt32(&vmgi_mat->ptl_mait, 0);
         if (offset_of_ptl_mait && (offset_of_ptl_mait <= vmgi_last_sector)) {
-            [sectionOrdering setObject:@"ptl_mait" forKey:[NSNumber numberWithUnsignedInt:offset_of_ptl_mait]];
+            [sectionOrdering setObject:kDKManagerInformationSection_PTL_MAIT forKey:[NSNumber numberWithUnsignedInt:offset_of_ptl_mait]];
             NSData* data = [dataSource requestDataOfLength:1 << 11 fromOffset:offset_of_ptl_mait << 11];
             NSAssert(data && ([data length] == 1 << 11), @"wtf?"); 
             const ptl_mait_t* ptl_mait = [data bytes];
@@ -183,7 +212,7 @@ NSString* const DVDManagerInformationException = @"DVDManagerInformation";
          */
         uint32_t offset_of_vmg_vts_atrt = OSReadBigInt32(&vmgi_mat->vmg_vts_atrt, 0);
         if (offset_of_vmg_vts_atrt && (offset_of_vmg_vts_atrt <= vmgi_last_sector)) {
-            [sectionOrdering setObject:@"vmg_vts_atrt" forKey:[NSNumber numberWithUnsignedInt:offset_of_vmg_vts_atrt]];
+            [sectionOrdering setObject:kDKManagerInformationSection_VMG_VTS_ATRT forKey:[NSNumber numberWithUnsignedInt:offset_of_vmg_vts_atrt]];
             NSData* data = [dataSource requestDataOfLength:1 << 11 fromOffset:offset_of_vmg_vts_atrt << 11];
             NSAssert(data && ([data length] == 1 << 11), @"wtf?"); 
             const vmg_vts_atrt_t* vmg_vts_atrt = [data bytes];
@@ -210,7 +239,7 @@ NSString* const DVDManagerInformationException = @"DVDManagerInformation";
          */
         uint32_t offset_of_vmgm_pgci_ut = OSReadBigInt32(&vmgi_mat->vmgm_pgci_ut, 0);
         if (offset_of_vmgm_pgci_ut && (offset_of_vmgm_pgci_ut <= vmgi_last_sector)) {
-            [sectionOrdering setObject:@"vmgm_pgci_ut" forKey:[NSNumber numberWithUnsignedInt:offset_of_vmgm_pgci_ut]];
+            [sectionOrdering setObject:kDKManagerInformationSection_VMGM_PGCI_UT forKey:[NSNumber numberWithUnsignedInt:offset_of_vmgm_pgci_ut]];
             NSData* data = [dataSource requestDataOfLength:1 << 11 fromOffset:offset_of_vmgm_pgci_ut << 11];
             NSAssert(data && ([data length] == 1 << 11), @"wtf?"); 
             const vmgm_pgci_ut_t* vmgm_pgci_ut = [data bytes];
@@ -268,23 +297,15 @@ NSString* const DVDManagerInformationException = @"DVDManagerInformation";
          */
         uint32_t offset_of_txtdt_mgi = OSReadBigInt32(&vmgi_mat->txtdt_mgi, 0);
         if (offset_of_txtdt_mgi && (offset_of_txtdt_mgi <= vmgi_last_sector)) {
-            [sectionOrdering setObject:@"txtdt_mgi" forKey:[NSNumber numberWithUnsignedInt:offset_of_txtdt_mgi]];
+            [sectionOrdering setObject:kDKManagerInformationSection_TXTDT_MGI forKey:[NSNumber numberWithUnsignedInt:offset_of_txtdt_mgi]];
             NSData* data = [dataSource requestDataOfLength:1 << 11 fromOffset:offset_of_txtdt_mgi << 11];
-            uint32_t last_byte = 1 + OSReadBigInt32([data bytes], 0);
             
-            /*  Have we already read all that we need?  */
-            if (last_byte > [data length]) {
-                data = [dataSource requestDataOfLength:last_byte fromOffset:(offset_of_txtdt_mgi << 11)];
-            } else {
-                data = [data subdataWithRange:NSMakeRange(0, last_byte)];
-            }
-
             /*  
              *  TODO: Additional Decoding  
              */
             
             /*  Retain the table  */
-            textData = [[data subdataWithRange:NSMakeRange(4, last_byte - 4)] retain]; 
+            textData = [data retain]; 
         }
         
         
@@ -292,7 +313,7 @@ NSString* const DVDManagerInformationException = @"DVDManagerInformation";
          */
         uint32_t offset_of_vmgm_c_adt = OSReadBigInt32(&vmgi_mat->vmgm_c_adt, 0);
         if (offset_of_vmgm_c_adt && (offset_of_vmgm_c_adt <= vmgi_last_sector)) {
-            [sectionOrdering setObject:@"vmgm_c_adt" forKey:[NSNumber numberWithUnsignedInt:offset_of_vmgm_c_adt]];
+            [sectionOrdering setObject:kDKManagerInformationSection_VMGM_C_ADT forKey:[NSNumber numberWithUnsignedInt:offset_of_vmgm_c_adt]];
             NSData* data = [dataSource requestDataOfLength:1 << 11 fromOffset:offset_of_vmgm_c_adt << 11];
             const vmgm_c_adt_t* vmgm_c_adt = [data bytes];
             uint16_t nr_of_c_adts = OSReadBigInt16(&vmgm_c_adt->nr_of_c_adts, 0);
@@ -326,7 +347,7 @@ NSString* const DVDManagerInformationException = @"DVDManagerInformation";
          */
         uint32_t offset_of_vmgm_vobu_admap = OSReadBigInt32(&vmgi_mat->vmgm_vobu_admap, 0);
         if (offset_of_vmgm_vobu_admap && (offset_of_vmgm_vobu_admap <= vmgi_last_sector)) {
-            [sectionOrdering setObject:@"vmgm_vobu_admap" forKey:[NSNumber numberWithUnsignedInt:offset_of_vmgm_vobu_admap]];
+            [sectionOrdering setObject:kDKManagerInformationSection_VMGM_VOBU_ADMAP forKey:[NSNumber numberWithUnsignedInt:offset_of_vmgm_vobu_admap]];
             NSData* data = [dataSource requestDataOfLength:1 << 11 fromOffset:offset_of_vmgm_vobu_admap << 11];
             uint32_t last_byte = 1 + OSReadBigInt32([data bytes], 0);
             
@@ -350,7 +371,7 @@ NSString* const DVDManagerInformationException = @"DVDManagerInformation";
          *  that the sections should be written in, should we choose to do so
          *  at a later point.
          */
-        sectionOrder = [sectionOrdering objectsForKeys:[sectionOrdering keysSortedByValueUsingSelector:@selector(compare:)] notFoundMarker:[NSNull null]];
+        preferredSectionOrder = [sectionOrdering objectsForKeys:[sectionOrdering keysSortedByValueUsingSelector:@selector(compare:)] notFoundMarker:[NSNull null]];
     }
     return self;     
 }
@@ -365,7 +386,7 @@ NSString* const DVDManagerInformationException = @"DVDManagerInformation";
     [textData retain];
     [cellAddressTable retain];
     [menuVobuAddressMap retain];
-    [sectionOrder retain];
+    [preferredSectionOrder retain];
     [super dealloc];
 }
 
@@ -394,5 +415,122 @@ NSString* const DVDManagerInformationException = @"DVDManagerInformation";
     return categoryAndMask & 0x1FF;
 }
 
-@end
+- (NSData*) saveAsData:(NSError**)_error
+{
+    NSMutableData* data = [NSMutableData data];
+    
+    
+    /*
+     */
+    [data increaseLengthBy:sizeof(vmgi_mat_t)];  
+    vmgi_mat_t vmgi_mat;
+    bzero(&vmgi_mat, sizeof(vmgi_mat_t));
+    memcpy(vmgi_mat.vmg_identifier, "DVDVIDEO-VMG", 12);
+    
 
+    /*
+     */
+    OSWriteBigInt32(&vmgi_mat.specification_version, 0, specificationVersion);
+    OSWriteBigInt32(&vmgi_mat.vmg_category, 0, categoryAndMask);
+    OSWriteBigInt16(&vmgi_mat.vmg_nr_of_volumes, 0, numberOfVolumes);
+    OSWriteBigInt16(&vmgi_mat.vmg_this_volume_nr, 0, volumeNumber);
+    vmgi_mat.disc_side = side;
+    OSWriteBigInt16(&vmgi_mat.vmg_nr_of_title_sets, 0, numberOfTitleSets);
+    OSWriteBigInt64(&vmgi_mat.vmg_pos_code, 0, pointOfSaleCode);
+    OSWriteBigInt32(&vmgi_mat.vmgm_vobs, 0, vmgm_vobs);
+    
+    
+    /*  Video/Audio/Subpicture Attributes
+     */
+    NSData* menuVideoAttributesData = [menuVideoAttributes saveAsData:_error];
+    if (!menuVideoAttributesData) {
+        return nil;
+    }
+    memcpy(&vmgi_mat.vmgm_video_attr, [menuVideoAttributesData bytes], sizeof(vmgm_video_attr_t));
+    /**/
+    uint8_t nr_of_vmgm_audio_streams = vmgi_mat.nr_of_vmgm_audio_streams = [menuAudioAttributes count];
+    if (nr_of_vmgm_audio_streams > 8) {
+        if (_error) {
+            /* TODO: Build Error */
+            *_error = nil;
+        }
+        return nil;
+    }
+    for (int i = 0; i < nr_of_vmgm_audio_streams; i++) {
+        NSData* menuAudioAttributesData = [[menuAudioAttributes objectAtIndex:i] saveAsData:_error];
+        if (!menuAudioAttributesData) {
+            return nil;
+        }
+        memcpy(&vmgi_mat.vmgm_audio_attr[i], [menuAudioAttributesData bytes], sizeof(vmgm_audio_attr_t));
+    }
+    /**/
+    if (menuSubpictureAttributes) {
+        OSWriteBigInt16(&vmgi_mat.nr_of_vmgm_subp_streams, 0, 1);
+        NSData* menuSubpictureAttributesData = [menuSubpictureAttributes saveAsData:_error];
+        if (!menuSubpictureAttributesData) {
+            return nil;
+        }
+        memcpy(&vmgi_mat.vmgm_subp_attr, [menuSubpictureAttributesData bytes], sizeof(vmgm_subp_attr_t));
+    }
+    
+
+    /*  Append the first play program chain
+     */
+    if (!firstPlayProgramChain) {
+        if (_error) {
+            /* TODO: Build Error */
+            *_error = nil;
+        }
+        return nil;
+    }
+    uint32_t amountToAlign = 0x800 - ([data length] & 0x07FF);
+    if (amountToAlign != 0x800) {
+        [data increaseLengthBy:amountToAlign];
+    }
+        
+    
+    /*  Determine the proper order, and then write out the various sections.
+     */
+    NSMutableArray* sectionOrder = [[preferredSectionOrder mutableCopy] autorelease];
+    for (NSString* section in ALL_SECTIONS) {
+        if (![sectionOrder containsObject:section]) {
+            [sectionOrder addObject:section];
+        }
+    }
+    for (NSString* section in sectionOrder) {
+        NSAssert([data length] & 0x07FF == 0, @"Sections not sector-aligned?");
+        uint32_t offsetOfSection = [data length];
+        if (titleTrackSearchPointerTable && [section isEqualToString:kDKManagerInformationSection_TT_SRPT]) {
+            
+            OSWriteBigInt32(&vmgi_mat.tt_srpt, 0, offsetOfSection);
+        } else if (parentalManagementInformationTable && [section isEqualToString:kDKManagerInformationSection_PTL_MAIT]) {
+            
+            OSWriteBigInt32(&vmgi_mat.ptl_mait, 0, offsetOfSection);
+        } else if (titleSetAttributeTable && [section isEqualToString:kDKManagerInformationSection_VMG_VTS_ATRT]) { 
+
+            OSWriteBigInt32(&vmgi_mat.vmg_vts_atrt, 0, offsetOfSection);
+        } else if (menuProgramChainInformationTablesByLanguage && [section isEqualToString:kDKManagerInformationSection_VMGM_PGCI_UT]) {
+        
+            OSWriteBigInt32(&vmgi_mat.vmgm_pgci_ut, 0, offsetOfSection);
+        } else if (textData && [section isEqualToString:kDKManagerInformationSection_TXTDT_MGI]) {
+        
+            OSWriteBigInt32(&vmgi_mat.txtdt_mgi, 0, offsetOfSection);
+        } else if (cellAddressTable && [section isEqualToString:kDKManagerInformationSection_VMGM_C_ADT]) {
+        
+            OSWriteBigInt32(&vmgi_mat.vmgm_c_adt, 0, offsetOfSection);
+        } else if (menuVobuAddressMap && [section isEqualToString:kDKManagerInformationSection_VMGM_VOBU_ADMAP]) {
+            
+            OSWriteBigInt32(&vmgi_mat.vmgm_vobu_admap, 0, offsetOfSection);
+        } else {
+            if (_error) {
+                /* TODO: Build Error */
+                *_error = nil;
+            }
+        }
+    }
+    
+    memcpy([data mutableBytes], &vmgi_mat, sizeof(vmgi_mat_t));
+    return data;
+}
+
+@end

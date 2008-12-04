@@ -33,10 +33,7 @@
     uint8_t side;
     uint16_t numberOfTitleSets;
     uint64_t pointOfSaleCode;
-    /**/
     uint32_t vmgm_vobs;
-    uint8_t nr_of_vmgm_audio_streams;
-    uint16_t nr_of_vmgm_subp_streams;
     /**/
     DVDVideoAttributes* menuVideoAttributes;
     NSArray* menuAudioAttributes;
@@ -51,7 +48,7 @@
     NSMutableArray* cellAddressTable;
     NSData* menuVobuAddressMap;
     /**/
-    NSArray* sectionOrder;
+    NSArray* preferredSectionOrder;
 }
 
 + (id) managerInformationWithDataSource:(id<DVDDataSource>)dataSource;
@@ -65,6 +62,9 @@
 
 - (DVDTitleTrackSearchPointer*) titleTrackSearchPointerForTitleSet:(uint16_t)vts track:(uint8_t)ttn;
 - (NSArray*) menuProgramChainInformationTableForLanguageCode:(uint16_t)languageCode;
+
+- (NSData*) saveAsData:(NSError**)error;
+
 @end
 
 extern NSString* const DVDManagerInformationException;
