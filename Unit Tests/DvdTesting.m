@@ -7,9 +7,7 @@
 //
 
 #import "DvdTesting.h"
-#import "DVDKit.h"
-#import "DVDCommand.h"
-#import "DVDVirtualMachine.h"
+#import <DVDKit/DVDKit.h>
 
 @implementation DvdTesting
 
@@ -27,13 +25,16 @@
 	
     
 }
+
 - (void) setUp
 {
     f1 = 3.0;
     f2 = 3.0;
 }
+
 - (void) testAddition
 {
     STAssertTrue (f1 + f2 == 5.0, @"%f + %f should equal 5.0", f1, f2);
 }
+
 @end
