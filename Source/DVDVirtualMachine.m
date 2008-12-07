@@ -88,10 +88,6 @@ enum {
     NSAssert(_dataSource, @"Shouldn't be nil");
     if (self = [super init]) {
         dataSource = [_dataSource retain];
-        managerInformation = [dataSource managerInformation];
-        if (!managerInformation) {
-            [NSException raise:DVDVirtualMachineException format:@"Video manager information is required"];
-        }
 
         bzero(SPRM, sizeof(SPRM));
         bzero(GPRM, sizeof(GPRM));
@@ -144,6 +140,17 @@ enum {
         [delegate release];
         delegate = [_delegate retain];
     }
+}
+
+- (DVDManagerInformation*) managerInformation
+{
+    if (!managerInformation) {
+        managerInformation = [dataSource managerInformation];
+        if (!managerInformation) {
+            [NSException raise:DVDVirtualMachineException format:@"Video manager information is required"];
+        }
+    }
+    return managerInformation;
 }
 
 - (dvd_user_ops_t) prohibitedUserOperations
@@ -217,7 +224,7 @@ enum {
                 case FIRST_PLAY: {
                     domain = FP_DOMAIN;
                     [programChain release];
-                    programChain = [[managerInformation firstPlayProgramChain] retain];
+                    programChain = [[[self managerInformation] firstPlayProgramChain] retain];
                     [titleSet release];
                     titleSet = nil;
                     state = PGC_START;
@@ -411,7 +418,7 @@ enum {
 - (void) executeJumpTT:(uint8_t)tt
 {
     [titleInformation release];
-    titleInformation = [[[managerInformation titleTrackSearchPointerTable] objectAtIndex:(tt - 1)] retain];
+    titleInformation = [[[[self managerInformation] titleTrackSearchPointerTable] objectAtIndex:(tt - 1)] retain];
     SPRM[4] = [titleInformation index];
     uint16_t vts = [titleInformation titleSetNumber];
     uint16_t ttn = [titleInformation trackNumber];
@@ -468,7 +475,7 @@ enum {
         vts = [titleSet index];
     }
     [titleInformation release];
-    titleInformation = [[managerInformation titleTrackSearchPointerForTitleSet:vts track:ttn] retain];
+    titleInformation = [[[self managerInformation] titleTrackSearchPointerForTitleSet:vts track:ttn] retain];
     resume.enabled &= (domain == VTSM_DOMAIN);
     domain = VTSM_DOMAIN;
     DVDProgramChainSearchPointer* foundSearchPointer = nil;
@@ -720,7 +727,7 @@ enum {
         }
         case VMGM_DOMAIN:
         case FP_DOMAIN: {
-            return [managerInformation menuProgramChainInformationTableForLanguageCode:SPRM[0]];
+            return [[self managerInformation] menuProgramChainInformationTableForLanguageCode:SPRM[0]];
         }
     }
     [NSException raise:DVDVirtualMachineException format:@"%s (%d)", __FILE__, __LINE__];

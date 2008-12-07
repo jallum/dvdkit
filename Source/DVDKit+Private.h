@@ -1,4 +1,8 @@
 
+
+#define OSReadBigInt8(x, y)     (((uint8_t*)x)[y])
+#define OSWriteBigInt8(x, y, z) (void)(((uint8_t*)x)[y] = z)
+
 typedef struct vmgm_video_attr_t vmgm_video_attr_t;
 struct vmgm_video_attr_t {
     uint16_t 
