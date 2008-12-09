@@ -27,6 +27,10 @@
 	command = [DVDCommand commandWithData:[NSData dataWithBytesNoCopy:"\x00\x41\x00\x02\x00\x05\x00\x06" length:8 freeWhenDone:NO]];
     STAssertTrue([[command description] isEqualTo:@"      0041000200050006 | if (g[2] >= g[5]) Goto 6"], @"Instruction not decoded properly.");    
     
+    //  0091000a00020008 | if (g[10] & 0x2) Goto 8
+	command = [DVDCommand commandWithData:[NSData dataWithBytesNoCopy:"\x00\x91\x00\x0a\x00\x02\x00\x08" length:8 freeWhenDone:NO]];
+    STAssertTrue([[command description] isEqualTo:@"      0091000a00020008 | if (g[10] & 0x2) Goto 8"], @"Instruction not decoded properly.");    
+    
     //  7100000D43210000 | g[13] = 0x4321
 	command = [DVDCommand commandWithData:[NSData dataWithBytesNoCopy:"\x71\x00\x00\x0D\x43\x21\x00\x00" length:8 freeWhenDone:NO]];
     STAssertTrue([[command description] isEqualTo:@"      7100000d43210000 | g[13] = 0x4321 (\"C!\")"], @"Instruction not decoded properly.");
