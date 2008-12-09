@@ -6,7 +6,7 @@
 typedef struct vmgm_video_attr_t vmgm_video_attr_t;
 struct vmgm_video_attr_t {
     uint16_t 
-#ifdef LITTLE_ENDIAN
+#if BYTE_ORDER == LITTLE_ENDIAN
     allow_automatic_letterbox : 1,
     allow_automatic_panandscan : 1,
     display_aspect_ratio : 2,
@@ -42,7 +42,7 @@ struct vmgm_video_attr_t {
 typedef struct vmgm_audio_attr_t vmgm_audio_attr_t;
 struct vmgm_audio_attr_t {
     uint16_t
-#ifdef LITTLE_ENDIAN
+#if BYTE_ORDER == LITTLE_ENDIAN
     audio_format : 3,
     multichannel_extension : 1,
     lang_type : 2,
@@ -63,7 +63,7 @@ struct vmgm_audio_attr_t {
     sample_frequency : 2,
     quantization : 2;
 #endif
-    char lang_code[2];
+    uint16_t lang_code;
     uint8_t lang_extension;
     uint8_t code_extension;
     uint8_t __zero_2;
@@ -71,7 +71,7 @@ struct vmgm_audio_attr_t {
         uint8_t value;
         struct {
             uint8_t
-#ifdef LITTLE_ENDIAN
+#if BYTE_ORDER == LITTLE_ENDIAN
             mode : 1,
             mc_intro : 1,
             version : 2,
@@ -87,7 +87,7 @@ struct vmgm_audio_attr_t {
         } __attribute__ ((packed)) karaoke;
         struct {
             uint8_t
-#ifdef LITTLE_ENDIAN
+#if BYTE_ORDER == LITTLE_ENDIAN
             __zero_1 : 3,
             dolby_encoded : 1,
             __zero_2 : 4;
@@ -102,18 +102,19 @@ struct vmgm_audio_attr_t {
 
 typedef struct vmgm_subp_attr_t vmgm_subp_attr_t;
 struct vmgm_subp_attr_t {
-    uint8_t
-#ifdef LITTLE_ENDIAN
+    uint16_t
+#if BYTE_ORDER == LITTLE_ENDIAN
+    __zero_2 : 8, 
     lang_type : 2,
     __zero_1 : 3,
     code_mode : 3;
 #else
     code_mode : 3,
     __zero_1 : 3,
-    type : 2;
+    lang_type : 2,
+    __zero_2 : 8;
 #endif
-    uint8_t __zero_2;
-    char lang_code[2];
+    uint16_t lang_code;
     uint8_t lang_extension;
     uint8_t code_extension;
 } __attribute__ ((packed));
@@ -168,7 +169,7 @@ struct tt_srpt_t {
 
 typedef struct title_info_t title_info_t;
 struct title_info_t {
-    dvd_playback_type_t pb_ty;
+    DKPlaybackFlags pb_ty;
     uint8_t nr_of_angles;
     uint16_t nr_of_ptts;
     uint16_t parental_id;
@@ -202,7 +203,7 @@ struct pgcit_t {
 typedef struct pgci_srp_t pgci_srp_t;
 struct pgci_srp_t {
     uint8_t  entry_id;
-#ifdef LITTLE_ENDIAN
+#if BYTE_ORDER == LITTLE_ENDIAN
     unsigned int unknown1   : 4;
     unsigned int block_type : 2;
     unsigned int block_mode : 2;
@@ -245,8 +246,84 @@ struct ptl_mait_t {
     uint32_t last_byte;
 } __attribute__ ((packed));
 
+typedef struct cell_playback_flags_t cell_playback_flags_t;
+struct cell_playback_flags_t {
+    uint16_t
+#if BYTE_ORDER == LITTLE_ENDIAN
+    seamless_angle : 1,
+    stc_discontinuity: 1,
+    interleaved : 1,
+    seamless_play : 1,
+    block_type : 2,
+    block_mode : 2,
+    /**/    
+    __zero_1 : 6,
+    restricted : 1,
+    playback_mode : 1;
+#else
+    block_mode : 2,
+    block_type : 2,
+    seamless_play : 1,
+    interleaved : 1,
+    stc_discontinuity: 1,
+    seamless_angle : 1,
+    /**/
+    playback_mode : 1,
+    restricted : 1,
+    __zero_1 : 6;
+#endif
+};
+
+typedef struct cell_playback_t cell_playback_t;
+struct cell_playback_t {
+    cell_playback_flags_t flags;
+    uint8_t still_time;
+    uint8_t cell_cmd_nr;
+    DKTime playback_time;
+    uint32_t first_sector;
+    uint32_t first_ilvu_end_sector;
+    uint32_t last_vobu_start_sector;
+    uint32_t last_sector;
+} __attribute__ ((packed));
 
 
+@interface DKVirtualMachine (DVDCommand)
+- (uint16_t) registerForCode:(uint8_t)rn;
+- (void) setValue:(uint16_t)value forRegisterForCode:(uint8_t)rn;
+- (void) conditionallySetHighlightedButton:(uint8_t)btn;
+- (void) executeLinkSubset:(uint8_t)code;
+@end
+
+@interface DKCommand (Private)
+- (uint32_t) bitsInRange:(NSRange)range;
+- (int) executeComparison:(uint8_t)comparison value1:(uint16_t)value1 value2:(uint16_t)value2;
+- (uint16_t) computeOp:(uint8_t)op value1:(uint16_t)value1 value2:(uint16_t)value2;
+@end
+
+#define DKLocalizedString(key, comment) NSLocalizedStringFromTableInBundle(key, nil, [NSBundle bundleForClass:[DKVirtualMachine class]], comment)
+
+extern NSString* const kDVDKitErrorDomain;
+
+typedef enum {
+    kDKMultipleErrorsError,
+    /**/
+    kDKNumberOfVolumesError,
+    kDKVolumeNumberError,
+    kDKDiscSideError,
+    kDKNumberOfTitleSetsError,
+    kDKFirstPlayProgramChainError,
+    kDKTitleTrackSearchPointerTableError,
+    kDKMenuProgramChainInformationMapError,
+    kDKCellAddressTableError,
+    kDKNumberOfVideoAttributesError,
+    kDKNumberOfAudioStreamsError,
+    kDKNumberOfSubpictureAttributesError,
+    kDKSectionNameError,
+    kDKSectionDataError,
+} DKErrorCode;
+
+#define DKErrorWithCode(code, ...)   __DKErrorWithCode(code, [NSString stringWithUTF8String:__PRETTY_FUNCTION__], @"function", [NSNumber numberWithInt:__LINE__], @"line", __VA_ARGS__)
+extern NSError* __DKErrorWithCode(DKErrorCode code, ...);
 
 
 
