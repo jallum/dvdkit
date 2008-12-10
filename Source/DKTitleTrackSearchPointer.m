@@ -39,13 +39,31 @@
     NSAssert(data, @"Shouldn't be nil");
     if (self = [super init]) {
         index = _index;
-        const title_info_t* title_info = [data bytes]; 
+        const void* title_info = [data bytes]; 
         
+        memcpy(&pb_ty, (uint8_t*)title_info + offsetof(title_info_t, pb_ty), sizeof(DKPlaybackFlags));
+        nr_of_ptts = OSReadBigInt16(title_info, offsetof(title_info_t, nr_of_ptts));
+        parental_id = OSReadBigInt16(title_info, offsetof(title_info_t, parental_id));
+        title_set_sector = OSReadBigInt32(title_info, offsetof(title_info_t, title_set_sector));
         title_set_nr = OSReadBigInt8(title_info, offsetof(title_info_t, title_set_nr));
         vts_ttn = OSReadBigInt8(title_info, offsetof(title_info_t, vts_ttn));
         nr_of_angles = OSReadBigInt8(title_info, offsetof(title_info_t, nr_of_angles));
     }
     return self;
+}
+
+- (NSData*) saveAsData:(NSError**)error
+{
+    title_info_t title_info;
+    bzero(&title_info, sizeof(title_info_t));
+    memcpy(&title_info.pb_ty, &pb_ty, sizeof(DKPlaybackFlags));
+    OSWriteBigInt16(&title_info, offsetof(title_info_t, nr_of_ptts), nr_of_ptts);
+    OSWriteBigInt16(&title_info, offsetof(title_info_t, parental_id), parental_id);
+    OSWriteBigInt32(&title_info, offsetof(title_info_t, title_set_sector), title_set_sector);
+    OSWriteBigInt8(&title_info, offsetof(title_info_t, title_set_nr), title_set_nr);
+    OSWriteBigInt8(&title_info, offsetof(title_info_t, vts_ttn), vts_ttn);
+    OSWriteBigInt8(&title_info, offsetof(title_info_t, nr_of_angles), nr_of_angles);
+    return [NSData dataWithBytes:&title_info length:sizeof(title_info_t)];
 }
 
 - (uint8_t) titleSetNumber

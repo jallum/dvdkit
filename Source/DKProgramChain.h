@@ -47,6 +47,8 @@
 
 - (id) initWithData:(NSData*)data;
 
+- (NSData*) saveAsData:(NSError**)error;
+
 @property (readonly) DKUserOperationFlags prohibitedUserOperations;
 @property (readonly) NSArray* preCommands;
 @property (readonly) NSArray* cellCommands;

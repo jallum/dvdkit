@@ -21,6 +21,10 @@
  */
 
 @interface DKTitleTrackSearchPointer : NSObject {
+    DKPlaybackFlags pb_ty;
+    uint16_t nr_of_ptts;
+    uint16_t parental_id;
+    uint32_t title_set_sector;
     uint8_t title_set_nr;
     uint8_t vts_ttn;
     uint8_t nr_of_angles;

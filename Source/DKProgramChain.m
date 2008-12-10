@@ -194,4 +194,9 @@ static NSArray* NO_ELEMENTS;
     [super dealloc];
 }
 
+- (NSData*) saveAsData:(NSError**)error
+{
+    return nil;
+}
+
 @end

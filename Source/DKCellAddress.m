@@ -47,4 +47,15 @@
     return self;
 }
 
+- (NSData*) saveAsData:(NSError**)error
+{
+    cell_adr_t cell_adr;
+    bzero(&cell_adr, sizeof(cell_adr_t));
+    OSWriteBigInt16(&cell_adr, offsetof(cell_adr_t, vob_id), vob_id);
+    OSWriteBigInt8(&cell_adr, offsetof(cell_adr_t, cell_id), cell_id);
+    OSWriteBigInt32(&cell_adr, offsetof(cell_adr_t, start_sector), start_sector);
+    OSWriteBigInt32(&cell_adr, offsetof(cell_adr_t, last_sector), last_sector);
+    return [NSData dataWithBytes:&cell_adr length:sizeof(cell_adr_t)];
+}
+
 @end

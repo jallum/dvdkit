@@ -41,10 +41,10 @@
     /**/
     DKProgramChain* firstPlayProgramChain;
     NSMutableArray* titleTrackSearchPointerTable;
-    NSData* parentalManagementInformationTable;
-    NSData* titleSetAttributeTable;
+    NSMutableData* parentalManagementInformationTable;
+    NSMutableData* titleSetAttributeTable;
     NSMutableDictionary* menuProgramChainInformationTablesByLanguage;
-    NSData* textData;
+    NSMutableData* textData;
     NSMutableArray* cellAddressTable;
     NSData* menuVobuAddressMap;
     /**/

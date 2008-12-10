@@ -240,7 +240,7 @@ NSString* const kDKManagerInformationSection_VMGM_VOBU_ADMAP  = @"vmgm_vobu_adma
              */
             
             /*  Retain the table  */
-            parentalManagementInformationTable = [[data subdataWithRange:NSMakeRange(sizeof(ptl_mait_t), last_byte - sizeof(ptl_mait_t))] retain];
+            parentalManagementInformationTable = [data retain];
         }
         
         
@@ -266,7 +266,7 @@ NSString* const kDKManagerInformationSection_VMGM_VOBU_ADMAP  = @"vmgm_vobu_adma
              */
             
             /*  Retain the table  */
-            titleSetAttributeTable = [[data subdataWithRange:NSMakeRange(sizeof(vmg_vts_atrt_t), last_byte - sizeof(vmg_vts_atrt_t))] retain];
+            titleSetAttributeTable = [data retain];
         }
         
         
@@ -487,7 +487,7 @@ NSString* const kDKManagerInformationSection_VMGM_VOBU_ADMAP  = @"vmgm_vobu_adma
      */ 
     if (menuVideoAttributes) {
         NSError* menuVideoAttributesError = nil;
-        NSData* menuVideoAttributesData = [menuVideoAttributes saveAsData:&menuVideoAttributesError];
+        NSData* menuVideoAttributesData = [menuVideoAttributes saveAsData:errors ? &menuVideoAttributesError : NULL];
         if (errors && menuVideoAttributesError) {
             if (menuVideoAttributesError.code == kDKMultipleErrorsError) {
                 [errors addObjectsFromArray:[menuVideoAttributesError.userInfo objectForKey:NSDetailedErrorsKey]];
@@ -516,7 +516,7 @@ NSString* const kDKManagerInformationSection_VMGM_VOBU_ADMAP  = @"vmgm_vobu_adma
         OSWriteBigInt16(&vmgi_mat, offsetof(vmgi_mat_t, nr_of_vmgm_audio_streams), nr_of_vmgm_audio_streams);
         for (int i = 0; i < nr_of_vmgm_audio_streams; i++) {
             NSError* menuAudioAttributesError = nil;
-            NSData* menuAudioAttributesData = [[menuAudioAttributes objectAtIndex:i] saveAsData:&menuAudioAttributesError];
+            NSData* menuAudioAttributesData = [[menuAudioAttributes objectAtIndex:i] saveAsData:errors ? &menuAudioAttributesError : NULL];
             if (errors && menuAudioAttributesError) {
                 if (menuAudioAttributesError.code == kDKMultipleErrorsError) {
                     [errors addObjectsFromArray:[menuAudioAttributesError.userInfo objectForKey:NSDetailedErrorsKey]];
@@ -535,13 +535,13 @@ NSString* const kDKManagerInformationSection_VMGM_VOBU_ADMAP  = @"vmgm_vobu_adma
      */
     if (menuSubpictureAttributes) {
         OSWriteBigInt16(&vmgi_mat, offsetof(vmgi_mat_t, nr_of_vmgm_subp_streams), 1);
-        NSError* menuAudioAttributesError = nil;
-        NSData* menuSubpictureAttributesData = [menuSubpictureAttributes saveAsData:error];
-        if (errors && menuAudioAttributesError) {
-            if (menuAudioAttributesError.code == kDKMultipleErrorsError) {
-                [errors addObjectsFromArray:[menuAudioAttributesError.userInfo objectForKey:NSDetailedErrorsKey]];
+        NSError* menuSubpictureAttributesError = nil;
+        NSData* menuSubpictureAttributesData = [menuSubpictureAttributes saveAsData:errors ? &menuSubpictureAttributesError : NULL];
+        if (errors && menuSubpictureAttributesError) {
+            if (menuSubpictureAttributesError.code == kDKMultipleErrorsError) {
+                [errors addObjectsFromArray:[menuSubpictureAttributesError.userInfo objectForKey:NSDetailedErrorsKey]];
             } else {
-                [errors addObject:menuAudioAttributesError];
+                [errors addObject:menuSubpictureAttributesError];
             }
         }
         if (menuSubpictureAttributesData) {
@@ -554,7 +554,18 @@ NSString* const kDKManagerInformationSection_VMGM_VOBU_ADMAP  = @"vmgm_vobu_adma
      */
     OSWriteBigInt32(&vmgi_mat, offsetof(vmgi_mat_t, first_play_pgc), [data length]);
     if (firstPlayProgramChain) {
-        //  TODO: Encode and append first play program chain to data.
+        NSError* firstPlayProgramChainError = nil;
+        NSData* firstPlayProgramChainData = [firstPlayProgramChain saveAsData:errors ? &firstPlayProgramChainError : NULL];
+        if (errors && firstPlayProgramChainError) {
+            if (firstPlayProgramChainError.code == kDKMultipleErrorsError) {
+                [errors addObjectsFromArray:[firstPlayProgramChainError.userInfo objectForKey:NSDetailedErrorsKey]];
+            } else {
+                [errors addObject:firstPlayProgramChainError];
+            }
+        }
+        if (firstPlayProgramChainData) {
+            [data appendData:firstPlayProgramChainData];
+        }
     } else if (errors) {
         [errors addObject:DKErrorWithCode(kDKFirstPlayProgramChainError, nil)];
     }
@@ -564,7 +575,6 @@ NSString* const kDKManagerInformationSection_VMGM_VOBU_ADMAP  = @"vmgm_vobu_adma
         [data increaseLengthBy:amountToAlign];
     }
     NSAssert(([data length] & 0x07FF) == 0, @"Sections not sector-aligned?");
-    OSWriteBigInt32(&vmgi_mat, offsetof(vmgi_mat_t, vmgi_last_sector), ([data length] >> 1) - 1);
     
     
     /*  Determine the proper order, and then write out the various sections.
@@ -576,33 +586,50 @@ NSString* const kDKManagerInformationSection_VMGM_VOBU_ADMAP  = @"vmgm_vobu_adma
         }
     }
     for (NSString* section in sectionOrder) {
+        NSMutableData* sectionData = nil;
         NSAssert(([data length] & 0x07FF) == 0, @"Sections not sector-aligned?");
-        uint32_t offsetOfSection = [data length];
-        NSData* sectionData = nil;
         if ([section isEqualToString:kDKManagerInformationSection_TT_SRPT]) {
             if (![titleTrackSearchPointerTable count]) {
                 continue;
             }
             
-            //  TODO: Encode titleTrackSearchPointerTable
+            uint16_t nr_of_srpts = [titleTrackSearchPointerTable count];
+            uint32_t last_byte = sizeof(tt_srpt_t) + (nr_of_srpts * sizeof(title_info_t));
+            sectionData = [NSMutableData dataWithLength:last_byte];
+            uint8_t* base = [sectionData mutableBytes];
+            OSWriteBigInt16(base, offsetof(tt_srpt_t, nr_of_srpts), nr_of_srpts);
+            OSWriteBigInt32(base, offsetof(tt_srpt_t, last_byte), last_byte - 1);
             
-            OSWriteBigInt32(&vmgi_mat, offsetof(vmgi_mat_t, tt_srpt), offsetOfSection);
+            for (int i = 0, p = sizeof(tt_srpt_t); i < nr_of_srpts; i++, p += sizeof(title_info_t)) {
+                NSError* title_info_error = nil;
+                NSData* title_info_data = [[titleTrackSearchPointerTable objectAtIndex:i] saveAsData:errors ? &title_info_error : NULL];
+                if (errors && title_info_error) {
+                    if (title_info_error.code == kDKMultipleErrorsError) {
+                        [errors addObjectsFromArray:[title_info_error.userInfo objectForKey:NSDetailedErrorsKey]];
+                    } else {
+                        [errors addObject:title_info_error];
+                    }
+                }
+                if (title_info_data) {
+                    memcpy(base + p, [title_info_data bytes], sizeof(title_info_t));
+                }
+            }
+            
+            OSWriteBigInt32(&vmgi_mat, offsetof(vmgi_mat_t, tt_srpt), [data length] >> 11);
         } else if ([section isEqualToString:kDKManagerInformationSection_PTL_MAIT]) {
             if (![parentalManagementInformationTable length]) {
                 continue;
             }
             
-            // TODO:  Encode parentalManagementInformationTable
-            
-            OSWriteBigInt32(&vmgi_mat, offsetof(vmgi_mat_t, ptl_mait), offsetOfSection);
+            sectionData = parentalManagementInformationTable;
+            OSWriteBigInt32(&vmgi_mat, offsetof(vmgi_mat_t, ptl_mait), [data length] >> 11);
         } else if ([section isEqualToString:kDKManagerInformationSection_VMG_VTS_ATRT]) { 
             if (![titleSetAttributeTable length]) {
                 continue;
             }
             
-            // TODO:  Encode titleSetAttributeTable
-            
-            OSWriteBigInt32(&vmgi_mat, offsetof(vmgi_mat_t, vmg_vts_atrt), offsetOfSection);
+            sectionData = titleSetAttributeTable;
+            OSWriteBigInt32(&vmgi_mat, offsetof(vmgi_mat_t, vmg_vts_atrt), [data length] >> 11);
         } else if ([section isEqualToString:kDKManagerInformationSection_VMGM_PGCI_UT]) {
             if (![menuProgramChainInformationTablesByLanguage count]) {
                 continue;
@@ -610,49 +637,78 @@ NSString* const kDKManagerInformationSection_VMGM_VOBU_ADMAP  = @"vmgm_vobu_adma
             
             // TODO:  Encode menuProgramChainInformationTablesByLanguage
             
-            OSWriteBigInt32(&vmgi_mat, offsetof(vmgi_mat_t, vmgm_pgci_ut), offsetOfSection);
-        } else if (textData && [section isEqualToString:kDKManagerInformationSection_TXTDT_MGI]) {
+//            OSWriteBigInt32(&vmgi_mat, offsetof(vmgi_mat_t, vmgm_pgci_ut), [data length] >> 11);
+        } else if ([section isEqualToString:kDKManagerInformationSection_TXTDT_MGI]) {
             if (![textData length]) {
                 continue;
             }
             
-            // TODO:  Encode textData
-            
-            OSWriteBigInt32(&vmgi_mat, offsetof(vmgi_mat_t, txtdt_mgi), offsetOfSection);
-        } else if (cellAddressTable && [section isEqualToString:kDKManagerInformationSection_VMGM_C_ADT]) {
+            sectionData = textData;
+            OSWriteBigInt32(&vmgi_mat, offsetof(vmgi_mat_t, txtdt_mgi), [data length] >> 11);
+        } else if ([section isEqualToString:kDKManagerInformationSection_VMGM_C_ADT]) {
             if (![cellAddressTable count]) {
                 continue;
             }
+
+            uint16_t nr_of_c_adts = [cellAddressTable count];
+            uint32_t last_byte = sizeof(vmgm_c_adt_t) + (nr_of_c_adts * sizeof(cell_adr_t));
+            sectionData = [NSMutableData dataWithLength:last_byte];
+            uint8_t* base = [sectionData mutableBytes];
+            OSWriteBigInt16(base, offsetof(vmgm_c_adt_t, nr_of_c_adts), nr_of_c_adts);
+            OSWriteBigInt32(base, offsetof(vmgm_c_adt_t, last_byte), last_byte - 1);
             
-            // TODO:  Encode cellAddressTable
-            
-            OSWriteBigInt32(&vmgi_mat, offsetof(vmgi_mat_t, vmgm_c_adt), offsetOfSection);
-        } else if (menuVobuAddressMap && [section isEqualToString:kDKManagerInformationSection_VMGM_VOBU_ADMAP]) {
+            for (int i = 0, p = sizeof(vmgm_c_adt_t); i < nr_of_c_adts; i++, p += sizeof(cell_adr_t)) {
+                NSError* cell_adr_error = nil;
+                NSData* cell_adr_data = [[cellAddressTable objectAtIndex:i] saveAsData:errors ? &cell_adr_error : NULL];
+                if (errors && cell_adr_error) {
+                    if (cell_adr_error.code == kDKMultipleErrorsError) {
+                        [errors addObjectsFromArray:[cell_adr_error.userInfo objectForKey:NSDetailedErrorsKey]];
+                    } else {
+                        [errors addObject:cell_adr_error];
+                    }
+                }
+                if (cell_adr_data) {
+                    memcpy(base + p, [cell_adr_data bytes], sizeof(cell_adr_t));
+                }
+            }
+
+            OSWriteBigInt32(&vmgi_mat, offsetof(vmgi_mat_t, vmgm_c_adt), [data length] >> 11);
+        } else if ([section isEqualToString:kDKManagerInformationSection_VMGM_VOBU_ADMAP]) {
             if (![menuVobuAddressMap length]) {
                 continue;
             }
             
-            //  TODO: Encode menuVobuAddressMap
+            uint32_t last_byte = sizeof(uint32_t) + [menuVobuAddressMap length];
+            sectionData = [NSMutableData dataWithLength:last_byte];
+            uint8_t* base = [sectionData mutableBytes];
+            OSWriteBigInt32(base, 0, last_byte - 1);
             
-            OSWriteBigInt32(&vmgi_mat, offsetof(vmgi_mat_t, vmgm_vobu_admap), offsetOfSection);
+            memcpy(base + 4, [menuVobuAddressMap bytes], [menuVobuAddressMap length]);
+            
+            OSWriteBigInt32(&vmgi_mat, offsetof(vmgi_mat_t, vmgm_vobu_admap), [data length] >> 11);
         } else if (errors) {
+            NSLog(@"%@", section);
             [errors addObject:DKErrorWithCode(kDKSectionNameError, nil)];
         }
         
+        /*  If data was generated for the section, append it to the final 
+         *  output and then pad that with zeros to the next sector boundary.
+         */
         if (sectionData) {
             [data appendData:sectionData];
-        } else if (errors) {
-            [errors addObject:DKErrorWithCode(kDKSectionDataError, nil)];
-        }
-        
-        /*  Pad the data to align with the next sector.
-         */
-        uint32_t amountToAlign = 0x800 - ([data length] & 0x07FF);
-        if (amountToAlign != 0x800) {
-            [data increaseLengthBy:amountToAlign];
+            uint32_t amountToAlign = 0x800 - ([data length] & 0x07FF);
+            if (amountToAlign != 0x800) {
+                [data increaseLengthBy:amountToAlign];
+            }
         }
     }
+
     
+    NSAssert(([data length] & 0x07FF) == 0, @"Sections not sector-aligned?");
+    uint32_t vmgi_last_sector = [data length] >> 11;
+    OSWriteBigInt32(&vmgi_mat, offsetof(vmgi_mat_t, vmgi_last_sector), vmgi_last_sector - 1);
+    OSWriteBigInt32(&vmgi_mat, offsetof(vmgi_mat_t, vmg_last_sector), (vmgi_last_sector * 2) - 1);
+    OSWriteBigInt32(&vmgi_mat, offsetof(vmgi_mat_t, vmgm_vobs), (vmgi_last_sector * 2));
     memcpy([data mutableBytes], &vmgi_mat, sizeof(vmgi_mat_t));
     
     if (errors) {
