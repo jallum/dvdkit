@@ -48,10 +48,16 @@ NSString* const DVDCommandException = @"DVDCommand";
     return self;
 }
 
+- (void) dealloc
+{
+    [description release];
+    [super dealloc];
+}
+
 - (void) executeAgainstVirtualMachine:(DVDVirtualMachine*)virtualMachine
 {
 #ifdef DEBUG
-    NSLog(@"%@", self);
+//    NSLog(@"%@", self);
 #endif
     uint8_t type = [self bitsInRange:NSMakeRange(63, 3)];
     if (type > 6) {
@@ -422,21 +428,23 @@ static void appendMnemonic(DVDCommand* command, NSMutableString* string);
 
 - (NSString*) description
 {
-    NSMutableString* string = [NSMutableString string];
-    if (self->row >= 0) {
-        [string appendFormat:@"(%03d) ", row + 1];
-    } else {
-        [string appendString:@"      "];
+    if (!description) {
+        description = [[NSMutableString alloc] init];
+        if (self->row >= 0) {
+            [description appendFormat:@"(%03d) ", row + 1];
+        } else {
+            [description appendString:@"      "];
+        }
+        [description appendFormat:@"%016llx | ", bits];
+        int length = [description length];
+        @try {
+            appendMnemonic(self, description);
+        } @catch (id exception) {
+            [description deleteCharactersInRange:NSMakeRange(length, [description length] - length)];
+            [description appendString:@"<INVALID INSTRUCTION>"];
+        }
     }
-    [string appendFormat:@"%016llx | ", bits];
-    int length = [string length];
-    @try {
-        appendMnemonic(self, string);
-    } @catch (id exception) {
-        [string deleteCharactersInRange:NSMakeRange(length, [string length] - length)];
-        [string appendString:@"<INVALID INSTRUCTION>"];
-    }
-    return string;
+    return description;
 }
 
 @end

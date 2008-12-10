@@ -26,6 +26,7 @@
     uint64_t bits;
     uint64_t mask;
     int row;
+    NSMutableString* description;
 }
 
 + (id) commandWithData:(NSData*)data;
