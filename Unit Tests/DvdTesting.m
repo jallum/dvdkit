@@ -1,6 +1,5 @@
 #import "DvdTesting.h"
 #import <DVDKit/DVDKit.h>
-#import "DVDVirtualMachine.h"
 
 @implementation DvdTesting
 
@@ -9,35 +8,35 @@
     DVDCommand* command;
     
     //  0000000000000000 | Nop
-	command = [DVDCommand commandWithData:[NSData dataWithBytesNoCopy:"\x00\x00\x00\x00\x00\x00\x00\x00" length:8 freeWhenDone:NO]];
+	command = [DVDCommand commandWith64Bits:0x0000000000000000L];
     STAssertTrue([[command description] isEqualTo:@"      0000000000000000 | Nop"], @"Instruction not decoded properly.");
     
 	
 	
 		
 	// 0001000000000008 | Goto 8
-	command = [DVDCommand commandWithData:[NSData dataWithBytesNoCopy:"\x00\x01\x00\x00\x00\x00\x00\x08" length:8 freeWhenDone:NO]];
-	STAssertTrue([[command description] isEqualTo:@"      0001000000000008 | Goto 8"], @"Instruction not decoded properly.");
+	command = [DVDCommand commandWith64Bits:0x0001000000000008L];
+    STAssertTrue([[command description] isEqualTo:@"      0001000000000008 | Goto 8"], @"Instruction not decoded properly.");
 	
 	// 0001000000000009 | Goto 9
-	command = [DVDCommand commandWithData:[NSData dataWithBytesNoCopy:"\x00\x01\x00\x00\x00\x00\x00\x09" length:8 freeWhenDone:NO]];
+	command = [DVDCommand commandWith64Bits:0x0001000000000009L];
     STAssertTrue([[command description] isEqualTo:@"      0001000000000009 | Goto 9"], @"Instruction not decoded properly.");
 	
 	// 000100000000000a | Goto 10
-	command = [DVDCommand commandWithData:[NSData dataWithBytesNoCopy:"\x00\x01\x00\x00\x00\x00\x00\x0a" length:8 freeWhenDone:NO]];
+	command = [DVDCommand commandWith64Bits:0x000100000000000L];
     STAssertTrue([[command description] isEqualTo:@"      000100000000000a | Goto 10"], @"Instruction not decoded properly.");
 	
 	
     //  000100000000000a | Goto 10
-	command = [DVDCommand commandWithData:[NSData dataWithBytesNoCopy:"\x00\x01\x00\x00\x00\x00\x00\x0a" length:8 freeWhenDone:NO]];
+	command = [DVDCommand commandWith64Bits:0x000100000000000L];
     STAssertTrue([[command description] isEqualTo:@"      000100000000000a | Goto 10"], @"Instruction not decoded properly.");
 
     //  0002000000000000 | Break
-	command = [DVDCommand commandWithData:[NSData dataWithBytesNoCopy:"\x00\x02\x00\x00\x00\x00\x00\x00" length:8 freeWhenDone:NO]];
+	command = [DVDCommand commandWith64Bits:0x000200000000000L];
     STAssertTrue([[command description] isEqualTo:@"      0002000000000000 | Break"], @"Instruction not decoded properly.");
 
     //  0021000600020007 | if (g[6] == g[2]) Goto 7
-	command = [DVDCommand commandWithData:[NSData dataWithBytesNoCopy:"\x00\x21\x00\x06\x00\x02\x00\x07" length:8 freeWhenDone:NO]];
+	command = [DVDCommand commandWith64Bits:0x0021000600020007L];
     STAssertTrue([[command description] isEqualTo:@"      0021000600020007 | if (g[6] == g[2]) Goto 7"], @"Instruction not decoded properly.");    
     
     //  0041000200050006 | if (g[2] >= g[5]) Goto 6

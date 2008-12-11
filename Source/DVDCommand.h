@@ -29,9 +29,13 @@
     NSMutableString* description;
 }
 
++ (id) commandWith64Bits:(uint64_t)bits;
++ (id) commandWith64Bits:(uint64_t)bits row:(int)row;
+
 + (id) commandWithData:(NSData*)data;
 + (id) commandWithData:(NSData*)data row:(int)row;
 
+- (id) initWith64Bits:(uint64_t)bits row:(int)row;
 - (id) initWithData:(NSData*)data row:(int)row;
 
 - (void) executeAgainstVirtualMachine:(DVDVirtualMachine*)virtualMachine;
