@@ -23,16 +23,12 @@
     STAssertTrue([[command description] isEqualTo:@"      0001000000000009 | Goto 9"], @"Instruction not decoded properly.");
 	
 	// 000100000000000a | Goto 10
-	command = [DVDCommand commandWith64Bits:0x000100000000000L];
+	command = [DVDCommand commandWith64Bits:0x000100000000000aL];
     STAssertTrue([[command description] isEqualTo:@"      000100000000000a | Goto 10"], @"Instruction not decoded properly.");
 	
 	
-    //  000100000000000a | Goto 10
-	command = [DVDCommand commandWith64Bits:0x000100000000000L];
-    STAssertTrue([[command description] isEqualTo:@"      000100000000000a | Goto 10"], @"Instruction not decoded properly.");
-
     //  0002000000000000 | Break
-	command = [DVDCommand commandWith64Bits:0x000200000000000L];
+	command = [DVDCommand commandWith64Bits:0x0002000000000000L];
     STAssertTrue([[command description] isEqualTo:@"      0002000000000000 | Break"], @"Instruction not decoded properly.");
 
     //  0021000600020007 | if (g[6] == g[2]) Goto 7
@@ -133,6 +129,58 @@
 	
 	
 	
+}
+
+- (void) testExecutionOfSimpleInstructions
+{
+    /* We shouldn't be testing instructions that need *real* a datasource 
+     * in this pass, so we'll just pass in ourselves.
+     */
+    DVDVirtualMachine* vm = [[DVDVirtualMachine alloc] initWithDataSource:self];
+    for (int i = 0; i < 16; i++) {
+        STAssertTrue([vm generalPurposeRegister:i] == 0, @"This register has the wrong initial value.");
+    }
+    id initialState = [vm state];
+
+    //  0000000000000000 | Nop
+    [[DVDCommand commandWith64Bits:0x0000000000000000L] executeAgainstVirtualMachine:vm];
+    STAssertTrue([[vm state] isEqual:initialState], @"Nop should have no effect."); 
+
+
+    /*  Test basic arithmetic (Add / Subtract / Multiply / Divide)
+     */
+    
+    //  7100000000010000 | g[0] = 0x1
+    [[DVDCommand commandWith64Bits:0x7100000000010000L] executeAgainstVirtualMachine:vm];
+    STAssertTrue([vm generalPurposeRegister:0] == 1, @"7100000000010000 | g[0] = 0x1");
+
+    //  7100000100020000 | g[1] = 0x2
+    [[DVDCommand commandWith64Bits:0x7100000100020000L] executeAgainstVirtualMachine:vm];
+    STAssertTrue([vm generalPurposeRegister:1] == 2, @"7100000100020000 | g[1] = 0x2");
+
+    //  7300000100010000 | g[1] += 0x1
+    [[DVDCommand commandWith64Bits:0x7300000100010000L] executeAgainstVirtualMachine:vm];
+    STAssertTrue([vm generalPurposeRegister:1] == 3, @"7300000100010000 | g[1] += 0x1");
+
+    //  7400000100010000 | g[1] -= 0x1
+    [[DVDCommand commandWith64Bits:0x7100000100020000L] executeAgainstVirtualMachine:vm];
+    STAssertTrue([vm generalPurposeRegister:1] == 2, @"7400000100010000 | g[1] -= 0x1");
+
+    // TODO: Implement more instructions.
+
+
+    /*  Test basic bitwise arithmetic (Or / Xor / And / Not)
+     */
+
+    // TODO: Implement me.
+
+    
+    /*  Test for proper 16-bit register overflow/underflow.  (0xFFFF + 1, etc.)
+     */
+
+    // TODO: Implement me.
+    
+    
 }
 
 @end
