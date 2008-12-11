@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		3C2D89B40EEF393800EA04BF /* DVDVirtualMachine.m in Sources */ = {isa = PBXBuildFile; fileRef = F98A62590E8C700300071926 /* DVDVirtualMachine.m */; };
 		8DC2EF530486A6940098B216 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C1666FE841158C02AAC07 /* InfoPlist.strings */; };
 		8DC2EF570486A6940098B216 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7B1FEA5585E11CA2CBB /* Cocoa.framework */; };
 		F90871570EEEC35A003B7507 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = F90871560EEEC35A003B7507 /* main.m */; };
@@ -395,6 +396,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3C2D89B40EEF393800EA04BF /* DVDVirtualMachine.m in Sources */,
 				F9A9E8980EEC900A00D2F1AC /* DvdTesting.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
