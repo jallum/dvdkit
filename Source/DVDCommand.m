@@ -901,7 +901,7 @@ static void appendSystemSet(DVDCommand* command, NSMutableString* string)
                     appendSystemRegister(i, string);
                     [string appendFormat:@" = "];
                     appendRegOrData2(command, string, [command bitsInRange:NSMakeRange(60, 1)], 47 - (i*8) );
-                    [string appendFormat:@" "];
+//                    [string appendFormat:@" "];
                 }
             }
             break;
