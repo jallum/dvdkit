@@ -23,18 +23,18 @@
 
 NSString* const DVDTitleSetException = @"DVDTitleSet";
 
-@interface DKTitleSet (Private)
+@interface DKTitleSetInformation (Private)
 - (NSArray*) parsePGCITfromData:(NSData*)data offset:(uint32_t)_offset;
 @end
 
-@implementation DKTitleSet
+@implementation DKTitleSetInformation
 @synthesize index;
 @synthesize programChainInformationTable;
 @synthesize partOfTitleSearchTable;
 
-+ (id) titleSetWithData:(NSData*)data index:(uint16_t)index
++ (id) titleSetInformationWithData:(NSData*)data index:(uint16_t)index
 {
-    return [[[DKTitleSet alloc] initWithData:data index:index] autorelease];
+    return [[[DKTitleSetInformation alloc] initWithData:data index:index] autorelease];
 }
 
 - (id) initWithData:(NSData*)data index:(uint16_t)_index

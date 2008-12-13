@@ -142,10 +142,10 @@ enum {
     }
 }
 
-- (DKManagerInformation*) managerInformation
+- (DKMainMenuInformation*) mainMenuInformation
 {
     if (!managerInformation) {
-        managerInformation = [dataSource managerInformation];
+        managerInformation = [dataSource mainMenuInformation];
         if (!managerInformation) {
             [NSException raise:DVDVirtualMachineException format:@"Video manager information is required"];
         }
@@ -224,7 +224,7 @@ enum {
                 case FIRST_PLAY: {
                     domain = kDKDomainFirstPlay;
                     [programChain release];
-                    programChain = [[[self managerInformation] firstPlayProgramChain] retain];
+                    programChain = [[[self mainMenuInformation] firstPlayProgramChain] retain];
                     [titleSet release];
                     titleSet = nil;
                     state = PGC_START;
@@ -418,13 +418,13 @@ enum {
 - (void) executeJumpTT:(uint8_t)tt
 {
     [titleInformation release];
-    titleInformation = [[[[self managerInformation] titleTrackSearchPointerTable] objectAtIndex:(tt - 1)] retain];
+    titleInformation = [[[[self mainMenuInformation] titleTrackSearchPointerTable] objectAtIndex:(tt - 1)] retain];
     SPRM[4] = [titleInformation index];
     uint16_t vts = [titleInformation titleSetNumber];
     uint16_t ttn = [titleInformation trackNumber];
     if (!titleSet || [titleSet index] != vts) {
         [titleSet release];
-        titleSet = [[dataSource titleSetAtIndex:vts] retain];
+        titleSet = [[dataSource titleSetInformationAtIndex:vts] retain];
     }
     [self executeJumpVTS_TT:ttn];
 }
@@ -469,13 +469,13 @@ enum {
     if (vts) {
         if (!titleSet || [titleSet index] != vts) {
             [titleSet release];
-            titleSet = [[dataSource titleSetAtIndex:vts] retain];
+            titleSet = [[dataSource titleSetInformationAtIndex:vts] retain];
         }
     } else {
         vts = [titleSet index];
     }
     [titleInformation release];
-    titleInformation = [[[self managerInformation] titleTrackSearchPointerForTitleSet:vts track:ttn] retain];
+    titleInformation = [[[self mainMenuInformation] titleTrackSearchPointerForTitleSet:vts track:ttn] retain];
     resume.enabled &= (domain == kDKDomainVideoTitleSetMenu);
     domain = kDKDomainVideoTitleSetMenu;
     DKProgramChainSearchPointer* foundSearchPointer = nil;
@@ -692,7 +692,7 @@ enum {
         if (resume.vts != [titleSet index]) {
             [titleSet release];
             if (domain == kDKDomainVideoTitleSet) {
-                titleSet = [[dataSource titleSetAtIndex:resume.vts] retain];
+                titleSet = [[dataSource titleSetInformationAtIndex:resume.vts] retain];
             } else {
                 titleSet = nil;
             }
@@ -727,7 +727,7 @@ enum {
         }
         case kDKDomainVideoManagerMenu:
         case kDKDomainFirstPlay: {
-            return [[self managerInformation] menuProgramChainInformationTableForLanguageCode:SPRM[0]];
+            return [[self mainMenuInformation] menuProgramChainInformationTableForLanguageCode:SPRM[0]];
         }
     }
     [NSException raise:DVDVirtualMachineException format:@"%s (%d)", __FILE__, __LINE__];

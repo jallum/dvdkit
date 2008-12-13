@@ -20,21 +20,21 @@
  *
  */
 
-@interface DKTitleSet : NSObject {
+@interface DKTitleSetInformation : NSObject {
     NSInteger index;
     NSArray* programChainInformationTable;
     NSMutableDictionary* menuProgramChainInformationTablesByLanguage;
     NSMutableArray* partOfTitleSearchTable;
     NSMutableArray* menuCellAddressTable;
     NSMutableArray* cellAddressTable;
-    CFBitVectorRef* vtsmVobuAdMap_;
+    CFBitVectorRef vtsmVobuAdMap_;
     uint32_t vtsmVobuAdMap_nr;
     uint32_t* vtsmVobuAdMap;
     uint32_t vtsVobuAdMap_nr;
     uint32_t* vtsVobuAdMap;
 }
 
-+ (id) titleSetWithData:(NSData*)data index:(uint16_t)index;
++ (id) titleSetInformationWithData:(NSData*)data index:(uint16_t)index;
 
 - (id) initWithData:(NSData*)data index:(uint16_t)index;
 

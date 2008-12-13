@@ -25,7 +25,7 @@
 @class DKProgramChain;
 @class DKTitleTrackSearchPointer;
 
-@interface DKManagerInformation : NSObject {
+@interface DKMainMenuInformation : NSObject {
     uint16_t specificationVersion;
     uint32_t categoryAndMask;
     uint16_t numberOfVolumes;
@@ -51,11 +51,11 @@
     NSArray* preferredSectionOrder;
 }
 
-+ (id) managerInformationWithDataSource:(id<DKDataSource>)dataSource error:(NSError**)error;
++ (id) mainMenuInformationWithDataSource:(id<DKDataSource>)dataSource error:(NSError**)error;
 
 - (id) initWithDataSource:(id<DKDataSource>)dataSource error:(NSError**)error;
 
-@property (readonly) DKProgramChain* firstPlayProgramChain;
+@property (retain) DKProgramChain* firstPlayProgramChain;
 @property (readonly) NSArray* titleTrackSearchPointerTable;
 @property (readonly) NSMutableDictionary* menuProgramChainInformationTablesByLanguage;
 @property (readonly) uint16_t regionMask;

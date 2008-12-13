@@ -34,7 +34,7 @@ NSString* const kDKManagerInformationSection_VMGM_C_ADT       = @"vmgm_c_adt";
 NSString* const kDKManagerInformationSection_VMGM_VOBU_ADMAP  = @"vmgm_vobu_admap";
 
 
-@implementation DKManagerInformation
+@implementation DKMainMenuInformation
 @synthesize firstPlayProgramChain;
 @synthesize titleTrackSearchPointerTable;
 @synthesize menuProgramChainInformationTablesByLanguage;
@@ -57,9 +57,9 @@ NSString* const kDKManagerInformationSection_VMGM_VOBU_ADMAP  = @"vmgm_vobu_adma
     return array;
 }
 
-+ (id) managerInformationWithDataSource:(id<DKDataSource>)dataSource error:(NSError**)error
++ (id) mainMenuInformationWithDataSource:(id<DKDataSource>)dataSource error:(NSError**)error
 {
-    return [[[DKManagerInformation alloc] initWithDataSource:dataSource error:error] autorelease];
+    return [[[DKMainMenuInformation alloc] initWithDataSource:dataSource error:error] autorelease];
 }
 
 - (id) initWithDataSource:(id<DKDataSource>)dataSource error:(NSError**)error
@@ -82,17 +82,17 @@ NSString* const kDKManagerInformationSection_VMGM_VOBU_ADMAP  = @"vmgm_vobu_adma
         specificationVersion = OSReadBigInt8(&vmgi_mat->specification_version, 0);
         categoryAndMask = OSReadBigInt32(&vmgi_mat->vmg_category, 0);
         numberOfVolumes = OSReadBigInt16(&vmgi_mat->vmg_nr_of_volumes, 0);
-        volumeNumber = OSReadBigInt16(vmgi_mat, offsetof(vmgi_mat_t, vmg_this_volume_nr));
-        side = OSReadBigInt8(vmgi_mat, offsetof(vmgi_mat_t, disc_side));
-        numberOfTitleSets = OSReadBigInt16(vmgi_mat, offsetof(vmgi_mat_t, vmg_nr_of_title_sets));
-        pointOfSaleCode = OSReadBigInt64(vmgi_mat, offsetof(vmgi_mat_t, vmg_pos_code));
-        vmgm_vobs = OSReadBigInt32(vmgi_mat, offsetof(vmgi_mat_t, vmgm_vobs));
+        volumeNumber = OSReadBigInt16(&vmgi_mat->vmg_this_volume_nr, 0);
+        side = OSReadBigInt8(&vmgi_mat->disc_side, 0);
+        numberOfTitleSets = OSReadBigInt16(&vmgi_mat->vmg_nr_of_title_sets, 0);
+        pointOfSaleCode = OSReadBigInt64(&vmgi_mat->vmg_pos_code, 0);
+        vmgm_vobs = OSReadBigInt32(&vmgi_mat->vmgm_vobs, 0);
         
         
         /*
          */
-        uint32_t vmgi_last_byte = 1 + OSReadBigInt32(vmgi_mat, offsetof(vmgi_mat_t, vmgi_last_byte));
-        uint32_t vmgi_last_sector = 1 + OSReadBigInt32(vmgi_mat, offsetof(vmgi_mat_t, vmgi_last_sector));
+        uint32_t vmgi_last_byte = 1 + OSReadBigInt32(&vmgi_mat->vmgi_last_byte, 0);
+        uint32_t vmgi_last_sector = 1 + OSReadBigInt32(&vmgi_mat->vmgi_last_sector, 0);
         
         
         /*  Sanity checks / Data Repair
@@ -131,8 +131,8 @@ NSString* const kDKManagerInformationSection_VMGM_VOBU_ADMAP  = @"vmgm_vobu_adma
         
         /*  Video/Audio/Subpicture Attributes
          */
-        menuVideoAttributes = [DKVideoAttributes videoAttributesWithData:[NSData dataWithBytesNoCopy:(void*)&vmgi_mat->vmgm_video_attr length:sizeof(vmgm_video_attr_t) freeWhenDone:NO]];
-        uint8_t nr_of_vmgm_audio_streams = vmgi_mat->nr_of_vmgm_audio_streams;
+        menuVideoAttributes = [DKVideoAttributes videoAttributesWithData:[header subdataWithRange:NSMakeRange(offsetof(vmgi_mat_t, vmgm_video_attr), sizeof(vmgm_video_attr_t))]];
+        uint8_t nr_of_vmgm_audio_streams = OSReadBigInt8(&vmgi_mat->nr_of_vmgm_audio_streams, 0);
         if (nr_of_vmgm_audio_streams) {
             if (nr_of_vmgm_audio_streams > 8) {
                 if (errors) {
@@ -142,11 +142,11 @@ NSString* const kDKManagerInformationSection_VMGM_VOBU_ADMAP  = @"vmgm_vobu_adma
             }
             NSMutableArray* table = [NSMutableArray array];
             for (int i = 0; i < nr_of_vmgm_audio_streams; i++) {
-                [table addObject:[DKAudioAttributes audioAttributesWithData:[NSData dataWithBytesNoCopy:(void*)&vmgi_mat->vmgm_audio_attr[i] length:sizeof(vmgm_audio_attr_t) freeWhenDone:NO]]];
+                [table addObject:[DKAudioAttributes audioAttributesWithData:[header subdataWithRange:NSMakeRange(offsetof(vmgi_mat_t, vmgm_audio_attr[i]), sizeof(vmgm_audio_attr_t))]]];
             }
             menuAudioAttributes = [table retain];
         }
-        uint16_t nr_of_vmgm_subp_streams = OSReadBigInt16(vmgi_mat, offsetof(vmgi_mat_t, nr_of_vmgm_subp_streams));
+        uint16_t nr_of_vmgm_subp_streams = OSReadBigInt16(&vmgi_mat->nr_of_vmgm_subp_streams, 0);
         if (nr_of_vmgm_subp_streams > 1) {
             if (errors) {
                 [errors addObject:DKErrorWithCode(kDKNumberOfSubpictureAttributesError, DKLocalizedString(@"The number of subpicture streams cannot be greater than one.", nil), NSLocalizedDescriptionKey, nil)];                    
@@ -154,13 +154,13 @@ NSString* const kDKManagerInformationSection_VMGM_VOBU_ADMAP  = @"vmgm_vobu_adma
             nr_of_vmgm_subp_streams = 1;
         }
         if (nr_of_vmgm_subp_streams) {
-            menuSubpictureAttributes = [DKSubpictureAttributes subpictureAttributesWithData:[NSData dataWithBytesNoCopy:(void*)&vmgi_mat->vmgm_subp_attr length:sizeof(vmgm_subp_attr_t) freeWhenDone:NO]];
+            menuSubpictureAttributes = [DKSubpictureAttributes subpictureAttributesWithData:[header subdataWithRange:NSMakeRange(offsetof(vmgi_mat_t, vmgm_subp_attr), sizeof(vmgm_subp_attr_t))]];
         }
         
         
         /*  First Play Program Chain.
          */
-        uint32_t first_play_pgc = OSReadBigInt32(vmgi_mat, offsetof(vmgi_mat_t, first_play_pgc));
+        uint32_t first_play_pgc = OSReadBigInt32(&vmgi_mat->first_play_pgc, 0);
         if (errors) {
             if (first_play_pgc < sizeof(vmgi_mat)) {
                 [errors addObject:DKErrorWithCode(kDKFirstPlayProgramChainError, DKLocalizedString(@"The offset of the first-play program chain must be greater than or equal to 512.", nil), NSLocalizedDescriptionKey, nil)];
@@ -181,14 +181,14 @@ NSString* const kDKManagerInformationSection_VMGM_VOBU_ADMAP  = @"vmgm_vobu_adma
         
         /*  Title/Track Search Pointer Table.
          */
-        uint32_t offset_of_tt_srpt = OSReadBigInt32(vmgi_mat, offsetof(vmgi_mat_t, tt_srpt));
+        uint32_t offset_of_tt_srpt = OSReadBigInt32(&vmgi_mat->tt_srpt, 0);
         if (offset_of_tt_srpt && (offset_of_tt_srpt <= vmgi_last_sector)) {
             [sectionOrdering setObject:kDKManagerInformationSection_TT_SRPT forKey:[NSNumber numberWithUnsignedInt:offset_of_tt_srpt]];
             NSData* data = [dataSource requestDataOfLength:1 << 11 fromOffset:offset_of_tt_srpt << 11];
             NSAssert(data && ([data length] == 1 << 11), @"wtf?"); 
-            const void* tt_srpt = [data bytes];
-            uint16_t nr_of_srpts = OSReadBigInt16(tt_srpt, offsetof(tt_srpt_t, nr_of_srpts));
-            uint32_t last_byte = 1 + OSReadBigInt32(tt_srpt, offsetof(tt_srpt_t, last_byte));
+            const tt_srpt_t* tt_srpt = [data bytes];
+            uint16_t nr_of_srpts = OSReadBigInt16(&tt_srpt->nr_of_srpts, 0);
+            uint32_t last_byte = 1 + OSReadBigInt32(&tt_srpt->last_byte, 0);
             
             /*  Sanity Checking / Data Repair  */
             uint32_t calculated_last_byte = sizeof(tt_srpt_t) + (nr_of_srpts * sizeof(title_info_t));
@@ -220,13 +220,13 @@ NSString* const kDKManagerInformationSection_VMGM_VOBU_ADMAP  = @"vmgm_vobu_adma
         
         /*  Parental Management Information Table
          */
-        uint32_t offset_of_ptl_mait = OSReadBigInt32(vmgi_mat, offsetof(vmgi_mat_t, ptl_mait));
+        uint32_t offset_of_ptl_mait = OSReadBigInt32(&vmgi_mat->ptl_mait, 0);
         if (offset_of_ptl_mait && (offset_of_ptl_mait <= vmgi_last_sector)) {
             [sectionOrdering setObject:kDKManagerInformationSection_PTL_MAIT forKey:[NSNumber numberWithUnsignedInt:offset_of_ptl_mait]];
             NSData* data = [dataSource requestDataOfLength:1 << 11 fromOffset:offset_of_ptl_mait << 11];
             NSAssert(data && ([data length] == 1 << 11), @"wtf?"); 
-            const void* ptl_mait = [data bytes];
-            uint32_t last_byte = 1 + OSReadBigInt32(ptl_mait, offsetof(ptl_mait_t, last_byte));
+            const ptl_mait_t* ptl_mait = [data bytes];
+            uint32_t last_byte = 1 + OSReadBigInt32(&ptl_mait->last_byte, 0);
             
             /*  Have we already read all that we need?  */
             if (last_byte > [data length]) {
@@ -246,13 +246,13 @@ NSString* const kDKManagerInformationSection_VMGM_VOBU_ADMAP  = @"vmgm_vobu_adma
         
         /*  Video Title Set Attribute Table
          */
-        uint32_t offset_of_vmg_vts_atrt = OSReadBigInt32(vmgi_mat, offsetof(vmgi_mat_t, vmg_vts_atrt));
+        uint32_t offset_of_vmg_vts_atrt = OSReadBigInt32(&vmgi_mat->vmg_vts_atrt, 0);
         if (offset_of_vmg_vts_atrt && (offset_of_vmg_vts_atrt <= vmgi_last_sector)) {
             [sectionOrdering setObject:kDKManagerInformationSection_VMG_VTS_ATRT forKey:[NSNumber numberWithUnsignedInt:offset_of_vmg_vts_atrt]];
             NSData* data = [dataSource requestDataOfLength:1 << 11 fromOffset:offset_of_vmg_vts_atrt << 11];
-            NSAssert(data && ([data length] == 1 << 11), @"wtf?"); 
-            const void* vmg_vts_atrt = [data bytes];
-            uint32_t last_byte = 1 + OSReadBigInt32(vmg_vts_atrt, offsetof(vmg_vts_atrt_t, last_byte));
+            NSAssert(data && ([data length] == 1 << 11), @"wtf?");
+            const vmg_vts_atrt_t* vmg_vts_atrt = [data bytes];
+            uint32_t last_byte = 1 + OSReadBigInt32(&vmg_vts_atrt->last_byte, 0);
             
             /*  Have we already read all that we need?  */
             if (last_byte > [data length]) {
@@ -272,14 +272,14 @@ NSString* const kDKManagerInformationSection_VMGM_VOBU_ADMAP  = @"vmgm_vobu_adma
         
         /*  Menu Program Chain Information Map (by language)
          */
-        uint32_t offset_of_vmgm_pgci_ut = OSReadBigInt32(vmgi_mat, offsetof(vmgi_mat_t, vmgm_pgci_ut));
+        uint32_t offset_of_vmgm_pgci_ut = OSReadBigInt32(&vmgi_mat->vmgm_pgci_ut, 0);
         if (offset_of_vmgm_pgci_ut && (offset_of_vmgm_pgci_ut <= vmgi_last_sector)) {
             [sectionOrdering setObject:kDKManagerInformationSection_VMGM_PGCI_UT forKey:[NSNumber numberWithUnsignedInt:offset_of_vmgm_pgci_ut]];
             NSData* data = [dataSource requestDataOfLength:1 << 11 fromOffset:offset_of_vmgm_pgci_ut << 11];
             NSAssert(data && ([data length] == 1 << 11), @"wtf?"); 
-            const void* vmgm_pgci_ut = [data bytes];
-            uint16_t nr_of_lus = OSReadBigInt16(vmgm_pgci_ut, offsetof(vmgm_pgci_ut_t, nr_of_lus));
-            uint32_t last_byte = 1 + OSReadBigInt32(vmgm_pgci_ut, offsetof(vmgm_pgci_ut_t, last_byte));
+            const vmgm_pgci_ut_t* vmgm_pgci_ut = [data bytes];
+            uint16_t nr_of_lus = OSReadBigInt16(&vmgm_pgci_ut->nr_of_lus, 0);
+            uint32_t last_byte = 1 + OSReadBigInt32(&vmgm_pgci_ut->last_byte, 0);
             
             /*  Sanity Checking  */
             if (error && (!nr_of_lus || nr_of_lus > 99)) {
@@ -296,13 +296,13 @@ NSString* const kDKManagerInformationSection_VMGM_VOBU_ADMAP  = @"vmgm_vobu_adma
             /*  Parse the tables  */
             NSMutableDictionary* tablesByLanguage = [NSMutableDictionary dictionaryWithCapacity:nr_of_lus];
             for (int i = 0, p = sizeof(vmgm_pgci_ut_t); i < nr_of_lus; i++, p += 8) {
-                const void* vmgm_lu = [[data subdataWithRange:NSMakeRange(p, sizeof(vmgm_lu_t))] bytes];
-                uint16_t lang_code = OSReadBigInt16(vmgm_lu, offsetof(vmgm_lu_t, lang_code));
-                uint32_t vmgm_pgc_start_byte = OSReadBigInt32(vmgm_lu, offsetof(vmgm_lu_t, pgcit_start_byte));
+                const vmgm_lu_t* vmgm_lu = [[data subdataWithRange:NSMakeRange(p, sizeof(vmgm_lu_t))] bytes];
+                uint16_t lang_code = OSReadBigInt16(&vmgm_lu->lang_code, 0);
+                uint32_t vmgm_pgc_start_byte = OSReadBigInt32(&vmgm_lu->pgcit_start_byte, 0);
                 
-                const void* vmgm_pgc = [[data subdataWithRange:NSMakeRange(vmgm_pgc_start_byte, sizeof(vmgm_pgc_t))] bytes];
-                uint16_t nr_of_pgci_srp = OSReadBigInt16(vmgm_pgc, offsetof(vmgm_pgc_t, nr_of_pgci_srp));
-                uint32_t vmgm_pgc_last_byte = 1 + OSReadBigInt32(vmgm_pgc, offsetof(vmgm_pgc_t, last_byte));
+                const vmgm_pgc_t* vmgm_pgc = [[data subdataWithRange:NSMakeRange(vmgm_pgc_start_byte, sizeof(vmgm_pgc_t))] bytes];
+                uint16_t nr_of_pgci_srp = OSReadBigInt16(&vmgm_pgc->nr_of_pgci_srp, 0);
+                uint32_t vmgm_pgc_last_byte = 1 + OSReadBigInt32(&vmgm_pgc->last_byte, 0);
                 
                 if (error && ((vmgm_pgc_start_byte + vmgm_pgc_last_byte) > last_byte)) {
                     // TODO: Correct last_byte?
@@ -311,10 +311,10 @@ NSString* const kDKManagerInformationSection_VMGM_VOBU_ADMAP  = @"vmgm_vobu_adma
                 
                 NSMutableArray* table = [NSMutableArray array];
                 for (int i = 0, p = vmgm_pgc_start_byte + sizeof(vmgm_pgc_t); i < nr_of_pgci_srp; i++, p += sizeof(pgci_srp_t)) {
-                    const void* pgci_srp = [[data subdataWithRange:NSMakeRange(p, sizeof(pgci_srp_t))] bytes];
-                    uint8_t entry_id = OSReadBigInt8(pgci_srp, offsetof(pgci_srp_t, entry_id));
-                    uint16_t ptl_id_mask = OSReadBigInt16(pgci_srp, offsetof(pgci_srp_t, ptl_id_mask));
-                    uint32_t pgc_start_byte = OSReadBigInt32(pgci_srp, offsetof(pgci_srp_t, pgc_start_byte));
+                    const pgci_srp_t* pgci_srp = [[data subdataWithRange:NSMakeRange(p, sizeof(pgci_srp_t))] bytes];
+                    uint8_t entry_id = OSReadBigInt8(&pgci_srp->entry_id, 0);
+                    uint16_t ptl_id_mask = OSReadBigInt16(&pgci_srp->ptl_id_mask, 0);
+                    uint32_t pgc_start_byte = OSReadBigInt32(&pgci_srp->pgc_start_byte, 0);
                     [table addObject:[DKProgramChainSearchPointer programChainSearchPointerWithEntryId:entry_id parentalMask:ptl_id_mask programChain:[DKProgramChain programChainWithData:[data subdataWithRange:NSMakeRange(vmgm_pgc_start_byte + pgc_start_byte, vmgm_pgc_last_byte - pgc_start_byte)]]]];
                 }
                 [tablesByLanguage setObject:table forKey:[NSNumber numberWithShort:lang_code]];
@@ -325,7 +325,7 @@ NSString* const kDKManagerInformationSection_VMGM_VOBU_ADMAP  = @"vmgm_vobu_adma
         
         /*  Text Data
          */
-        uint32_t offset_of_txtdt_mgi = OSReadBigInt32(vmgi_mat, offsetof(vmgi_mat_t, txtdt_mgi));
+        uint32_t offset_of_txtdt_mgi = OSReadBigInt32(&vmgi_mat->txtdt_mgi, 0);
         if (offset_of_txtdt_mgi && (offset_of_txtdt_mgi <= vmgi_last_sector)) {
             [sectionOrdering setObject:kDKManagerInformationSection_TXTDT_MGI forKey:[NSNumber numberWithUnsignedInt:offset_of_txtdt_mgi]];
             NSData* data = [dataSource requestDataOfLength:1 << 11 fromOffset:offset_of_txtdt_mgi << 11];
@@ -341,13 +341,13 @@ NSString* const kDKManagerInformationSection_VMGM_VOBU_ADMAP  = @"vmgm_vobu_adma
         
         /*  Cell Address Table
          */
-        uint32_t offset_of_vmgm_c_adt = OSReadBigInt32(vmgi_mat, offsetof(vmgi_mat_t, vmgm_c_adt));
+        uint32_t offset_of_vmgm_c_adt = OSReadBigInt32(&vmgi_mat->vmgm_c_adt, 0);
         if (offset_of_vmgm_c_adt && (offset_of_vmgm_c_adt <= vmgi_last_sector)) {
             [sectionOrdering setObject:kDKManagerInformationSection_VMGM_C_ADT forKey:[NSNumber numberWithUnsignedInt:offset_of_vmgm_c_adt]];
             NSData* data = [dataSource requestDataOfLength:1 << 11 fromOffset:offset_of_vmgm_c_adt << 11];
-            const void* vmgm_c_adt = [data bytes];
-            uint16_t nr_of_c_adts = OSReadBigInt16(vmgm_c_adt, offsetof(vmgm_c_adt_t, nr_of_c_adts));
-            uint32_t last_byte = 1 + OSReadBigInt32(vmgm_c_adt, offsetof(vmgm_c_adt_t, last_byte));
+            const vmgm_c_adt_t* vmgm_c_adt = [data bytes];
+            uint16_t nr_of_c_adts = OSReadBigInt16(&vmgm_c_adt->nr_of_c_adts, 0);
+            uint32_t last_byte = 1 + OSReadBigInt32(&vmgm_c_adt->last_byte, 0);
             
             /*  Sanity Checking / Data Repair  */
             uint32_t calculated_last_byte = sizeof(vmgm_c_adt_t) + (nr_of_c_adts * sizeof(cell_adr_t));
@@ -376,7 +376,7 @@ NSString* const kDKManagerInformationSection_VMGM_VOBU_ADMAP  = @"vmgm_vobu_adma
         
         /*  Menu VOBU Address Map
          */
-        uint32_t offset_of_vmgm_vobu_admap = OSReadBigInt32(vmgi_mat, offsetof(vmgi_mat_t, vmgm_vobu_admap));
+        uint32_t offset_of_vmgm_vobu_admap = OSReadBigInt32(&vmgi_mat->vmgm_vobu_admap, 0);
         if (offset_of_vmgm_vobu_admap && (offset_of_vmgm_vobu_admap <= vmgi_last_sector)) {
             [sectionOrdering setObject:kDKManagerInformationSection_VMGM_VOBU_ADMAP forKey:[NSNumber numberWithUnsignedInt:offset_of_vmgm_vobu_admap]];
             NSData* data = [dataSource requestDataOfLength:1 << 11 fromOffset:offset_of_vmgm_vobu_admap << 11];
@@ -580,7 +580,7 @@ NSString* const kDKManagerInformationSection_VMGM_VOBU_ADMAP  = @"vmgm_vobu_adma
     /*  Determine the proper order, and then write out the various sections.
      */
     NSMutableArray* sectionOrder = [[preferredSectionOrder mutableCopy] autorelease];
-    for (NSString* section in [DKManagerInformation availableSections]) {
+    for (NSString* section in [DKMainMenuInformation availableSections]) {
         if (![sectionOrder containsObject:section]) {
             [sectionOrder addObject:section];
         }
@@ -720,7 +720,7 @@ NSString* const kDKManagerInformationSection_VMGM_VOBU_ADMAP  = @"vmgm_vobu_adma
             for (int i = 0, p = sizeof(vmgm_c_adt_t); i < nr_of_c_adts; i++, p += sizeof(cell_adr_t)) {
                 NSError* cell_adr_error = nil;
                 NSData* cell_adr_data = [[cellAddressTable objectAtIndex:i] saveAsData:errors ? &cell_adr_error : NULL];
-                if (errors && cell_adr_error) {
+                if (cell_adr_error) {
                     if (cell_adr_error.code == kDKMultipleErrorsError) {
                         [errors addObjectsFromArray:[cell_adr_error.userInfo objectForKey:NSDetailedErrorsKey]];
                     } else {

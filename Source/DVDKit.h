@@ -206,8 +206,8 @@ typedef enum {
 
 
 #import "DKVirtualMachine.h"
-#import "DKManagerInformation.h"
-#import "DKTitleSet.h"
+#import "DKMainMenuInformation.h"
+#import "DKTitleSetInformation.h"
 #import "DKProgramChain.h"
 #import "DKProgramChainSearchPointer.h"
 #import "DKCellAddress.h"

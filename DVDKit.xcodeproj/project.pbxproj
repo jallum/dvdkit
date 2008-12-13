@@ -19,16 +19,16 @@
 		F98A62610E8C700300071926 /* DKCommand.h in Headers */ = {isa = PBXBuildFile; fileRef = F98A62490E8C700300071926 /* DKCommand.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F98A62620E8C700300071926 /* DKCommand.m in Sources */ = {isa = PBXBuildFile; fileRef = F98A624A0E8C700300071926 /* DKCommand.m */; };
 		F98A62630E8C700300071926 /* DVDKit.h in Headers */ = {isa = PBXBuildFile; fileRef = F98A624B0E8C700300071926 /* DVDKit.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		F98A62640E8C700300071926 /* DKManagerInformation.h in Headers */ = {isa = PBXBuildFile; fileRef = F98A624C0E8C700300071926 /* DKManagerInformation.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		F98A62650E8C700300071926 /* DKManagerInformation.m in Sources */ = {isa = PBXBuildFile; fileRef = F98A624D0E8C700300071926 /* DKManagerInformation.m */; };
+		F98A62640E8C700300071926 /* DKMainMenuInformation.h in Headers */ = {isa = PBXBuildFile; fileRef = F98A624C0E8C700300071926 /* DKMainMenuInformation.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		F98A62650E8C700300071926 /* DKMainMenuInformation.m in Sources */ = {isa = PBXBuildFile; fileRef = F98A624D0E8C700300071926 /* DKMainMenuInformation.m */; };
 		F98A62660E8C700300071926 /* DKPartOfTitle.h in Headers */ = {isa = PBXBuildFile; fileRef = F98A624E0E8C700300071926 /* DKPartOfTitle.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F98A62670E8C700300071926 /* DKPartOfTitle.m in Sources */ = {isa = PBXBuildFile; fileRef = F98A624F0E8C700300071926 /* DKPartOfTitle.m */; };
 		F98A62680E8C700300071926 /* DKProgramChain.h in Headers */ = {isa = PBXBuildFile; fileRef = F98A62500E8C700300071926 /* DKProgramChain.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F98A62690E8C700300071926 /* DKProgramChain.m in Sources */ = {isa = PBXBuildFile; fileRef = F98A62510E8C700300071926 /* DKProgramChain.m */; };
 		F98A626A0E8C700300071926 /* DKProgramChainSearchPointer.h in Headers */ = {isa = PBXBuildFile; fileRef = F98A62520E8C700300071926 /* DKProgramChainSearchPointer.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F98A626B0E8C700300071926 /* DKProgramChainSearchPointer.m in Sources */ = {isa = PBXBuildFile; fileRef = F98A62530E8C700300071926 /* DKProgramChainSearchPointer.m */; };
-		F98A626C0E8C700300071926 /* DKTitleSet.h in Headers */ = {isa = PBXBuildFile; fileRef = F98A62540E8C700300071926 /* DKTitleSet.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		F98A626D0E8C700300071926 /* DKTitleSet.m in Sources */ = {isa = PBXBuildFile; fileRef = F98A62550E8C700300071926 /* DKTitleSet.m */; };
+		F98A626C0E8C700300071926 /* DKTitleSetInformation.h in Headers */ = {isa = PBXBuildFile; fileRef = F98A62540E8C700300071926 /* DKTitleSetInformation.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		F98A626D0E8C700300071926 /* DKTitleSetInformation.m in Sources */ = {isa = PBXBuildFile; fileRef = F98A62550E8C700300071926 /* DKTitleSetInformation.m */; };
 		F98A626E0E8C700300071926 /* DKTitleTrackSearchPointer.h in Headers */ = {isa = PBXBuildFile; fileRef = F98A62560E8C700300071926 /* DKTitleTrackSearchPointer.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F98A626F0E8C700300071926 /* DKTitleTrackSearchPointer.m in Sources */ = {isa = PBXBuildFile; fileRef = F98A62570E8C700300071926 /* DKTitleTrackSearchPointer.m */; };
 		F98A62700E8C700300071926 /* DKVirtualMachine.h in Headers */ = {isa = PBXBuildFile; fileRef = F98A62580E8C700300071926 /* DKVirtualMachine.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -62,16 +62,16 @@
 		F98A62490E8C700300071926 /* DKCommand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DKCommand.h; sourceTree = "<group>"; };
 		F98A624A0E8C700300071926 /* DKCommand.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DKCommand.m; sourceTree = "<group>"; };
 		F98A624B0E8C700300071926 /* DVDKit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DVDKit.h; sourceTree = "<group>"; };
-		F98A624C0E8C700300071926 /* DKManagerInformation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DKManagerInformation.h; sourceTree = "<group>"; };
-		F98A624D0E8C700300071926 /* DKManagerInformation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DKManagerInformation.m; sourceTree = "<group>"; };
+		F98A624C0E8C700300071926 /* DKMainMenuInformation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DKMainMenuInformation.h; sourceTree = "<group>"; };
+		F98A624D0E8C700300071926 /* DKMainMenuInformation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DKMainMenuInformation.m; sourceTree = "<group>"; };
 		F98A624E0E8C700300071926 /* DKPartOfTitle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DKPartOfTitle.h; sourceTree = "<group>"; };
 		F98A624F0E8C700300071926 /* DKPartOfTitle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DKPartOfTitle.m; sourceTree = "<group>"; };
 		F98A62500E8C700300071926 /* DKProgramChain.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DKProgramChain.h; sourceTree = "<group>"; };
 		F98A62510E8C700300071926 /* DKProgramChain.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DKProgramChain.m; sourceTree = "<group>"; };
 		F98A62520E8C700300071926 /* DKProgramChainSearchPointer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DKProgramChainSearchPointer.h; sourceTree = "<group>"; };
 		F98A62530E8C700300071926 /* DKProgramChainSearchPointer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DKProgramChainSearchPointer.m; sourceTree = "<group>"; };
-		F98A62540E8C700300071926 /* DKTitleSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DKTitleSet.h; sourceTree = "<group>"; };
-		F98A62550E8C700300071926 /* DKTitleSet.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DKTitleSet.m; sourceTree = "<group>"; };
+		F98A62540E8C700300071926 /* DKTitleSetInformation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DKTitleSetInformation.h; sourceTree = "<group>"; };
+		F98A62550E8C700300071926 /* DKTitleSetInformation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DKTitleSetInformation.m; sourceTree = "<group>"; };
 		F98A62560E8C700300071926 /* DKTitleTrackSearchPointer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DKTitleTrackSearchPointer.h; sourceTree = "<group>"; };
 		F98A62570E8C700300071926 /* DKTitleTrackSearchPointer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DKTitleTrackSearchPointer.m; sourceTree = "<group>"; };
 		F98A62580E8C700300071926 /* DKVirtualMachine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DKVirtualMachine.h; sourceTree = "<group>"; };
@@ -152,16 +152,16 @@
 				F98A62470E8C700300071926 /* DKCellPosition.m */,
 				F98A62490E8C700300071926 /* DKCommand.h */,
 				F98A624A0E8C700300071926 /* DKCommand.m */,
-				F98A624C0E8C700300071926 /* DKManagerInformation.h */,
-				F98A624D0E8C700300071926 /* DKManagerInformation.m */,
+				F98A624C0E8C700300071926 /* DKMainMenuInformation.h */,
+				F98A624D0E8C700300071926 /* DKMainMenuInformation.m */,
 				F98A624E0E8C700300071926 /* DKPartOfTitle.h */,
 				F98A624F0E8C700300071926 /* DKPartOfTitle.m */,
 				F98A62500E8C700300071926 /* DKProgramChain.h */,
 				F98A62510E8C700300071926 /* DKProgramChain.m */,
 				F98A62520E8C700300071926 /* DKProgramChainSearchPointer.h */,
 				F98A62530E8C700300071926 /* DKProgramChainSearchPointer.m */,
-				F98A62540E8C700300071926 /* DKTitleSet.h */,
-				F98A62550E8C700300071926 /* DKTitleSet.m */,
+				F98A62540E8C700300071926 /* DKTitleSetInformation.h */,
+				F98A62550E8C700300071926 /* DKTitleSetInformation.m */,
 				F98A62560E8C700300071926 /* DKTitleTrackSearchPointer.h */,
 				F98A62570E8C700300071926 /* DKTitleTrackSearchPointer.m */,
 				F98A62580E8C700300071926 /* DKVirtualMachine.h */,
@@ -206,11 +206,11 @@
 				F98A625E0E8C700300071926 /* DKCellPosition.h in Headers */,
 				F98A62610E8C700300071926 /* DKCommand.h in Headers */,
 				F98A62630E8C700300071926 /* DVDKit.h in Headers */,
-				F98A62640E8C700300071926 /* DKManagerInformation.h in Headers */,
+				F98A62640E8C700300071926 /* DKMainMenuInformation.h in Headers */,
 				F98A62660E8C700300071926 /* DKPartOfTitle.h in Headers */,
 				F98A62680E8C700300071926 /* DKProgramChain.h in Headers */,
 				F98A626A0E8C700300071926 /* DKProgramChainSearchPointer.h in Headers */,
-				F98A626C0E8C700300071926 /* DKTitleSet.h in Headers */,
+				F98A626C0E8C700300071926 /* DKTitleSetInformation.h in Headers */,
 				F98A626E0E8C700300071926 /* DKTitleTrackSearchPointer.h in Headers */,
 				F98A62700E8C700300071926 /* DKVirtualMachine.h in Headers */,
 				F9A9D9220EE5916E00D2F1AC /* DVDKit+Private.h in Headers */,
@@ -282,11 +282,11 @@
 				F98A625D0E8C700300071926 /* DKCellPlayback.m in Sources */,
 				F98A625F0E8C700300071926 /* DKCellPosition.m in Sources */,
 				F98A62620E8C700300071926 /* DKCommand.m in Sources */,
-				F98A62650E8C700300071926 /* DKManagerInformation.m in Sources */,
+				F98A62650E8C700300071926 /* DKMainMenuInformation.m in Sources */,
 				F98A62670E8C700300071926 /* DKPartOfTitle.m in Sources */,
 				F98A62690E8C700300071926 /* DKProgramChain.m in Sources */,
 				F98A626B0E8C700300071926 /* DKProgramChainSearchPointer.m in Sources */,
-				F98A626D0E8C700300071926 /* DKTitleSet.m in Sources */,
+				F98A626D0E8C700300071926 /* DKTitleSetInformation.m in Sources */,
 				F98A626F0E8C700300071926 /* DKTitleTrackSearchPointer.m in Sources */,
 				F98A62710E8C700300071926 /* DKVirtualMachine.m in Sources */,
 				F9A9DB730EE6E13C00D2F1AC /* DKVideoAttributes.m in Sources */,

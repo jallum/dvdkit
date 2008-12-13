@@ -20,10 +20,10 @@
  *
  */
 
-@class DKManagerInformation;
+@class DKMainMenuInformation;
 @class DKProgramChain;
 @class DKTitleTrackSearchPointer;
-@class DKTitleSet;
+@class DKTitleSetInformation;
 @class DKCellPlayback;
 @class DKCommand;
 
@@ -46,11 +46,11 @@
         uint32_t REGS[5];
     } resume;
     /**/
-    DKManagerInformation* managerInformation;
+    DKMainMenuInformation* managerInformation;
     int state;
     /**/
     DKDomain domain;
-    DKTitleSet* titleSet;
+    DKTitleSetInformation* titleSet;
     DKProgramChain* programChain;
     int programNumber;
     int instructionCounter;
@@ -65,7 +65,7 @@
 - (id) initWithDataSource:(id)delegate;
 
 @property (readonly) DKUserOperationFlags prohibitedUserOperations;
-@property (readonly) DKTitleSet* titleSet;
+@property (readonly) DKTitleSetInformation* titleSet;
 @property (readonly) DKDomain domain;
 @property (readonly) BOOL trackingRegisterUsage;
 @property (retain) id delegate;
@@ -126,8 +126,8 @@
 
 @interface NSObject (DVDVirtualMachineDataSource)
 
-- (DKManagerInformation*) managerInformation;
-- (DKTitleSet*) titleSetAtIndex:(NSInteger)index;
+- (DKMainMenuInformation*) mainMenuInformation;
+- (DKTitleSetInformation*) titleSetInformationAtIndex:(NSInteger)index;
 
 @end
 
