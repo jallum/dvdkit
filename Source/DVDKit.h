@@ -192,6 +192,18 @@ typedef enum {
     kDKAudioApplocationModeSurroundSound = 2,
 } DKAudioApplicationMode;
 
+typedef enum {
+    kDKBlockTypeNone = 0,
+    kDKBlockTypeAngle = 1,
+} DKBlockType;
+
+typedef enum {
+    kDKBlockModeNotInBlock = 0,
+    kDKBlockModeFirstCell = 1,
+    kDKBlockModeInBlock = 2,
+    kDKBlockModeLastCell = 3,
+} DKBlockMode;
+
 
 #import "DKVirtualMachine.h"
 #import "DKManagerInformation.h"

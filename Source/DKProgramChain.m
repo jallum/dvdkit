@@ -20,6 +20,7 @@
  *
  */
 #import "DVDKit.h"
+#import "DVDKit+Private.h"
 
 NSString* const DVDProgramChainException = @"DVDProgramChain";
 
@@ -56,8 +57,8 @@ static NSArray* NO_ELEMENTS;
             [NSException raise:DVDProgramChainException format:@"%s(%d)", __FILE__, __LINE__];
         }
 
-        nr_of_programs = bytes[2];
-        nr_of_cells = bytes[3];
+        uint8_t nr_of_programs = bytes[2];
+        uint8_t nr_of_cells = bytes[3];
         memcpy(&playback_time, bytes + 4, sizeof(DKTime));
         memcpy(&prohibitedUserOperations, bytes + 8, sizeof(prohibitedUserOperations));
         
@@ -121,7 +122,7 @@ static NSArray* NO_ELEMENTS;
                 preCommands = [NSMutableArray arrayWithCapacity:nr_of_pre_commands]; 
                 int row = 0;
                 while (nr_of_pre_commands--) {
-                    [preCommands addObject:[DKCommand commandWithData:[data subdataWithRange:NSMakeRange(p - bytes, 8)] row:row]];
+                    [preCommands addObject:[DKCommand commandWith64Bits:OSReadBigInt64(p, 0) row:row]];
                     p += 8;
                     row++;
                 }
@@ -130,7 +131,7 @@ static NSArray* NO_ELEMENTS;
                 postCommands = [NSMutableArray arrayWithCapacity:nr_of_post_commands];
                 int row = 0;
                 while (nr_of_post_commands--) {
-                    [postCommands addObject:[DKCommand commandWithData:[data subdataWithRange:NSMakeRange(p - bytes, 8)] row:row]];
+                    [postCommands addObject:[DKCommand commandWith64Bits:OSReadBigInt64(p, 0) row:row]];
                     p += 8;
                     row++;
                 }
@@ -139,7 +140,7 @@ static NSArray* NO_ELEMENTS;
                 cellCommands = [NSMutableArray arrayWithCapacity:nr_of_cell_commands];
                 int row = 0;
                 while (nr_of_cell_commands--) {
-                    [cellCommands addObject:[DKCommand commandWithData:[data subdataWithRange:NSMakeRange(p - bytes, 8)] row:row]];
+                    [cellCommands addObject:[DKCommand commandWith64Bits:OSReadBigInt64(p, 0) row:row]];
                     p += 8;
                     row++;
                 }
@@ -196,7 +197,131 @@ static NSArray* NO_ELEMENTS;
 
 - (NSData*) saveAsData:(NSError**)error
 {
-    return nil;
+    NSMutableArray* errors = !error ? nil : [NSMutableArray array];
+    NSMutableData* data = [NSMutableData dataWithLength:sizeof(pgc_t)];
+    pgc_t pgc;
+    bzero(&pgc, sizeof(pgc_t));
+
+    memcpy((uint8_t*)&pgc.playback_time, &playback_time, sizeof(DKTime));
+    memcpy((uint8_t*)&pgc.prohibited_ops, &prohibitedUserOperations, sizeof(DKUserOperationFlags));
+    
+    for (int i = 0; i < 8; i++) {
+        OSWriteBigInt16(&pgc.audio_control, i << 1, audio_control[i]);
+    }
+    
+    for (int i = 0; i < 32; i++) {
+        OSWriteBigInt32(&pgc.subp_control, (i << 2), subp_control[i]);
+    }
+    
+    OSWriteBigInt16(&pgc.next_pgc_nr, 0, nextProgramChainNumber);
+    OSWriteBigInt16(&pgc.prev_pgc_nr, 0, previousProgramChainNumber);
+    OSWriteBigInt16(&pgc.goup_pgc_nr, 0, goUpProgramChainNumber);
+    OSWriteBigInt8(&pgc.still_time, 0, still_time);
+    OSWriteBigInt8(&pgc.pg_playback_mode, 0, pg_playback_mode);
+
+    for (int i = 0; i < 16; i++) {
+        OSWriteBigInt32(&pgc.palette, (i << 2), palette[i]);
+    }
+    
+    uint16_t nr_of_pre_commands = [preCommands count];
+    uint16_t nr_of_post_commands = [postCommands count];
+    uint16_t nr_of_cell_commands = [cellCommands count];
+    if (nr_of_pre_commands || nr_of_post_commands || nr_of_cell_commands) {
+        uint16_t command_tbl_offset = [data length];
+        OSWriteBigInt16(&pgc.command_tbl_offset, 0, command_tbl_offset);
+
+        //  TODO: Check for overflow.
+        uint16_t last_byte = 8 + (8 * (nr_of_pre_commands + nr_of_post_commands + nr_of_cell_commands));
+        [data increaseLengthBy:last_byte];
+        uint8_t* base = [data mutableBytes] + command_tbl_offset;
+
+        OSWriteBigInt16(base, 0, nr_of_pre_commands);
+        OSWriteBigInt16(base, 2, nr_of_post_commands);
+        OSWriteBigInt16(base, 4, nr_of_cell_commands);
+        OSWriteBigInt16(base, 6, last_byte - 1);
+
+        uint16_t offset = 8;
+        for (DKCommand* command in preCommands) {
+            OSWriteBigInt64(base, offset, command.bits);
+            offset += 8;
+        }
+        for (DKCommand* command in postCommands) {
+            OSWriteBigInt64(base, offset, command.bits);
+            offset += 8;
+        }
+        for (DKCommand* command in cellCommands) {
+            OSWriteBigInt64(base, offset, command.bits);
+            offset += 8;
+        }
+    }
+    
+    uint8_t nr_of_programs = [programMap count];
+    if (nr_of_programs) {
+        uint16_t program_map_offset = [data length];
+        OSWriteBigInt8(&pgc.nr_of_programs, 0, nr_of_programs);
+        OSWriteBigInt16(&pgc.program_map_offset, 0, program_map_offset);
+        [data increaseLengthBy:nr_of_programs];
+        uint8_t* base = [data mutableBytes] + program_map_offset;
+        for (int i = 0; i < nr_of_programs; i++) {
+            OSWriteBigInt8(base, i, [[programMap objectAtIndex:i] unsignedCharValue]);
+        }
+    }
+    
+    uint8_t nr_of_cells = [cellPlaybackTable count];
+    if (nr_of_cells) {
+        OSWriteBigInt8(&pgc.nr_of_cells, 0, nr_of_cells);
+
+        uint16_t cell_playback_offset = [data length];
+        uint16_t cell_position_offset = cell_playback_offset + (nr_of_cells * sizeof(cell_playback_t));
+        OSWriteBigInt16(&pgc.cell_playback_offset, 0, cell_playback_offset);
+        OSWriteBigInt16(&pgc.cell_position_offset, 0, cell_position_offset);
+        [data increaseLengthBy:nr_of_cells * (sizeof(cell_playback_t) + sizeof(cell_position_t))];
+        uint8_t* base = [data mutableBytes] + cell_playback_offset;
+        
+        for (int i = 0; i < nr_of_cells; i++, base += sizeof(cell_playback_t)) {
+            NSError* cellPlaybackError = nil;
+            NSData* cellPlaybackData = [[cellPlaybackTable objectAtIndex:i] saveAsData:errors ? &cellPlaybackError : NULL];
+            if (cellPlaybackError) {
+                if (cellPlaybackError.code == kDKMultipleErrorsError) {
+                    [errors addObjectsFromArray:[cellPlaybackError.userInfo objectForKey:NSDetailedErrorsKey]];
+                } else {
+                    [errors addObject:cellPlaybackError];
+                }
+            }
+            if (cellPlaybackData) {
+                memcpy(base, [cellPlaybackData bytes], sizeof(cell_playback_t));
+            }
+        }
+
+        for (int i = 0; i < nr_of_cells; i++, base += sizeof(cell_position_t)) {
+            NSError* cellPositionError = nil;
+            NSData* cellPositionData = [[cellPositionTable objectAtIndex:i] saveAsData:errors ? &cellPositionError : NULL];
+            if (cellPositionError) {
+                if (cellPositionError.code == kDKMultipleErrorsError) {
+                    [errors addObjectsFromArray:[cellPositionError.userInfo objectForKey:NSDetailedErrorsKey]];
+                } else {
+                    [errors addObject:cellPositionError];
+                }
+            }
+            if (cellPositionData) {
+                memcpy(base, [cellPositionData bytes], sizeof(cell_position_t));
+            }
+        }
+    }
+    
+    if (errors) {
+        int errorCount = [errors count];
+        if (0 == errorCount) {
+            *error = nil;
+        } else if (1 == errorCount) {
+            *error = [errors objectAtIndex:0];
+        } else {
+            *error = DKErrorWithCode(kDKMultipleErrorsError, errors, NSDetailedErrorsKey, nil);
+        }
+    }
+
+    memcpy([data mutableBytes], &pgc, sizeof(pgc_t));
+    return data;
 }
 
 @end

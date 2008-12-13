@@ -83,4 +83,34 @@ NSString* const DVDCellPlaybackException = @"DVDCellPlayback";
     return [self retain];
 }
 
+- (NSData*) saveAsData:(NSError**)error
+{
+    NSMutableData* data = [NSMutableData dataWithLength:sizeof(cell_playback_t)];
+    cell_playback_t* cell_playback = [data mutableBytes];
+
+    cell_playback->flags.seamless_play = seamless_angle;
+    cell_playback->flags.stc_discontinuity = stc_discontinuity;
+    cell_playback->flags.interleaved = interleaved;
+    cell_playback->flags.seamless_play = seamless_play;
+    cell_playback->flags.block_type = blockType;
+    cell_playback->flags.block_mode = blockMode;
+    cell_playback->flags.restricted = restricted;
+    cell_playback->flags.playback_mode = playback_mode;
+    
+    /* dvd_time_t is endian-neutral.
+     */
+    cell_playback->playback_time = playbackTime;
+    
+    /*  Pick out the values of fields that are endian-sensitive.
+     */
+    OSWriteBigInt8(cell_playback, offsetof(cell_playback_t, still_time), stillTime);
+    OSWriteBigInt8(cell_playback, offsetof(cell_playback_t, cell_cmd_nr), postCommandIndex);
+    OSWriteBigInt32(cell_playback, offsetof(cell_playback_t, first_sector), firstSector);
+    OSWriteBigInt32(cell_playback, offsetof(cell_playback_t, first_ilvu_end_sector), firstInterleavingUnitSector);
+    OSWriteBigInt32(cell_playback, offsetof(cell_playback_t, last_vobu_start_sector), lastVideoObjectUnitStartSector);
+    OSWriteBigInt32(cell_playback, offsetof(cell_playback_t, last_sector), lastSector);
+    
+    return data;
+}
+
 @end

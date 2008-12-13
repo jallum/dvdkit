@@ -286,6 +286,34 @@ struct cell_playback_t {
     uint32_t last_sector;
 } __attribute__ ((packed));
 
+typedef struct pgc_t pgc_t;
+struct pgc_t {
+    uint16_t __zero_1;
+    uint8_t nr_of_programs;
+    uint8_t nr_of_cells;
+    DKTime playback_time;
+    DKUserOperationFlags prohibited_ops;
+    uint16_t audio_control[8]; /* New type? */
+    uint32_t subp_control[32]; /* New type? */
+    uint16_t next_pgc_nr;
+    uint16_t prev_pgc_nr;
+    uint16_t goup_pgc_nr;
+    uint8_t pg_playback_mode;
+    uint8_t still_time;
+    uint32_t palette[16]; /* New type struct {zero_1, Y, Cr, Cb} ? */
+    uint16_t command_tbl_offset;
+    uint16_t program_map_offset;
+    uint16_t cell_playback_offset;
+    uint16_t cell_position_offset;
+} __attribute__ ((packed));
+
+typedef struct cell_position_t cell_position_t;
+struct cell_position_t {
+    uint16_t vob_id_nr;
+    uint8_t  __zero_1;
+    uint8_t  cell_nr;
+} __attribute__ ((packed));
+
 
 @interface DKVirtualMachine (DVDCommand)
 - (uint16_t) registerForCode:(uint8_t)rn;

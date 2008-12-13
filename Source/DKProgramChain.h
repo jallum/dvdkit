@@ -23,8 +23,6 @@
 @class DKCellPlayback;
 
 @interface DKProgramChain : NSObject {
-    uint8_t nr_of_programs;
-    uint8_t nr_of_cells;
     DKTime playback_time;
     DKUserOperationFlags prohibitedUserOperations;
     uint16_t audio_control[8];

@@ -26,8 +26,12 @@
 }
 
 + (id) cellPositionWithNumber:(uint8_t)_number vobId:(uint16_t)_vobId;
++ (id) cellPositionWithData:(NSData*)data error:(NSError**)error;
 
 - (id) initWithNumber:(uint8_t)_number vobId:(uint16_t)_vobId;
+- (id) initWithData:(NSData*)data error:(NSError**)error;
+
+- (NSData*) saveAsData:(NSError**)error;
 
 @end
 

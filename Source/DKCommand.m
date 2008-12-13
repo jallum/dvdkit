@@ -25,6 +25,17 @@
 NSString* const DVDCommandException = @"DVDCommand";
 
 @implementation DKCommand
+@synthesize bits;
+
++ (id) commandWith64Bits:(uint64_t)bits
+{
+    return [DKCommand commandWith64Bits:bits row:-1];
+}
+
++ (id) commandWith64Bits:(uint64_t)bits row:(int)row
+{
+    return [[[DKCommand alloc] initWith64Bits:bits row:row] autorelease];
+}
 
 + (id) commandWithData:(NSData*)data
 {
@@ -34,6 +45,16 @@ NSString* const DVDCommandException = @"DVDCommand";
 + (id) commandWithData:(NSData*)data row:(int)row
 {
     return [[[DKCommand alloc] initWithData:data row:row] autorelease];
+}
+
+- (id) initWith64Bits:(uint64_t)_bits row:(int)_row;
+{
+    if (self = [super init]) {
+        bits = _bits;
+        mask = 0;
+        row = _row;
+    }
+    return self;
 }
 
 - (id) initWithData:(NSData*)data row:(int)_row;

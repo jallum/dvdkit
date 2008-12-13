@@ -20,18 +20,6 @@
  *
  */
 
-typedef enum {
-    kDKBlockTypeNone = 0,
-    kDKBlockTypeAngle = 1,
-} DKBlockType;
-
-typedef enum {
-    kDKBlockModeNotInBlock = 0,
-    kDKBlockModeFirstCell = 1,
-    kDKBlockModeInBlock = 2,
-    kDKBlockModeLastCell = 3,
-} DKBlockMode;
-
 @interface DKCellPlayback : NSObject <NSCopying> {
     BOOL seamless_angle;
     BOOL stc_discontinuity;
@@ -54,6 +42,8 @@ typedef enum {
 + (id) cellPlaybackWithData:(NSData*)data;
 
 - (id) initWithData:(NSData*)data;
+
+- (NSData*) saveAsData:(NSError**)error;
 
 @property (readonly) uint32_t firstSector;
 @property (readonly) uint32_t lastSector;

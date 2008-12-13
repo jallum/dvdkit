@@ -20,12 +20,18 @@
  *
  */
 #import "DVDKit.h"
+#import "DVDKit+Private.h"
 
 @implementation DKCellPosition
 
 + (id) cellPositionWithNumber:(uint8_t)_number vobId:(uint16_t)_vobId
 {
     return [[[DKCellPosition alloc] initWithNumber:_number vobId:_vobId] autorelease];
+}
+
++ (id) cellPositionWithData:(NSData*)data error:(NSError**)error
+{
+    return [[[DKCellPosition alloc] initWithData:data error:error] autorelease];
 }
 
 - (id) initWithNumber:(uint8_t)_number vobId:(uint16_t)_vobId
@@ -35,6 +41,30 @@
         vobId = _vobId;
     }
     return self;
+}
+
+- (id) initWithData:(NSData*)data error:(NSError**)error
+{
+    NSAssert(data, @"wtf?");
+    NSAssert([data length] == sizeof(cell_position_t), @"wtf?");
+    if (self = [super init]) {
+        const cell_position_t* cell_position = [data bytes];
+        number = OSReadBigInt8(&cell_position->cell_nr, 0);
+        vobId = OSReadBigInt16(&cell_position->vob_id_nr, 0);
+    }
+    return self;
+}
+
+
+- (NSData*) saveAsData:(NSError**)error
+{
+    NSMutableData* data = [NSMutableData dataWithLength:sizeof(cell_position_t)];
+    cell_position_t* cell_position = [data mutableBytes];
+    
+    OSWriteBigInt8(&cell_position->cell_nr, 0, number);
+    OSWriteBigInt16(&cell_position->vob_id_nr, 0, vobId);
+
+    return data;
 }
 
 @end
