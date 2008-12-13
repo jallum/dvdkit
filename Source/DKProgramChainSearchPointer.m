@@ -23,6 +23,7 @@
 
 @implementation DKProgramChainSearchPointer
 @synthesize entryId;
+@synthesize ptl_id_mask;
 @synthesize programChain;
 
 + (id) programChainSearchPointerWithEntryId:(uint8_t)entry_id parentalMask:(uint16_t)ptl_id_mask programChain:(DKProgramChain*)programChain

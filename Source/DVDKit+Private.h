@@ -139,6 +139,7 @@ struct vmgi_mat_t {
     uint32_t vmgi_last_byte;
     uint32_t first_play_pgc;
     uint8_t __zero_5[56];
+    /**/
     uint32_t vmgm_vobs;
     /**/
     uint32_t tt_srpt;           
@@ -185,16 +186,16 @@ struct vmgi_pgci_ut_t {
     uint32_t last_byte;
 } __attribute__ ((packed));
 
-typedef struct pgci_lu_t pgci_lu_t;
-struct pgci_lu_t {
+typedef struct vmgm_lu_t vmgm_lu_t;
+struct vmgm_lu_t {
     uint16_t lang_code;
     uint8_t lang_extension;
     uint8_t exists;
     uint32_t pgcit_start_byte;
 } __attribute__ ((packed));
 
-typedef struct pgcit_t pgcit_t;
-struct pgcit_t {
+typedef struct vmgm_pgc_t vmgm_pgc_t;
+struct vmgm_pgc_t {
     uint16_t nr_of_pgci_srp;
     uint16_t __zero_1;
     uint32_t last_byte;
@@ -346,8 +347,8 @@ typedef enum {
     kDKNumberOfVideoAttributesError,
     kDKNumberOfAudioStreamsError,
     kDKNumberOfSubpictureAttributesError,
+    kDKNumberOfMenuProgramChainLanguageUnitsError,
     kDKSectionNameError,
-    kDKSectionDataError,
 } DKErrorCode;
 
 #define DKErrorWithCode(code, ...)   __DKErrorWithCode(code, [NSString stringWithUTF8String:__PRETTY_FUNCTION__], @"function", [NSNumber numberWithInt:__LINE__], @"line", __VA_ARGS__)

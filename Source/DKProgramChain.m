@@ -320,7 +320,7 @@ static NSArray* NO_ELEMENTS;
         }
     }
 
-    memcpy([data mutableBytes], &pgc, sizeof(pgc_t));
+    [data replaceBytesInRange:NSMakeRange(0, sizeof(pgc_t)) withBytes:&pgc];
     return data;
 }
 

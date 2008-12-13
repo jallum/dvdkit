@@ -79,9 +79,9 @@ NSString* const kDKManagerInformationSection_VMGM_VOBU_ADMAP  = @"vmgm_vobu_adma
         
         /*
          */
-        specificationVersion = OSReadBigInt16(vmgi_mat, offsetof(vmgi_mat_t, specification_version));
-        categoryAndMask = OSReadBigInt32(vmgi_mat, offsetof(vmgi_mat_t, vmg_category));
-        numberOfVolumes = OSReadBigInt16(vmgi_mat, offsetof(vmgi_mat_t, vmg_nr_of_volumes));
+        specificationVersion = OSReadBigInt8(&vmgi_mat->specification_version, 0);
+        categoryAndMask = OSReadBigInt32(&vmgi_mat->vmg_category, 0);
+        numberOfVolumes = OSReadBigInt16(&vmgi_mat->vmg_nr_of_volumes, 0);
         volumeNumber = OSReadBigInt16(vmgi_mat, offsetof(vmgi_mat_t, vmg_this_volume_nr));
         side = OSReadBigInt8(vmgi_mat, offsetof(vmgi_mat_t, disc_side));
         numberOfTitleSets = OSReadBigInt16(vmgi_mat, offsetof(vmgi_mat_t, vmg_nr_of_title_sets));
@@ -296,26 +296,26 @@ NSString* const kDKManagerInformationSection_VMGM_VOBU_ADMAP  = @"vmgm_vobu_adma
             /*  Parse the tables  */
             NSMutableDictionary* tablesByLanguage = [NSMutableDictionary dictionaryWithCapacity:nr_of_lus];
             for (int i = 0, p = sizeof(vmgm_pgci_ut_t); i < nr_of_lus; i++, p += 8) {
-                const void* pgci_lu = [[data subdataWithRange:NSMakeRange(p, sizeof(pgci_lu_t))] bytes];
-                uint16_t lang_code = OSReadBigInt16(pgci_lu, offsetof(pgci_lu_t, lang_code));
-                uint32_t pgcit_start_byte = OSReadBigInt32(pgci_lu, offsetof(pgci_lu_t, pgcit_start_byte));
+                const void* vmgm_lu = [[data subdataWithRange:NSMakeRange(p, sizeof(vmgm_lu_t))] bytes];
+                uint16_t lang_code = OSReadBigInt16(vmgm_lu, offsetof(vmgm_lu_t, lang_code));
+                uint32_t vmgm_pgc_start_byte = OSReadBigInt32(vmgm_lu, offsetof(vmgm_lu_t, pgcit_start_byte));
                 
-                const void* pgcit = [[data subdataWithRange:NSMakeRange(pgcit_start_byte, sizeof(pgcit_t))] bytes];
-                uint16_t nr_of_pgci_srp = OSReadBigInt16(pgcit, offsetof(pgcit_t, nr_of_pgci_srp));
-                uint32_t pgcit_last_byte = 1 + OSReadBigInt32(pgcit, offsetof(pgcit_t, last_byte));
+                const void* vmgm_pgc = [[data subdataWithRange:NSMakeRange(vmgm_pgc_start_byte, sizeof(vmgm_pgc_t))] bytes];
+                uint16_t nr_of_pgci_srp = OSReadBigInt16(vmgm_pgc, offsetof(vmgm_pgc_t, nr_of_pgci_srp));
+                uint32_t vmgm_pgc_last_byte = 1 + OSReadBigInt32(vmgm_pgc, offsetof(vmgm_pgc_t, last_byte));
                 
-                if (error && ((pgcit_start_byte + pgcit_last_byte) > last_byte)) {
+                if (error && ((vmgm_pgc_start_byte + vmgm_pgc_last_byte) > last_byte)) {
                     // TODO: Correct last_byte?
                     [errors addObject:DKErrorWithCode(kDKMenuProgramChainInformationMapError, nil)];
                 }
                 
                 NSMutableArray* table = [NSMutableArray array];
-                for (int i = 0, p = pgcit_start_byte + sizeof(pgcit_t); i < nr_of_pgci_srp; i++, p += sizeof(pgci_srp_t)) {
+                for (int i = 0, p = vmgm_pgc_start_byte + sizeof(vmgm_pgc_t); i < nr_of_pgci_srp; i++, p += sizeof(pgci_srp_t)) {
                     const void* pgci_srp = [[data subdataWithRange:NSMakeRange(p, sizeof(pgci_srp_t))] bytes];
                     uint8_t entry_id = OSReadBigInt8(pgci_srp, offsetof(pgci_srp_t, entry_id));
                     uint16_t ptl_id_mask = OSReadBigInt16(pgci_srp, offsetof(pgci_srp_t, ptl_id_mask));
                     uint32_t pgc_start_byte = OSReadBigInt32(pgci_srp, offsetof(pgci_srp_t, pgc_start_byte));
-                    [table addObject:[DKProgramChainSearchPointer programChainSearchPointerWithEntryId:entry_id parentalMask:ptl_id_mask programChain:[DKProgramChain programChainWithData:[data subdataWithRange:NSMakeRange(pgcit_start_byte + pgc_start_byte, pgcit_last_byte - pgc_start_byte)]]]];
+                    [table addObject:[DKProgramChainSearchPointer programChainSearchPointerWithEntryId:entry_id parentalMask:ptl_id_mask programChain:[DKProgramChain programChainWithData:[data subdataWithRange:NSMakeRange(vmgm_pgc_start_byte + pgc_start_byte, vmgm_pgc_last_byte - pgc_start_byte)]]]];
                 }
                 [tablesByLanguage setObject:table forKey:[NSNumber numberWithShort:lang_code]];
             }
@@ -402,7 +402,7 @@ NSString* const kDKManagerInformationSection_VMGM_VOBU_ADMAP  = @"vmgm_vobu_adma
          *  that the sections should be written in, should we choose to do so
          *  at a later point.
          */
-        preferredSectionOrder = [sectionOrdering objectsForKeys:[sectionOrdering keysSortedByValueUsingSelector:@selector(compare:)] notFoundMarker:[NSNull null]];
+        preferredSectionOrder = [sectionOrdering objectsForKeys:[[sectionOrdering allKeys] sortedArrayUsingSelector:@selector(compare:)] notFoundMarker:[NSNull null]];
         
         if (errors) {
             int errorCount = [errors count];
@@ -473,7 +473,7 @@ NSString* const kDKManagerInformationSection_VMGM_VOBU_ADMAP  = @"vmgm_vobu_adma
     
     /*
      */
-    OSWriteBigInt32(&vmgi_mat, offsetof(vmgi_mat_t, specification_version), specificationVersion);
+    OSWriteBigInt8(&vmgi_mat, offsetof(vmgi_mat_t, specification_version), specificationVersion);
     OSWriteBigInt32(&vmgi_mat, offsetof(vmgi_mat_t, vmg_category), categoryAndMask);
     OSWriteBigInt16(&vmgi_mat, offsetof(vmgi_mat_t, vmg_nr_of_volumes), numberOfVolumes);
     OSWriteBigInt16(&vmgi_mat, offsetof(vmgi_mat_t, vmg_this_volume_nr), volumeNumber);
@@ -635,9 +635,69 @@ NSString* const kDKManagerInformationSection_VMGM_VOBU_ADMAP  = @"vmgm_vobu_adma
                 continue;
             }
             
-            // TODO:  Encode menuProgramChainInformationTablesByLanguage
+            uint16_t nr_of_lus = [menuProgramChainInformationTablesByLanguage count];
+            if (nr_of_lus > 99) {
+                if (errors) {
+                    [errors addObject:DKErrorWithCode(kDKNumberOfMenuProgramChainLanguageUnitsError, nil)];
+                }
+                nr_of_lus = 99;
+            }
             
-//            OSWriteBigInt32(&vmgi_mat, offsetof(vmgi_mat_t, vmgm_pgci_ut), [data length] >> 11);
+            sectionData = [NSMutableData dataWithLength:sizeof(vmgm_pgci_ut_t) + (nr_of_lus * sizeof(vmgm_lu_t))];
+            int i = 0;
+            for (NSNumber* languageCode in menuProgramChainInformationTablesByLanguage) {
+                NSArray* table = [menuProgramChainInformationTablesByLanguage objectForKey:languageCode];
+                uint32_t vmgm_lu_start_byte = sizeof(vmgm_pgci_ut_t) + (i * sizeof(vmgm_lu_t));
+
+                uint32_t vmgm_pgc_start_byte = [sectionData length];
+                uint16_t nr_of_pgci_srp = [table count];
+                [sectionData increaseLengthBy:sizeof(vmgm_pgc_t) + (nr_of_pgci_srp * sizeof(pgci_srp_t))];
+                int j = 0;
+                for (DKProgramChainSearchPointer* programChainSearchPointer in table) {
+                    pgci_srp_t pgci_srp;
+                    bzero(&pgci_srp, sizeof(pgci_srp_t));
+                    OSWriteBigInt8(&pgci_srp.entry_id, 0, [programChainSearchPointer entryId]);
+                    OSWriteBigInt16(&pgci_srp.ptl_id_mask, 0, [programChainSearchPointer ptl_id_mask]);
+                    OSWriteBigInt32(&pgci_srp.pgc_start_byte, 0, [sectionData length] - vmgm_pgc_start_byte);
+                    [sectionData replaceBytesInRange:NSMakeRange(vmgm_pgc_start_byte + sizeof(vmgm_pgc_t) + (j * sizeof(pgci_srp_t)), sizeof(pgci_srp_t)) withBytes:&pgci_srp];
+                    j++;
+                    
+                    NSError* programChainError = nil;
+                    NSData* programChainData = [programChainSearchPointer.programChain saveAsData:errors ? &programChainError : NULL];
+                    if (programChainError) {
+                        if (programChainError.code == kDKMultipleErrorsError) {
+                            [errors addObjectsFromArray:[programChainError.userInfo objectForKey:NSDetailedErrorsKey]];
+                        } else {
+                            [errors addObject:programChainError];
+                        }
+                    }
+                    if (programChainData) {
+                        [sectionData appendData:programChainData];
+                    }
+                }
+
+                vmgm_pgc_t vmgm_pgc;
+                bzero(&vmgm_pgc, sizeof(vmgm_pgc_t));
+                OSWriteBigInt16(&vmgm_pgc.nr_of_pgci_srp, 0, nr_of_pgci_srp);
+                OSWriteBigInt32(&vmgm_pgc.last_byte, 0, [sectionData length] - vmgm_pgc_start_byte - 1);
+                [sectionData replaceBytesInRange:NSMakeRange(vmgm_pgc_start_byte, sizeof(vmgm_pgc_t)) withBytes:&vmgm_pgc];
+
+                vmgm_lu_t vmgm_lu;
+                bzero(&vmgm_lu, sizeof(vmgm_lu_t));
+                OSWriteBigInt16(&vmgm_lu.lang_code, 0, [languageCode unsignedShortValue]);
+                OSWriteBigInt8(&vmgm_lu.exists, 0, 0x80);
+                OSWriteBigInt32(&vmgm_lu.pgcit_start_byte, 0, vmgm_pgc_start_byte);
+                [sectionData replaceBytesInRange:NSMakeRange(vmgm_lu_start_byte, sizeof(vmgm_lu_t)) withBytes:&vmgm_lu];
+                i++;
+            }
+            
+            vmgm_pgci_ut_t vmgm_pgci_ut;
+            bzero(&vmgm_pgci_ut, sizeof(vmgm_pgci_ut));
+            OSWriteBigInt16(&vmgm_pgci_ut.nr_of_lus, 0, nr_of_lus);
+            OSWriteBigInt32(&vmgm_pgci_ut.last_byte, 0, [sectionData length] - 1);
+            [sectionData replaceBytesInRange:NSMakeRange(0, sizeof(vmgm_pgci_ut_t)) withBytes:&vmgm_pgci_ut];
+            
+            OSWriteBigInt32(&vmgi_mat.vmgm_pgci_ut, 0, [data length] >> 11);
         } else if ([section isEqualToString:kDKManagerInformationSection_TXTDT_MGI]) {
             if (![textData length]) {
                 continue;
@@ -706,9 +766,9 @@ NSString* const kDKManagerInformationSection_VMGM_VOBU_ADMAP  = @"vmgm_vobu_adma
     
     NSAssert(([data length] & 0x07FF) == 0, @"Sections not sector-aligned?");
     uint32_t vmgi_last_sector = [data length] >> 11;
-    OSWriteBigInt32(&vmgi_mat, offsetof(vmgi_mat_t, vmgi_last_sector), vmgi_last_sector - 1);
-    OSWriteBigInt32(&vmgi_mat, offsetof(vmgi_mat_t, vmg_last_sector), (vmgi_last_sector * 2) - 1);
-    OSWriteBigInt32(&vmgi_mat, offsetof(vmgi_mat_t, vmgm_vobs), (vmgi_last_sector * 2));
+    OSWriteBigInt32(&vmgi_mat.vmgi_last_sector, 0, vmgi_last_sector - 1);
+    OSWriteBigInt32(&vmgi_mat.vmg_last_sector, 0, (vmgi_last_sector * 2) - 1);
+    OSWriteBigInt32(&vmgi_mat.vmgm_vobs, 0, vmgi_last_sector);
     
     if (errors) {
         int errorCount = [errors count];

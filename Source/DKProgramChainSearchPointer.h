@@ -33,6 +33,7 @@
 - (id) initWithEntryId:(uint8_t)entry_id parentalMask:(uint16_t)ptl_id_mask programChain:(DKProgramChain*)programChain;
 
 @property (readonly) uint8_t entryId;
+@property (readonly) uint16_t ptl_id_mask;
 @property (readonly) DKProgramChain* programChain;
 
 @end
