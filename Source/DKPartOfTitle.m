@@ -20,23 +20,38 @@
  *
  */
 #import "DVDKit.h"
+#import "DVDKit+Private.h"
+
 
 @implementation DKPartOfTitle
 @synthesize programChainNumber;
 @synthesize programNumber;
 
-+ (id) partOfTitleWithProgramChain:(uint16_t)programChain program:(uint16_t)program
+
++ (id) partOfTitleWithData:(NSData*)data error:(NSError**)error
 {
-    return [[[DKPartOfTitle alloc] initWithProgramChain:programChain program:program] autorelease];
+    return [[[DKPartOfTitle alloc] initWithData:data error:error] autorelease];
 }
 
-- (id) initWithProgramChain:(uint16_t)_programChain program:(uint16_t)_program
+- (id) initWithData:(NSData*)data error:(NSError**)error
 {
+    NSAssert(data, @"wtf?");
+    NSAssert([data length] >= sizeof(ptt_info_t), @"wtf?");
     if (self = [super init]) {
-        programChainNumber = _programChain;
-        programNumber = _program;
+        const ptt_info_t* ptt_info = [data bytes];
+        programChainNumber = OSReadBigInt16(&ptt_info->pgcn, 0);
+        programNumber = OSReadBigInt16(&ptt_info->pgn, 0);
     }
     return self;
+}
+
+- (NSData*) saveAsData:(NSError**)error
+{
+    NSMutableData* data = [NSMutableData dataWithLength:sizeof(ptt_info_t)];
+    ptt_info_t* ptt_info = [data mutableBytes];
+    OSWriteBigInt16(&ptt_info->pgcn, 0, programChainNumber);
+    OSWriteBigInt16(&ptt_info->pgn, 0, programNumber);
+    return data;
 }
 
 @end

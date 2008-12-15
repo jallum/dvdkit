@@ -21,22 +21,32 @@
  */
 
 @interface DKTitleSetInformation : NSObject {
+    uint16_t specificationVersion;
+    uint32_t vts_category;
+    /**/
     NSInteger index;
-    NSArray* programChainInformationTable;
+    NSMutableArray* programChainInformationTable;
     NSMutableDictionary* menuProgramChainInformationTablesByLanguage;
     NSMutableArray* partOfTitleSearchTable;
     NSMutableArray* menuCellAddressTable;
     NSMutableArray* cellAddressTable;
-    CFBitVectorRef vtsmVobuAdMap_;
-    uint32_t vtsmVobuAdMap_nr;
-    uint32_t* vtsmVobuAdMap;
-    uint32_t vtsVobuAdMap_nr;
-    uint32_t* vtsVobuAdMap;
+    NSData* menuVobuAddressMap;
+    NSData* vobuAddressMap;
+    /**/
+    DKVideoAttributes* menuVideoAttributes;
+    NSMutableArray* menuAudioAttributes;
+    DKSubpictureAttributes* menuSubpictureAttributes; 
+    /**/
+    DKVideoAttributes* videoAttributes;
+    NSMutableArray* audioAttributes;
+    NSMutableArray* subpictureAttributes; 
+    /**/
+    NSArray* preferredSectionOrder;
 }
 
-+ (id) titleSetInformationWithData:(NSData*)data index:(uint16_t)index;
++ (id) titleSetInformationWithDataSource:(id<DKDataSource>)dataSource index:(uint16_t)index error:(NSError**)error;
 
-- (id) initWithData:(NSData*)data index:(uint16_t)index;
+- (id) initWithDataSource:(id<DKDataSource>)dataSource index:(uint16_t)index error:(NSError**)error;
 
 @property (readonly) NSInteger index;
 @property (readonly) NSArray* programChainInformationTable;

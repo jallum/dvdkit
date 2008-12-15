@@ -3,8 +3,8 @@
 #define OSReadBigInt8(x, y)     (((uint8_t*)x)[y])
 #define OSWriteBigInt8(x, y, z) (void)(((uint8_t*)x)[y] = z)
 
-typedef struct vmgm_video_attr_t vmgm_video_attr_t;
-struct vmgm_video_attr_t {
+typedef struct video_attr_t video_attr_t;
+struct video_attr_t {
     uint16_t 
 #if BYTE_ORDER == LITTLE_ENDIAN
     allow_automatic_letterbox : 1,
@@ -39,8 +39,8 @@ struct vmgm_video_attr_t {
 #endif
 } __attribute__ ((packed));
 
-typedef struct vmgm_audio_attr_t vmgm_audio_attr_t;
-struct vmgm_audio_attr_t {
+typedef struct audio_attr_t audio_attr_t;
+struct audio_attr_t {
     uint16_t
 #if BYTE_ORDER == LITTLE_ENDIAN
     audio_format : 3,
@@ -100,8 +100,8 @@ struct vmgm_audio_attr_t {
     } __attribute__ ((packed)) app_info;
 } __attribute__ ((packed));
 
-typedef struct vmgm_subp_attr_t vmgm_subp_attr_t;
-struct vmgm_subp_attr_t {
+typedef struct subp_attr_t subp_attr_t;
+struct subp_attr_t {
     uint16_t
 #if BYTE_ORDER == LITTLE_ENDIAN
     __zero_2 : 8, 
@@ -119,9 +119,64 @@ struct vmgm_subp_attr_t {
     uint8_t code_extension;
 } __attribute__ ((packed));
 
+typedef struct multichannel_ext_t multichannel_ext_t;
+struct multichannel_ext_t {
+    uint8_t
+#if BYTE_ORDER == LITTLE_ENDIAN
+    ach0_gme : 1,
+    __zero_1 : 7,
+	
+    ach1_gme : 1,
+    __zero_2 : 7,
+	
+    ach2_gm2e : 1,
+    ach2_gm1e : 1,
+    ach2_gv2e : 1,
+    ach2_gv1e : 1,
+    __zero_3 : 4,
+	
+    ach3_se2e : 1,
+    ach3_gmAe : 1,
+    ach3_gv2e : 1,
+    ach3_gv1e : 1,
+    __zero_4 : 4,
+	
+    ach4_seBe : 1,
+    ach4_gmBe : 1,
+    ach4_gv2e : 1,
+    ach4_gv1e : 1,
+    __zero_5 : 4;
+#else
+    __zero_1 : 7,
+    ach0_gme : 1,
+	
+    __zero_2 : 7,
+    ach1_gme : 1,
+	
+    __zero_3 : 4,
+    ach2_gv1e : 1,
+    ach2_gv2e : 1,
+    ach2_gm1e : 1,
+    ach2_gm2e : 1,
+	
+    __zero_4 : 4,
+    ach3_gv1e : 1,
+    ach3_gv2e : 1,
+    ach3_gmAe : 1,
+    ach3_se2e : 1,
+	
+    __zero_5 : 4,
+    ach4_gv1e : 1,
+    ach4_gv2e : 1,
+    ach4_gmBe : 1,
+    ach4_seBe : 1;
+#endif
+    uint8_t __zero_6[19];
+} __attribute__ ((packed));
+
 typedef struct vmgi_mat_t vmgi_mat_t;
 struct vmgi_mat_t {
-    int8_t vmg_identifier[12];
+    uint8_t vmg_identifier[12];
     uint32_t vmg_last_sector;
     uint8_t __zero_1[12];
     uint32_t vmgi_last_sector;
@@ -151,14 +206,55 @@ struct vmgi_mat_t {
     uint32_t vmgm_vobu_admap;   
     /**/
     uint8_t __zero_6[32];
-    vmgm_video_attr_t vmgm_video_attr;
-    uint8_t __zero_7;
-    uint8_t nr_of_vmgm_audio_streams;
-    vmgm_audio_attr_t vmgm_audio_attr[8];
+    video_attr_t vmgm_video_attr;
+    uint16_t nr_of_vmgm_audio_streams;
+    audio_attr_t vmgm_audio_attr[8];
     uint8_t __zero_8[16];
     uint16_t nr_of_vmgm_subp_streams;
-    vmgm_subp_attr_t vmgm_subp_attr;
+    subp_attr_t vmgm_subp_attr;
     uint8_t __zero_9[164];
+} __attribute__ ((packed));
+
+typedef struct vts_mat_t vts_mat_t;
+struct vts_mat_t {
+    uint8_t vts_identifier[12];
+    uint32_t vts_last_sector;
+    uint8_t __zero_1[12];
+    uint32_t vtsi_last_sector;
+    uint16_t specification_version;
+    uint32_t vts_category;
+    uint8_t __zero_2[90];
+    uint32_t vtsi_last_byte;
+    uint8_t __zero_3[60];
+    /**/
+    uint32_t vtsm_vobs;       /* sector */
+    uint32_t vtstt_vobs;      /* sector */
+    uint32_t vts_ptt_srpt;    /* sector */
+    uint32_t vts_pgcit;       /* sector */
+    uint32_t vtsm_pgci_ut;    /* sector */
+    uint32_t vts_tmapt;       /* sector */
+    uint32_t vtsm_c_adt;      /* sector */
+    uint32_t vtsm_vobu_admap; /* sector */
+    uint32_t vts_c_adt;       /* sector */
+    uint32_t vts_vobu_admap;  /* sector */
+    /**/
+    uint8_t __zero_4[24];
+    	 
+    video_attr_t vtsm_video_attr;
+    uint16_t nr_of_vtsm_audio_streams;
+    audio_attr_t vtsm_audio_attr[8];
+    uint16_t nr_of_vtsm_subp_streams;
+    subp_attr_t vtsm_subp_attr;
+    uint8_t __zero_6[164];
+    	 
+    video_attr_t vts_video_attr;
+    uint16_t nr_of_vts_audio_streams;
+    audio_attr_t vts_audio_attr[8];
+    uint8_t __zero_7[16];
+    uint16_t nr_of_vts_subp_streams;
+    subp_attr_t vts_subp_attr[32];
+    uint8_t __zero_8[2];
+    multichannel_ext_t vts_mu_audio_attr[8];
 } __attribute__ ((packed));
 
 typedef struct tt_srpt_t tt_srpt_t;
@@ -186,12 +282,34 @@ struct vmgi_pgci_ut_t {
     uint32_t last_byte;
 } __attribute__ ((packed));
 
+typedef struct vtsm_pgci_ut_t vtsm_pgci_ut_t;
+struct vtsm_pgci_ut_t {
+    uint16_t nr_of_lus;
+    uint16_t __zero_1;
+    uint32_t last_byte;
+} __attribute__ ((packed));
+
+typedef struct vtsm_lu_t vtsm_lu_t;
+struct vtsm_lu_t {
+    uint16_t lang_code;
+    uint8_t lang_extension;
+    uint8_t exists;
+    uint32_t pgcit_start_byte;
+} __attribute__ ((packed));
+
 typedef struct vmgm_lu_t vmgm_lu_t;
 struct vmgm_lu_t {
     uint16_t lang_code;
     uint8_t lang_extension;
     uint8_t exists;
     uint32_t pgcit_start_byte;
+} __attribute__ ((packed));
+
+typedef struct vtsm_pgc_t vtsm_pgc_t;
+struct vtsm_pgc_t {
+    uint16_t nr_of_pgci_srp;
+    uint16_t __zero_1;
+    uint32_t last_byte;
 } __attribute__ ((packed));
 
 typedef struct vmgm_pgc_t vmgm_pgc_t;
@@ -315,6 +433,34 @@ struct cell_position_t {
     uint8_t  cell_nr;
 } __attribute__ ((packed));
 
+typedef struct vts_ptt_srpt_t vts_ptt_srpt_t;
+struct vts_ptt_srpt_t {
+    uint16_t nr_of_srpts;
+    uint16_t zero_1;
+    uint32_t last_byte;
+} __attribute__ ((packed));
+
+typedef struct ptt_info_t ptt_info_t;
+struct ptt_info_t {
+    uint16_t pgcn;
+    uint16_t pgn;
+} __attribute__ ((packed));
+
+typedef struct vtsm_c_adt_t vtsm_c_adt_t;
+struct vtsm_c_adt_t {
+    uint16_t nr_of_c_adts;
+    uint16_t __zero_1;
+    uint32_t last_byte;
+} __attribute__ ((packed));
+
+typedef struct vts_c_adt_t vts_c_adt_t;
+struct vts_c_adt_t {
+    uint16_t nr_of_c_adts;
+    uint16_t __zero_1;
+    uint32_t last_byte;
+} __attribute__ ((packed));
+
+
 
 @interface DKVirtualMachine (DVDCommand)
 - (uint16_t) registerForCode:(uint8_t)rn;
@@ -347,7 +493,10 @@ typedef enum {
     kDKNumberOfVideoAttributesError,
     kDKNumberOfAudioStreamsError,
     kDKNumberOfSubpictureAttributesError,
+    kDKNumberOfSubpictureStreamsError,
     kDKNumberOfMenuProgramChainLanguageUnitsError,
+    kDKTitleSetProgramChainInformationMapError,
+    kDKPartOfTitleSearchPointerTableError,
     kDKSectionNameError,
 } DKErrorCode;
 

@@ -131,8 +131,8 @@ NSString* const kDKManagerInformationSection_VMGM_VOBU_ADMAP  = @"vmgm_vobu_adma
         
         /*  Video/Audio/Subpicture Attributes
          */
-        menuVideoAttributes = [DKVideoAttributes videoAttributesWithData:[header subdataWithRange:NSMakeRange(offsetof(vmgi_mat_t, vmgm_video_attr), sizeof(vmgm_video_attr_t))]];
-        uint8_t nr_of_vmgm_audio_streams = OSReadBigInt8(&vmgi_mat->nr_of_vmgm_audio_streams, 0);
+        menuVideoAttributes = [DKVideoAttributes videoAttributesWithData:[header subdataWithRange:NSMakeRange(offsetof(vmgi_mat_t, vmgm_video_attr), sizeof(video_attr_t))]];
+        uint16_t nr_of_vmgm_audio_streams = OSReadBigInt16(&vmgi_mat->nr_of_vmgm_audio_streams, 0);
         if (nr_of_vmgm_audio_streams) {
             if (nr_of_vmgm_audio_streams > 8) {
                 if (errors) {
@@ -142,7 +142,7 @@ NSString* const kDKManagerInformationSection_VMGM_VOBU_ADMAP  = @"vmgm_vobu_adma
             }
             NSMutableArray* table = [NSMutableArray array];
             for (int i = 0; i < nr_of_vmgm_audio_streams; i++) {
-                [table addObject:[DKAudioAttributes audioAttributesWithData:[header subdataWithRange:NSMakeRange(offsetof(vmgi_mat_t, vmgm_audio_attr[i]), sizeof(vmgm_audio_attr_t))]]];
+                [table addObject:[DKAudioAttributes audioAttributesWithData:[header subdataWithRange:NSMakeRange(offsetof(vmgi_mat_t, vmgm_audio_attr[i]), sizeof(audio_attr_t))]]];
             }
             menuAudioAttributes = [table retain];
         }
@@ -154,7 +154,7 @@ NSString* const kDKManagerInformationSection_VMGM_VOBU_ADMAP  = @"vmgm_vobu_adma
             nr_of_vmgm_subp_streams = 1;
         }
         if (nr_of_vmgm_subp_streams) {
-            menuSubpictureAttributes = [DKSubpictureAttributes subpictureAttributesWithData:[header subdataWithRange:NSMakeRange(offsetof(vmgi_mat_t, vmgm_subp_attr), sizeof(vmgm_subp_attr_t))]];
+            menuSubpictureAttributes = [DKSubpictureAttributes subpictureAttributesWithData:[header subdataWithRange:NSMakeRange(offsetof(vmgi_mat_t, vmgm_subp_attr), sizeof(subp_attr_t))]];
         }
         
         
@@ -174,7 +174,7 @@ NSString* const kDKManagerInformationSection_VMGM_VOBU_ADMAP  = @"vmgm_vobu_adma
         } else {
             firstPlayProgramChain = [DKProgramChain programChainWithData:[dataSource requestDataOfLength:vmgi_last_byte - first_play_pgc fromOffset:first_play_pgc]];
         }
-        if (error && !firstPlayProgramChain) {
+        if (errors && !firstPlayProgramChain) {
             [errors addObject:DKErrorWithCode(kDKFirstPlayProgramChainError, DKLocalizedString(@"The VMGI must contain a first-play program chain.", nil), NSLocalizedDescriptionKey, nil)];
         }
         
@@ -191,10 +191,13 @@ NSString* const kDKManagerInformationSection_VMGM_VOBU_ADMAP  = @"vmgm_vobu_adma
             uint32_t last_byte = 1 + OSReadBigInt32(&tt_srpt->last_byte, 0);
             
             /*  Sanity Checking / Data Repair  */
-            uint32_t calculated_last_byte = sizeof(tt_srpt_t) + (nr_of_srpts * sizeof(title_info_t));
-            if (error && (!nr_of_srpts || nr_of_srpts > 99)) {
-                [errors addObject:DKErrorWithCode(kDKTitleTrackSearchPointerTableError, nil)];
+            if (nr_of_srpts > 99) {
+                if (errors) {
+                    [errors addObject:DKErrorWithCode(kDKTitleTrackSearchPointerTableError, nil)];
+                }
+                nr_of_srpts = 99;
             }
+            uint32_t calculated_last_byte = sizeof(tt_srpt_t) + (nr_of_srpts * sizeof(title_info_t));
             if (last_byte != calculated_last_byte) {
                 if (errors) {
                     [errors addObject:DKErrorWithCode(kDKTitleTrackSearchPointerTableError, [NSString stringWithFormat:DKLocalizedString(@"Corrected last_byte (was %d, is now %d)", nil), last_byte, calculated_last_byte], NSLocalizedDescriptionKey, nil)];
@@ -281,10 +284,13 @@ NSString* const kDKManagerInformationSection_VMGM_VOBU_ADMAP  = @"vmgm_vobu_adma
             uint16_t nr_of_lus = OSReadBigInt16(&vmgm_pgci_ut->nr_of_lus, 0);
             uint32_t last_byte = 1 + OSReadBigInt32(&vmgm_pgci_ut->last_byte, 0);
             
-            /*  Sanity Checking  */
-            if (error && (!nr_of_lus || nr_of_lus > 99)) {
-                [errors addObject:DKErrorWithCode(kDKMenuProgramChainInformationMapError, nil)];
-            } 
+            /*  Sanity Checking / Data Repair  */
+            if (nr_of_lus > 99) {
+                if (errors) {
+                    [errors addObject:DKErrorWithCode(kDKMenuProgramChainInformationMapError, nil)];
+                }
+                nr_of_lus = 99;
+            }
             
             /*  Have we already read all that we need?  */
             if (last_byte > [data length]) {
@@ -304,7 +310,7 @@ NSString* const kDKManagerInformationSection_VMGM_VOBU_ADMAP  = @"vmgm_vobu_adma
                 uint16_t nr_of_pgci_srp = OSReadBigInt16(&vmgm_pgc->nr_of_pgci_srp, 0);
                 uint32_t vmgm_pgc_last_byte = 1 + OSReadBigInt32(&vmgm_pgc->last_byte, 0);
                 
-                if (error && ((vmgm_pgc_start_byte + vmgm_pgc_last_byte) > last_byte)) {
+                if (errors && ((vmgm_pgc_start_byte + vmgm_pgc_last_byte) > last_byte)) {
                     // TODO: Correct last_byte?
                     [errors addObject:DKErrorWithCode(kDKMenuProgramChainInformationMapError, nil)];
                 }
@@ -496,7 +502,7 @@ NSString* const kDKManagerInformationSection_VMGM_VOBU_ADMAP  = @"vmgm_vobu_adma
             }
         }
         if (menuVideoAttributesData) {
-            memcpy(&vmgi_mat.vmgm_video_attr, [menuVideoAttributesData bytes], sizeof(vmgm_video_attr_t));
+            memcpy(&vmgi_mat.vmgm_video_attr, [menuVideoAttributesData bytes], sizeof(video_attr_t));
         }
     } else if (errors) {
         [errors addObject:DKErrorWithCode(kDKNumberOfVideoAttributesError, nil)];
@@ -525,7 +531,7 @@ NSString* const kDKManagerInformationSection_VMGM_VOBU_ADMAP  = @"vmgm_vobu_adma
                 }
             }
             if (menuAudioAttributesData) {
-                memcpy(&vmgi_mat.vmgm_audio_attr[i], [menuAudioAttributesData bytes], sizeof(vmgm_audio_attr_t));
+                memcpy(&vmgi_mat.vmgm_audio_attr[i], [menuAudioAttributesData bytes], sizeof(audio_attr_t));
             }
         }
     }
@@ -545,7 +551,7 @@ NSString* const kDKManagerInformationSection_VMGM_VOBU_ADMAP  = @"vmgm_vobu_adma
             }
         }
         if (menuSubpictureAttributesData) {
-            memcpy(&vmgi_mat.vmgm_subp_attr, [menuSubpictureAttributesData bytes], sizeof(vmgm_subp_attr_t));
+            memcpy(&vmgi_mat.vmgm_subp_attr, [menuSubpictureAttributesData bytes], sizeof(subp_attr_t));
         }
     }
     

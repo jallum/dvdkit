@@ -24,9 +24,9 @@ static DKPictureSize PICTURE_SIZE_TABLE[4][4] = {
 
 - (id) initWithData:(NSData*)data
 {
-    NSAssert(data && [data length] == sizeof(vmgm_video_attr_t), @"wtf?");
+    NSAssert(data && [data length] == sizeof(video_attr_t), @"wtf?");
     if (self = [super init]) {
-        const vmgm_video_attr_t* vmgm_video_attr = [data bytes];
+        const video_attr_t* vmgm_video_attr = [data bytes];
         allowAutomaticLetterbox = vmgm_video_attr->allow_automatic_letterbox;
         allowAutomaticPanAndScan = vmgm_video_attr->allow_automatic_panandscan;
         display_aspect_ratio = vmgm_video_attr->display_aspect_ratio;
@@ -46,8 +46,8 @@ static DKPictureSize PICTURE_SIZE_TABLE[4][4] = {
 
 - (NSData*) saveAsData:(NSError**)_error
 {
-    vmgm_video_attr_t vmgm_video_attr;
-    bzero(&vmgm_video_attr, sizeof(vmgm_video_attr_t));
+    video_attr_t vmgm_video_attr;
+    bzero(&vmgm_video_attr, sizeof(video_attr_t));
     vmgm_video_attr.allow_automatic_letterbox = allowAutomaticLetterbox;
     vmgm_video_attr.allow_automatic_panandscan = allowAutomaticPanAndScan;
     vmgm_video_attr.display_aspect_ratio = display_aspect_ratio;
@@ -59,7 +59,7 @@ static DKPictureSize PICTURE_SIZE_TABLE[4][4] = {
     vmgm_video_attr.bit_rate = bit_rate;
     vmgm_video_attr.line21_cc_1 = line21_cc_1;
     vmgm_video_attr.line21_cc_2 = line21_cc_2;
-    return [NSData dataWithBytes:&vmgm_video_attr length:sizeof(vmgm_video_attr_t)];
+    return [NSData dataWithBytes:&vmgm_video_attr length:sizeof(video_attr_t)];
 }
 
 @end

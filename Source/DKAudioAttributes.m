@@ -10,9 +10,9 @@
 
 - (id) initWithData:(NSData*)data
 {
-    NSAssert(data && [data length] == sizeof(vmgm_audio_attr_t), @"wtf?");
+    NSAssert(data && [data length] == sizeof(audio_attr_t), @"wtf?");
     if (self = [super init]) {
-        const vmgm_audio_attr_t* vmgm_audio_attr = [data bytes];
+        const audio_attr_t* vmgm_audio_attr = [data bytes];
         audio_format = vmgm_audio_attr->audio_format;
         has_multichannel_extension = vmgm_audio_attr->multichannel_extension;
         application_mode = vmgm_audio_attr->application_mode;
@@ -31,8 +31,8 @@
 
 - (NSData*) saveAsData:(NSError**)_error
 {
-    vmgm_audio_attr_t vmgm_audio_attr;
-    bzero(&vmgm_audio_attr, sizeof(vmgm_audio_attr_t));
+    audio_attr_t vmgm_audio_attr;
+    bzero(&vmgm_audio_attr, sizeof(audio_attr_t));
     vmgm_audio_attr.audio_format = audio_format;
     vmgm_audio_attr.multichannel_extension = has_multichannel_extension;
     vmgm_audio_attr.application_mode = application_mode;
@@ -46,7 +46,7 @@
     vmgm_audio_attr.lang_extension = lang_extension;
     vmgm_audio_attr.code_extension = code_extension;
     vmgm_audio_attr.app_info.value = app_info_value;
-    return [NSData dataWithBytes:&vmgm_audio_attr length:sizeof(vmgm_audio_attr_t)];
+    return [NSData dataWithBytes:&vmgm_audio_attr length:sizeof(audio_attr_t)];
 }
 
 

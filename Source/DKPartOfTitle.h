@@ -25,10 +25,11 @@
     uint16_t programNumber;
 }
 
-+ (id) partOfTitleWithProgramChain:(uint16_t)programChain program:(uint16_t)program;
++ (id) partOfTitleWithData:(NSData*)data error:(NSError**)error;
 
-- (id) initWithProgramChain:(uint16_t)programChain program:(uint16_t)program;
+- (id) initWithData:(NSData*)data error:(NSError**)error;
 
 @property (readonly) uint16_t programChainNumber;
 @property (readonly) uint16_t programNumber;
+
 @end
