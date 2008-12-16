@@ -658,13 +658,32 @@ STAssertTrue([[command description] isEqualTo:@"      7100000e25040000 | g[14] =
     /*  Test basic bitwise arithmetic (Or / Xor / And / Not)
      */
 
-    
+	//  AND
+	//  7900000100020000 | g[1] &= 0x6
+    [[DVDCommand commandWith64Bits:0x7900000100060000L] executeAgainstVirtualMachine:vm];
+    STAssertTrue([vm generalPurposeRegister:1] == 2, @"7500000100010000 | g[1] &= 0x6");
+	
+    //  OR
+	//  7a00000100020000 | g[1] |= 0x6
+    [[DVDCommand commandWith64Bits:0x7a00000100060000L] executeAgainstVirtualMachine:vm];
+    STAssertTrue([vm generalPurposeRegister:1] == 6, @"7500000100010000 | g[1] |= 0x6");
+	
+	
+	//  XOR
+	//  7b00000100020000 | g[1] ^= 0x6
+    [[DVDCommand commandWith64Bits:0x7b00000100060000L] executeAgainstVirtualMachine:vm];
+    STAssertTrue([vm generalPurposeRegister:1] == 0, @"7500000100010000 | g[1] ^= 0x6");
+	
 	
     
     /*  Test for proper 16-bit register overflow/underflow.  (0xFFFF + 1, etc.)
      */
-
-    // TODO: Implement me.
+	
+	// Divide by zero
+    //  7600000100020000 | g[1] %= 0x0
+    [[DVDCommand commandWith64Bits:0x7600000100000000L] executeAgainstVirtualMachine:vm];
+    STAssertTrue([vm generalPurposeRegister:1] != 0, @"7500000100010000 | g[1] %= 0x0");
+	
     
     
 }
