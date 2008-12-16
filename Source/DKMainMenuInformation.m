@@ -259,7 +259,7 @@ NSString* const kDKManagerInformationSection_VMGM_VOBU_ADMAP  = @"vmgm_vobu_adma
     return self;     
 }
             
-- (NSMutableArray*) _readTitleTrackSearchPointerTableFromDataSource:(id<DKDataSource>)dataSource offset:(uint32_t)offset errors:(NSMutableArray*)errors
++ (NSMutableArray*) _readTitleTrackSearchPointerTableFromDataSource:(id<DKDataSource>)dataSource offset:(uint32_t)offset errors:(NSMutableArray*)errors
 {
     NSData* data = [dataSource requestDataOfLength:1 << 11 fromOffset:offset << 11];
     NSAssert(data && ([data length] == 1 << 11), @"wtf?"); 
@@ -298,7 +298,7 @@ NSString* const kDKManagerInformationSection_VMGM_VOBU_ADMAP  = @"vmgm_vobu_adma
     return table;
 }
 
-- (NSData*) _readParentalManagementInformationTableFromDataSource:(id<DKDataSource>)dataSource offset:(uint32_t)offset errors:(NSMutableArray*)errors
++ (NSData*) _readParentalManagementInformationTableFromDataSource:(id<DKDataSource>)dataSource offset:(uint32_t)offset errors:(NSMutableArray*)errors
 {
     NSData* data = [dataSource requestDataOfLength:1 << 11 fromOffset:offset << 11];
     NSAssert(data && ([data length] == 1 << 11), @"wtf?"); 
@@ -319,7 +319,7 @@ NSString* const kDKManagerInformationSection_VMGM_VOBU_ADMAP  = @"vmgm_vobu_adma
     return data;
 }
 
-- (NSData*) _readTitleSetAttributeTableFromDataSource:(id<DKDataSource>)dataSource offset:(uint32_t)offset errors:(NSMutableArray*)errors
++ (NSData*) _readTitleSetAttributeTableFromDataSource:(id<DKDataSource>)dataSource offset:(uint32_t)offset errors:(NSMutableArray*)errors
 {
     NSData* data = [dataSource requestDataOfLength:1 << 11 fromOffset:offset << 11];
     NSAssert(data && ([data length] == 1 << 11), @"wtf?");
@@ -340,7 +340,7 @@ NSString* const kDKManagerInformationSection_VMGM_VOBU_ADMAP  = @"vmgm_vobu_adma
     return data;
 }
 
-- (NSMutableDictionary*) _readMenuProgramChainInformationTablesByLanguageFromDataSource:(id<DKDataSource>)dataSource offset:(uint32_t)offset errors:(NSMutableArray*)errors
++ (NSMutableDictionary*) _readMenuProgramChainInformationTablesByLanguageFromDataSource:(id<DKDataSource>)dataSource offset:(uint32_t)offset errors:(NSMutableArray*)errors
 {
     NSData* data = [dataSource requestDataOfLength:1 << 11 fromOffset:offset << 11];
     NSAssert(data && ([data length] == 1 << 11), @"wtf?"); 
@@ -402,7 +402,7 @@ NSString* const kDKManagerInformationSection_VMGM_VOBU_ADMAP  = @"vmgm_vobu_adma
     return dictionary;
 }
 
-- (NSData*) _readTextDataFromDataSource:(id<DKDataSource>)dataSource offset:(uint32_t)offset errors:(NSMutableArray*)errors
++ (NSData*) _readTextDataFromDataSource:(id<DKDataSource>)dataSource offset:(uint32_t)offset errors:(NSMutableArray*)errors
 {
     NSData* data = [dataSource requestDataOfLength:1 << 11 fromOffset:offset << 11];
     NSAssert(data && ([data length] == 1 << 11), @"wtf?"); 
@@ -414,7 +414,7 @@ NSString* const kDKManagerInformationSection_VMGM_VOBU_ADMAP  = @"vmgm_vobu_adma
     return data;
 }
 
-- (NSMutableArray*) _readCellAddressTableFromDataSource:(id<DKDataSource>)dataSource offset:(uint32_t)offset errors:(NSMutableArray*)errors
++ (NSMutableArray*) _readCellAddressTableFromDataSource:(id<DKDataSource>)dataSource offset:(uint32_t)offset errors:(NSMutableArray*)errors
 {
     NSData* data = [dataSource requestDataOfLength:1 << 11 fromOffset:offset << 11];
     NSAssert(data && ([data length] == 1 << 11), @"wtf?"); 
@@ -447,7 +447,7 @@ NSString* const kDKManagerInformationSection_VMGM_VOBU_ADMAP  = @"vmgm_vobu_adma
     return table;
 }
 
-- (NSData*) _readVobuAddressMapFromDataSource:(id<DKDataSource>)dataSource offset:(uint32_t)offset errors:(NSMutableArray*)errors
++ (NSData*) _readVobuAddressMapFromDataSource:(id<DKDataSource>)dataSource offset:(uint32_t)offset errors:(NSMutableArray*)errors
 {
     NSData* data = [dataSource requestDataOfLength:1 << 11 fromOffset:offset << 11];
     NSAssert(data && ([data length] == 1 << 11), @"wtf?"); 

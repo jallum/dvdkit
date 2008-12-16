@@ -21,25 +21,25 @@
  */
 
 @interface DKTitleSetInformation : NSObject {
+    NSInteger index;
+    /**/
     uint16_t specificationVersion;
     uint32_t categoryAndMask;
-    /**/
-    NSInteger index;
-    NSMutableArray* programChainInformationTable;
-    NSMutableDictionary* menuProgramChainInformationTablesByLanguage;
-    NSMutableArray* partOfTitleSearchTable;
-    NSMutableArray* menuCellAddressTable;
-    NSMutableArray* cellAddressTable;
-    NSData* menuVobuAddressMap;
-    NSData* vobuAddressMap;
     /**/
     DKVideoAttributes* menuVideoAttributes;
     NSMutableArray* menuAudioAttributes;
     DKSubpictureAttributes* menuSubpictureAttributes; 
+    NSMutableDictionary* menuProgramChainInformationTablesByLanguage;
+    NSMutableArray* menuCellAddressTable;
+    NSData* menuVobuAddressMap;
     /**/
     DKVideoAttributes* videoAttributes;
     NSMutableArray* audioAttributes;
     NSMutableArray* subpictureAttributes; 
+    NSMutableArray* programChainInformationTable;
+    NSMutableArray* partOfTitleSearchTable;
+    NSMutableArray* cellAddressTable;
+    NSData* vobuAddressMap;
     /**/
     NSArray* preferredSectionOrder;
 }

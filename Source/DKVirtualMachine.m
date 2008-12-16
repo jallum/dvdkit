@@ -112,7 +112,7 @@ enum {
 - (void) dealloc
 {
     [dataSource release];
-    [managerInformation release];
+    [mainMenuInformation release];
     [titleSet release];
     [programChain release];
     [titleInformation release];
@@ -125,7 +125,7 @@ enum {
     DKVirtualMachine* copy = NSCopyObject(self, 0, zone);
     if (copy) {
         [copy->dataSource retain];
-        [copy->managerInformation retain];
+        [copy->mainMenuInformation retain];
         [copy->titleSet retain];
         [copy->programChain retain];
         [copy->titleInformation retain];
@@ -144,13 +144,13 @@ enum {
 
 - (DKMainMenuInformation*) mainMenuInformation
 {
-    if (!managerInformation) {
-        managerInformation = [dataSource mainMenuInformation];
-        if (!managerInformation) {
+    if (!mainMenuInformation) {
+        mainMenuInformation = [[dataSource mainMenuInformation] retain];
+        if (!mainMenuInformation) {
             [NSException raise:DVDVirtualMachineException format:@"Video manager information is required"];
         }
     }
-    return managerInformation;
+    return mainMenuInformation;
 }
 
 - (DKUserOperationFlags) prohibitedUserOperations

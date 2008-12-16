@@ -46,7 +46,7 @@
         uint32_t REGS[5];
     } resume;
     /**/
-    DKMainMenuInformation* managerInformation;
+    DKMainMenuInformation* mainMenuInformation;
     int state;
     /**/
     DKDomain domain;
