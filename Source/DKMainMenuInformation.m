@@ -169,10 +169,15 @@ NSString* const kDKManagerInformationSection_VMGM_VOBU_ADMAP  = @"vmgm_vobu_adma
                 [errors addObject:DKErrorWithCode(kDKFirstPlayProgramChainError, DKLocalizedString(@"The offset of the first-play program chain must be less than the length of the VMGI header.", nil), NSLocalizedDescriptionKey, nil)];
             }
         }
-        if (vmgi_last_byte < [header length]) {
-            firstPlayProgramChain = [DKProgramChain programChainWithData:[header subdataWithRange:NSMakeRange(first_play_pgc, vmgi_last_byte - first_play_pgc)]];
-        } else {
-            firstPlayProgramChain = [DKProgramChain programChainWithData:[dataSource requestDataOfLength:vmgi_last_byte - first_play_pgc fromOffset:first_play_pgc]];
+        NSError* firstPlayProgramChainError = nil;
+        NSData* firstPlayProgramChainData = (vmgi_last_byte < [header length]) ? [header subdataWithRange:NSMakeRange(first_play_pgc, vmgi_last_byte - first_play_pgc)] : [dataSource requestDataOfLength:vmgi_last_byte - first_play_pgc fromOffset:first_play_pgc];
+        firstPlayProgramChain = [DKProgramChain programChainWithData:firstPlayProgramChainData error:errors ? &firstPlayProgramChainError : NULL];
+        if (firstPlayProgramChainError) {
+            if (firstPlayProgramChainError.code == kDKMultipleErrorsError) {
+                [errors addObjectsFromArray:[firstPlayProgramChainError.userInfo objectForKey:NSDetailedErrorsKey]];
+            } else {
+                [errors addObject:firstPlayProgramChainError];
+            }
         }
         if (errors && !firstPlayProgramChain) {
             [errors addObject:DKErrorWithCode(kDKFirstPlayProgramChainError, DKLocalizedString(@"The VMGI must contain a first-play program chain.", nil), NSLocalizedDescriptionKey, nil)];
@@ -321,7 +326,16 @@ NSString* const kDKManagerInformationSection_VMGM_VOBU_ADMAP  = @"vmgm_vobu_adma
                     uint8_t entry_id = OSReadBigInt8(&pgci_srp->entry_id, 0);
                     uint16_t ptl_id_mask = OSReadBigInt16(&pgci_srp->ptl_id_mask, 0);
                     uint32_t pgc_start_byte = OSReadBigInt32(&pgci_srp->pgc_start_byte, 0);
-                    [table addObject:[DKProgramChainSearchPointer programChainSearchPointerWithEntryId:entry_id parentalMask:ptl_id_mask programChain:[DKProgramChain programChainWithData:[data subdataWithRange:NSMakeRange(vmgm_pgc_start_byte + pgc_start_byte, vmgm_pgc_last_byte - pgc_start_byte)]]]];
+                    
+                    NSError* programChainError = nil;
+                    [table addObject:[DKProgramChainSearchPointer programChainSearchPointerWithEntryId:entry_id parentalMask:ptl_id_mask programChain:[DKProgramChain programChainWithData:[data subdataWithRange:NSMakeRange(vmgm_pgc_start_byte + pgc_start_byte, vmgm_pgc_last_byte - pgc_start_byte)] error:errors ? &programChainError : NULL]]];
+                    if (programChainError) {
+                        if (programChainError.code == kDKMultipleErrorsError) {
+                            [errors addObjectsFromArray:[programChainError.userInfo objectForKey:NSDetailedErrorsKey]];
+                        } else {
+                            [errors addObject:programChainError];
+                        }
+                    }
                 }
                 [tablesByLanguage setObject:table forKey:[NSNumber numberWithShort:lang_code]];
             }
@@ -356,12 +370,12 @@ NSString* const kDKManagerInformationSection_VMGM_VOBU_ADMAP  = @"vmgm_vobu_adma
             uint32_t last_byte = 1 + OSReadBigInt32(&vmgm_c_adt->last_byte, 0);
             
             /*  Sanity Checking / Data Repair  */
-            uint32_t calculated_last_byte = sizeof(vmgm_c_adt_t) + (nr_of_c_adts * sizeof(cell_adr_t));
-            if (last_byte != calculated_last_byte) {
+            uint32_t calculated_nr_of_c_adts = (last_byte - sizeof(vmgm_c_adt_t)) / sizeof(cell_adr_t);
+            if (nr_of_c_adts != calculated_nr_of_c_adts) {
                 if (errors) {
-                    [errors addObject:DKErrorWithCode(kDKCellAddressTableError, [NSString stringWithFormat:DKLocalizedString(@"Corrected last_byte (was %d, is now %d)", nil), last_byte, calculated_last_byte], NSLocalizedDescriptionKey, nil)];
+                    [errors addObject:DKErrorWithCode(kDKMenuCellAddressTableError, [NSString stringWithFormat:DKLocalizedString(@"Corrected nr_of_c_adts (was %d, is now %d)", nil), nr_of_c_adts, calculated_nr_of_c_adts], NSLocalizedDescriptionKey, nil)];
                 }
-                last_byte = calculated_last_byte;
+                nr_of_c_adts = calculated_nr_of_c_adts;
             } 
             
             /*  Have we already read all that we need?  */

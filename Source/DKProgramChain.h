@@ -41,9 +41,9 @@
     NSMutableArray* cellPositionTable;
 }
 
-+ (id) programChainWithData:(NSData*)data;
++ (id) programChainWithData:(NSData*)data error:(NSError**)error;
 
-- (id) initWithData:(NSData*)data;
+- (id) initWithData:(NSData*)data error:(NSError**)error;
 
 - (NSData*) saveAsData:(NSError**)error;
 

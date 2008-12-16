@@ -489,6 +489,7 @@ typedef enum {
     kDKFirstPlayProgramChainError,
     kDKTitleTrackSearchPointerTableError,
     kDKMenuProgramChainInformationMapError,
+    kDKMenuCellAddressTableError,
     kDKCellAddressTableError,
     kDKNumberOfVideoAttributesError,
     kDKNumberOfAudioStreamsError,
@@ -500,7 +501,7 @@ typedef enum {
     kDKSectionNameError,
 } DKErrorCode;
 
-#define DKErrorWithCode(code, ...)   __DKErrorWithCode(code, [NSString stringWithUTF8String:__PRETTY_FUNCTION__], @"function", [NSNumber numberWithInt:__LINE__], @"line", __VA_ARGS__)
+#define DKErrorWithCode(code, ...)   __DKErrorWithCode(code, self, NSAffectedObjectsErrorKey, [NSString stringWithUTF8String:__PRETTY_FUNCTION__], @"function", [NSNumber numberWithInt:__LINE__], @"line", __VA_ARGS__)
 extern NSError* __DKErrorWithCode(DKErrorCode code, ...);
 
 

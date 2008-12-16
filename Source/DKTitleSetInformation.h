@@ -53,6 +53,7 @@
 @property (readonly) NSArray* partOfTitleSearchTable;
 
 - (NSArray*) menuProgramChainInformationTableForLanguageCode:(uint16_t)languageCode;
+- (NSData*) saveAsData:(NSError**)error;
 
 @end
 

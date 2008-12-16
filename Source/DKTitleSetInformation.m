@@ -192,12 +192,12 @@ NSString* const kDKTitleSetInformationSection_VTS_PGCIT = @"vts_pgcit";
             uint32_t last_byte = 1 + OSReadBigInt32(&vtsm_c_adt->last_byte, 0);
             
             /*  Sanity Checking / Data Repair  */
-            uint32_t calculated_last_byte = sizeof(vtsm_c_adt_t) + (nr_of_c_adts * sizeof(cell_adr_t));
-            if (last_byte != calculated_last_byte) {
+            uint32_t calculated_nr_of_c_adts = (last_byte - sizeof(vtsm_c_adt_t)) / sizeof(cell_adr_t);
+            if (nr_of_c_adts != calculated_nr_of_c_adts) {
                 if (errors) {
-                    [errors addObject:DKErrorWithCode(kDKCellAddressTableError, [NSString stringWithFormat:DKLocalizedString(@"Corrected last_byte (was %d, is now %d)", nil), last_byte, calculated_last_byte], NSLocalizedDescriptionKey, nil)];
+                    [errors addObject:DKErrorWithCode(kDKMenuCellAddressTableError, [NSString stringWithFormat:DKLocalizedString(@"Corrected nr_of_c_adts (was %d, is now %d)", nil), nr_of_c_adts, calculated_nr_of_c_adts], NSLocalizedDescriptionKey, nil)];
                 }
-                last_byte = calculated_last_byte;
+                nr_of_c_adts = calculated_nr_of_c_adts;
             } 
             
             /*  Have we already read all that we need?  */
@@ -226,12 +226,12 @@ NSString* const kDKTitleSetInformationSection_VTS_PGCIT = @"vts_pgcit";
             uint32_t last_byte = 1 + OSReadBigInt32(&vts_c_adt->last_byte, 0);
             
             /*  Sanity Checking / Data Repair  */
-            uint32_t calculated_last_byte = sizeof(vts_c_adt_t) + (nr_of_c_adts * sizeof(cell_adr_t));
-            if (last_byte != calculated_last_byte) {
+            uint32_t calculated_nr_of_c_adts = (last_byte - sizeof(vts_c_adt_t)) / sizeof(cell_adr_t);
+            if (nr_of_c_adts != calculated_nr_of_c_adts) {
                 if (errors) {
-                    [errors addObject:DKErrorWithCode(kDKCellAddressTableError, [NSString stringWithFormat:DKLocalizedString(@"Corrected last_byte (was %d, is now %d)", nil), last_byte, calculated_last_byte], NSLocalizedDescriptionKey, nil)];
+                    [errors addObject:DKErrorWithCode(kDKMenuCellAddressTableError, [NSString stringWithFormat:DKLocalizedString(@"Corrected nr_of_c_adts (was %d, is now %d)", nil), nr_of_c_adts, calculated_nr_of_c_adts], NSLocalizedDescriptionKey, nil)];
                 }
-                last_byte = calculated_last_byte;
+                nr_of_c_adts = calculated_nr_of_c_adts;
             } 
             
             /*  Have we already read all that we need?  */
@@ -319,7 +319,15 @@ NSString* const kDKTitleSetInformationSection_VTS_PGCIT = @"vts_pgcit";
                 uint8_t entry_id = OSReadBigInt8(&pgci_srp->entry_id, 0);
                 uint16_t ptl_id_mask = OSReadBigInt16(&pgci_srp->ptl_id_mask, 0);
                 uint32_t pgc_start_byte = OSReadBigInt32(&pgci_srp->pgc_start_byte, 0);
-                [programChainInformationTable addObject:[DKProgramChainSearchPointer programChainSearchPointerWithEntryId:entry_id parentalMask:ptl_id_mask programChain:[DKProgramChain programChainWithData:[data subdataWithRange:NSMakeRange(pgc_start_byte, last_byte - pgc_start_byte)]]]];
+                NSError* programChainError = nil;
+                [programChainInformationTable addObject:[DKProgramChainSearchPointer programChainSearchPointerWithEntryId:entry_id parentalMask:ptl_id_mask programChain:[DKProgramChain programChainWithData:[data subdataWithRange:NSMakeRange(pgc_start_byte, last_byte - pgc_start_byte)] error:errors ? &programChainError : NULL]]];
+                if (programChainError) {
+                    if (programChainError.code == kDKMultipleErrorsError) {
+                        [errors addObjectsFromArray:[programChainError.userInfo objectForKey:NSDetailedErrorsKey]];
+                    } else {
+                        [errors addObject:programChainError];
+                    }
+                }
             }
         }
         
@@ -372,7 +380,15 @@ NSString* const kDKTitleSetInformationSection_VTS_PGCIT = @"vts_pgcit";
                     uint8_t entry_id = OSReadBigInt8(&pgci_srp->entry_id, 0);
                     uint16_t ptl_id_mask = OSReadBigInt16(&pgci_srp->ptl_id_mask, 0);
                     uint32_t pgc_start_byte = OSReadBigInt32(&pgci_srp->pgc_start_byte, 0);
-                    [table addObject:[DKProgramChainSearchPointer programChainSearchPointerWithEntryId:entry_id parentalMask:ptl_id_mask programChain:[DKProgramChain programChainWithData:[data subdataWithRange:NSMakeRange(vtsm_pgc_start_byte + pgc_start_byte, vtsm_pgc_last_byte - pgc_start_byte)]]]];
+                    NSError* programChainError = nil;
+                    [table addObject:[DKProgramChainSearchPointer programChainSearchPointerWithEntryId:entry_id parentalMask:ptl_id_mask programChain:[DKProgramChain programChainWithData:[data subdataWithRange:NSMakeRange(vtsm_pgc_start_byte + pgc_start_byte, vtsm_pgc_last_byte - pgc_start_byte)] error:errors ? &programChainError : NULL]]];
+                    if (programChainError) {
+                        if (programChainError.code == kDKMultipleErrorsError) {
+                            [errors addObjectsFromArray:[programChainError.userInfo objectForKey:NSDetailedErrorsKey]];
+                        } else {
+                            [errors addObject:programChainError];
+                        }
+                    }
                 }
                 [menuProgramChainInformationTablesByLanguage setObject:table forKey:[NSNumber numberWithShort:lang_code]];
                 [table release];
@@ -421,32 +437,9 @@ NSString* const kDKTitleSetInformationSection_VTS_PGCIT = @"vts_pgcit";
     return table;
 }
 
-- (NSArray*) parsePGCITfromData:(NSData*)data offset:(uint32_t)_offset  
+- (NSData*) saveAsData:(NSError**)error
 {
-    const uint8_t* bp = [data bytes] + _offset; 
-    const uint8_t* p = bp;
-    uint16_t nr_of_pgci_srp = OSReadBigInt16(p, 0);
-    uint32_t last_byte = OSReadBigInt32(p, 4);
-    p += 8;
-
-    if ((_offset + last_byte) >= [data length]) {
-        [NSException raise:DVDTitleSetException format:@"%s(%d)", __FILE__, __LINE__];
-    }
-
-    NSMutableArray* pgcit = [NSMutableArray arrayWithCapacity:nr_of_pgci_srp];
-    for (int i = 0; i < nr_of_pgci_srp; i++, p += 8) {
-        uint8_t entry_id = p[0];
-        uint16_t ptl_id_mask = OSReadBigInt16(p, 2);
-        uint32_t pgc_start_byte = OSReadBigInt32(p, 4);
-
-        if ((pgc_start_byte + 8) >= last_byte) {
-            [NSException raise:DVDTitleSetException format:@"%s(%d)", __FILE__, __LINE__];
-        }
-        
-        [pgcit addObject:[DKProgramChainSearchPointer programChainSearchPointerWithEntryId:entry_id parentalMask:ptl_id_mask programChain:[DKProgramChain programChainWithData:[data subdataWithRange:NSMakeRange(_offset + pgc_start_byte, (last_byte - pgc_start_byte) + 1)]]]];
-    }
-    
-    return pgcit;
+    return nil;
 }
 
 @end
