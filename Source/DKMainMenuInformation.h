@@ -57,7 +57,7 @@
 
 @property (retain) DKProgramChain* firstPlayProgramChain;
 @property (readonly) NSArray* titleTrackSearchPointerTable;
-@property (readonly) NSMutableDictionary* menuProgramChainInformationTablesByLanguage;
+@property (readonly) NSDictionary* menuProgramChainInformationTablesByLanguage;
 @property (readonly) uint16_t regionMask;
 
 - (DKTitleTrackSearchPointer*) titleTrackSearchPointerForTitleSet:(uint16_t)vts track:(uint8_t)ttn;
