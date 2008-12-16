@@ -42,7 +42,31 @@ typedef struct DKUserOperationFlags DKUserOperationFlags;
 struct DKUserOperationFlags {
     uint32_t
 #if BYTE_ORDER == LITTLE_ENDIAN
-    /* 0 - 7 */ 
+    /* 31 - 24 */
+    video_pres_mode_change : 1,
+    __zero_1 : 7,
+    
+    /* 23 - 16 */
+    resume : 1,
+    button_select_or_activate : 1,
+    still_off : 1,
+    pause_on : 1,
+    audio_stream_change : 1,
+    subpic_stream_change : 1,
+    angle_change : 1,
+    karaoke_audio_pres_mode_change : 1,
+    
+    /* 15 - 8 */
+    forward_scan : 1,
+    backward_scan : 1,
+    title_menu_call : 1,
+    root_menu_call : 1,
+    subpic_menu_call : 1,
+    audio_menu_call : 1,
+    angle_menu_call : 1,
+    chapter_menu_call : 1,
+    
+    /* 7 - 0 */ 
     title_or_time_play : 1,
     chapter_search_or_play : 1,
     title_play : 1,
@@ -50,37 +74,13 @@ struct DKUserOperationFlags {
     go_up : 1,
     time_or_chapter_search : 1,
     prev_or_top_pg_search : 1,
-    next_pg_search : 1,
-    
-    /* 8 - 15 */
-    forward_scan : 1,
-    backward_scan : 1,
-    title_menu_call : 1,
-    root_menu_call : 1,
-    subpic_menu_call : 1,
-    audio_menu_call : 1,
-    angle_menu_call : 1,
-    chapter_menu_call : 1,
-    
-    /* 16 - 23 */
-    resume : 1,
-    button_select_or_activate : 1,
-    still_off : 1,
-    pause_on : 1,
-    audio_stream_change : 1,
-    subpic_stream_change : 1,
-    angle_change : 1,
-    karaoke_audio_pres_mode_change : 1,
-    
-    /* 24 - 31 */
-    video_pres_mode_change : 1,
-    __zero_1 : 7;
+    next_pg_search : 1;
 #else
-    /* 31 - 24 */
+    /* 24 - 31 */
     __zero_1 : 7,
     video_pres_mode_change : 1,
     
-    /* 23 - 16 */
+    /* 16 - 23 */
     karaoke_audio_pres_mode_change : 1,
     angle_change : 1,
     subpic_stream_change : 1,
@@ -89,8 +89,8 @@ struct DKUserOperationFlags {
     still_off : 1,
     button_select_or_activate : 1,
     resume : 1,
-
-    /* 15 - 8 */
+    
+    /* 8 - 15 */
     chapter_menu_call : 1,
     angle_menu_call : 1,
     audio_menu_call : 1,
@@ -100,7 +100,7 @@ struct DKUserOperationFlags {
     backward_scan : 1,
     forward_scan : 1,
     
-    /* 7 - 0 */ 
+    /* 0 - 7 */ 
     next_pg_search : 1,
     prev_or_top_pg_search : 1,
     time_or_chapter_search : 1,
