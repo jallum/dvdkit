@@ -229,6 +229,7 @@ struct vts_mat_t {
     /**/
     uint32_t vtsm_vobs;       /* sector */
     uint32_t vtstt_vobs;      /* sector */
+    /**/
     uint32_t vts_ptt_srpt;    /* sector */
     uint32_t vts_pgcit;       /* sector */
     uint32_t vtsm_pgci_ut;    /* sector */
