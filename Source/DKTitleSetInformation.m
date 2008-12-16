@@ -26,6 +26,7 @@ NSString* const DVDTitleSetException = @"DVDTitleSet";
 
 NSString* const kDKTitleSetInformationSection_VTS_PTT_SRPT      = @"vts_ptt_srpt";
 NSString* const kDKTitleSetInformationSection_VTSM_C_ADT        = @"vtsm_c_adt";
+NSString* const kDKTitleSetInformationSection_VTS_C_ADT         = @"vts_c_adt";
 NSString* const kDKTitleSetInformationSection_VTSM_VOBU_ADMAP   = @"vtsm_vobu_admap";
 NSString* const kDKTitleSetInformationSection_VTS_VOBU_ADMAP    = @"vts_vobu_admap";
 NSString* const kDKTitleSetInformationSection_VTSM_PGCI_UT      = @"vtsm_pgci_ut";
@@ -51,6 +52,7 @@ NSString* const kDKTitleSetInformationSection_VTS_PGCIT         = @"vts_pgcit";
         array = [[NSArray alloc] initWithObjects:
             kDKTitleSetInformationSection_VTS_PTT_SRPT,
             kDKTitleSetInformationSection_VTSM_C_ADT,
+            kDKTitleSetInformationSection_VTS_C_ADT,
             kDKTitleSetInformationSection_VTSM_VOBU_ADMAP, 
             kDKTitleSetInformationSection_VTS_VOBU_ADMAP,
             kDKTitleSetInformationSection_VTSM_PGCI_UT,
@@ -85,8 +87,8 @@ NSString* const kDKTitleSetInformationSection_VTS_PGCIT         = @"vts_pgcit";
 
         /*
          */
-        specificationVersion = OSReadBigInt8(&vts_mat->specification_version, 0);
-        vts_category = OSReadBigInt32(&vts_mat->vts_category, 0);
+        specificationVersion = OSReadBigInt16(&vts_mat->specification_version, 0);
+        categoryAndMask = OSReadBigInt32(&vts_mat->vts_category, 0);
 
         //uint32_t vtsi_last_byte = 1 + OSReadBigInt32(&vts_mat->vtsi_last_byte, 0);
         uint32_t vtsi_last_sector = 1 + OSReadBigInt32(&vts_mat->vtsi_last_sector, 0);
@@ -165,7 +167,7 @@ NSString* const kDKTitleSetInformationSection_VTS_PGCIT         = @"vts_pgcit";
         }
         uint32_t offset_of_vts_c_adt = OSReadBigInt32(&vts_mat->vts_c_adt, 0);
         if (offset_of_vts_c_adt && (offset_of_vts_c_adt <= vtsi_last_sector)) {
-            [sectionOrdering setObject:kDKTitleSetInformationSection_VTSM_C_ADT forKey:[NSNumber numberWithUnsignedInt:offset_of_vts_c_adt]];
+            [sectionOrdering setObject:kDKTitleSetInformationSection_VTS_C_ADT forKey:[NSNumber numberWithUnsignedInt:offset_of_vts_c_adt]];
             cellAddressTable = [[self _readCellAddressTableFromDataSource:dataSource offset:offset_of_vts_c_adt errors:errors] retain];
         }
         uint32_t offset_of_vtsm_vobu_admap = OSReadBigInt32(&vts_mat->vtsm_vobu_admap, 0);
@@ -314,9 +316,9 @@ NSString* const kDKTitleSetInformationSection_VTS_PGCIT         = @"vts_pgcit";
 {
     NSData* data = [dataSource requestDataOfLength:1 << 11 fromOffset:offset << 11];
     NSAssert(data && ([data length] == 1 << 11), @"wtf?"); 
-    const vtsm_pgc_t* vtsm_pgc = [data bytes];
-    uint16_t nr_of_pgci_srp = OSReadBigInt16(&vtsm_pgc->nr_of_pgci_srp, 0);
-    uint32_t last_byte = 1 + OSReadBigInt32(&vtsm_pgc->last_byte, 0);
+    const vtsm_pgc_t* vts_pgc = [data bytes];
+    uint16_t nr_of_pgci_srp = OSReadBigInt16(&vts_pgc->nr_of_pgci_srp, 0);
+    uint32_t last_byte = 1 + OSReadBigInt32(&vts_pgc->last_byte, 0);
     
     /*  Have we already read all that we need?  */
     if (last_byte > [data length]) {
@@ -349,9 +351,9 @@ NSString* const kDKTitleSetInformationSection_VTS_PGCIT         = @"vts_pgcit";
 {
     NSData* data = [dataSource requestDataOfLength:1 << 11 fromOffset:offset << 11];
     NSAssert(data && ([data length] == 1 << 11), @"wtf?"); 
-    const vtsm_pgci_ut_t* vtsm_pgci_ut = [data bytes];
-    uint16_t nr_of_lus = OSReadBigInt16(&vtsm_pgci_ut->nr_of_lus, 0);
-    uint32_t last_byte = 1 + OSReadBigInt32(&vtsm_pgci_ut->last_byte, 0);
+    const vtsm_pgci_ut_t* vts_pgci_ut = [data bytes];
+    uint16_t nr_of_lus = OSReadBigInt16(&vts_pgci_ut->nr_of_lus, 0);
+    uint32_t last_byte = 1 + OSReadBigInt32(&vts_pgci_ut->last_byte, 0);
     
     /*  Sanity Checking / Data Repair  */
     if (nr_of_lus > 99) {
@@ -373,25 +375,25 @@ NSString* const kDKTitleSetInformationSection_VTS_PGCIT         = @"vts_pgcit";
     for (int i = 0, p = sizeof(vtsm_pgci_ut_t); i < nr_of_lus; i++, p += 8) {
         const vtsm_lu_t* vtsm_lu = [[data subdataWithRange:NSMakeRange(p, sizeof(vtsm_lu_t))] bytes];
         uint16_t lang_code = OSReadBigInt16(&vtsm_lu->lang_code, 0);
-        uint32_t vtsm_pgc_start_byte = OSReadBigInt32(&vtsm_lu->pgcit_start_byte, 0);
+        uint32_t vts_pgc_start_byte = OSReadBigInt32(&vtsm_lu->pgcit_start_byte, 0);
         
-        const vtsm_pgc_t* vtsm_pgc = [[data subdataWithRange:NSMakeRange(vtsm_pgc_start_byte, sizeof(vtsm_pgc_t))] bytes];
-        uint16_t nr_of_pgci_srp = OSReadBigInt16(&vtsm_pgc->nr_of_pgci_srp, 0);
-        uint32_t vtsm_pgc_last_byte = 1 + OSReadBigInt32(&vtsm_pgc->last_byte, 0);
+        const vtsm_pgc_t* vts_pgc = [[data subdataWithRange:NSMakeRange(vts_pgc_start_byte, sizeof(vtsm_pgc_t))] bytes];
+        uint16_t nr_of_pgci_srp = OSReadBigInt16(&vts_pgc->nr_of_pgci_srp, 0);
+        uint32_t vts_pgc_last_byte = 1 + OSReadBigInt32(&vts_pgc->last_byte, 0);
         
-        if (errors && ((vtsm_pgc_start_byte + vtsm_pgc_last_byte) > last_byte)) {
+        if (errors && ((vts_pgc_start_byte + vts_pgc_last_byte) > last_byte)) {
             // TODO: Correct last_byte?
             [errors addObject:DKErrorWithCode(kDKTitleSetProgramChainInformationMapError, nil)];
         }
         
         NSMutableArray* table = [[NSMutableArray alloc] initWithCapacity:nr_of_pgci_srp];
-        for (int i = 0, p = vtsm_pgc_start_byte + sizeof(vtsm_pgc_t); i < nr_of_pgci_srp; i++, p += sizeof(pgci_srp_t)) {
+        for (int i = 0, p = vts_pgc_start_byte + sizeof(vtsm_pgc_t); i < nr_of_pgci_srp; i++, p += sizeof(pgci_srp_t)) {
             const pgci_srp_t* pgci_srp = [[data subdataWithRange:NSMakeRange(p, sizeof(pgci_srp_t))] bytes];
             uint8_t entry_id = OSReadBigInt8(&pgci_srp->entry_id, 0);
             uint16_t ptl_id_mask = OSReadBigInt16(&pgci_srp->ptl_id_mask, 0);
             uint32_t pgc_start_byte = OSReadBigInt32(&pgci_srp->pgc_start_byte, 0);
             NSError* programChainError = nil;
-            [table addObject:[DKProgramChainSearchPointer programChainSearchPointerWithEntryId:entry_id parentalMask:ptl_id_mask programChain:[DKProgramChain programChainWithData:[data subdataWithRange:NSMakeRange(vtsm_pgc_start_byte + pgc_start_byte, vtsm_pgc_last_byte - pgc_start_byte)] error:errors ? &programChainError : NULL]]];
+            [table addObject:[DKProgramChainSearchPointer programChainSearchPointerWithEntryId:entry_id parentalMask:ptl_id_mask programChain:[DKProgramChain programChainWithData:[data subdataWithRange:NSMakeRange(vts_pgc_start_byte + pgc_start_byte, vts_pgc_last_byte - pgc_start_byte)] error:errors ? &programChainError : NULL]]];
             if (programChainError) {
                 if (programChainError.code == kDKMultipleErrorsError) {
                     [errors addObjectsFromArray:[programChainError.userInfo objectForKey:NSDetailedErrorsKey]];
@@ -430,7 +432,250 @@ NSString* const kDKTitleSetInformationSection_VTS_PGCIT         = @"vts_pgcit";
 
 - (NSData*) saveAsData:(NSError**)error
 {
-    return nil;
+    NSMutableArray* errors = !error ? nil : [NSMutableArray array];
+    NSMutableData* data = [NSMutableData data];
+    
+    /*
+     */
+    [data increaseLengthBy:sizeof(vts_mat_t)];  
+    vts_mat_t vts_mat;
+    bzero(&vts_mat, sizeof(vts_mat_t));
+    memcpy(vts_mat.vts_identifier, "DVDVIDEO-VTS", sizeof(vts_mat.vts_identifier));
+    
+    /*
+     */
+    OSWriteBigInt16(&vts_mat.specification_version, 0, specificationVersion);
+    OSWriteBigInt32(&vts_mat.vts_category, 0, categoryAndMask);
+
+    
+    /*  Menu Video / Audio / Subpicture Attributes
+     */
+    if (menuVideoAttributes) {
+        NSError* menuVideoAttributesError = nil;
+        NSData* menuVideoAttributesData = [menuVideoAttributes saveAsData:errors ? &menuVideoAttributesError : NULL];
+        if (menuVideoAttributesError) {
+            if (menuVideoAttributesError.code == kDKMultipleErrorsError) {
+                [errors addObjectsFromArray:[menuVideoAttributesError.userInfo objectForKey:NSDetailedErrorsKey]];
+            } else {
+                [errors addObject:menuVideoAttributesError];
+            }
+        }
+        if (menuVideoAttributesData) {
+            memcpy(&vts_mat.vtsm_video_attr, [menuVideoAttributesData bytes], sizeof(video_attr_t));
+        }
+    } else if (errors) {
+        [errors addObject:DKErrorWithCode(kDKNumberOfVideoAttributesError, nil)];
+    }
+    uint16_t nr_of_vtsm_audio_streams = [menuAudioAttributes count];
+    if (nr_of_vtsm_audio_streams > 8) {
+        if (errors) {
+            [errors addObject:DKErrorWithCode(kDKNumberOfAudioStreamsError, nil)];
+        }
+        nr_of_vtsm_audio_streams = 8;
+    }
+    if (nr_of_vtsm_audio_streams) {
+        OSWriteBigInt16(&vts_mat.nr_of_vtsm_audio_streams, 0, nr_of_vtsm_audio_streams);
+        for (int i = 0; i < nr_of_vtsm_audio_streams; i++) {
+            NSError* menuAudioAttributesError = nil;
+            NSData* menuAudioAttributesData = [[menuAudioAttributes objectAtIndex:i] saveAsData:errors ? &menuAudioAttributesError : NULL];
+            if (menuAudioAttributesError) {
+                if (menuAudioAttributesError.code == kDKMultipleErrorsError) {
+                    [errors addObjectsFromArray:[menuAudioAttributesError.userInfo objectForKey:NSDetailedErrorsKey]];
+                } else {
+                    [errors addObject:menuAudioAttributesError];
+                }
+            }
+            if (menuAudioAttributesData) {
+                memcpy(&vts_mat.vtsm_audio_attr[i], [menuAudioAttributesData bytes], sizeof(audio_attr_t));
+            }
+        }
+    }
+    if (menuSubpictureAttributes) {
+        OSWriteBigInt16(&vts_mat.nr_of_vtsm_subp_streams, 0, 1);
+        NSError* menuSubpictureAttributesError = nil;
+        NSData* menuSubpictureAttributesData = [menuSubpictureAttributes saveAsData:errors ? &menuSubpictureAttributesError : NULL];
+        if (menuSubpictureAttributesError) {
+            if (menuSubpictureAttributesError.code == kDKMultipleErrorsError) {
+                [errors addObjectsFromArray:[menuSubpictureAttributesError.userInfo objectForKey:NSDetailedErrorsKey]];
+            } else {
+                [errors addObject:menuSubpictureAttributesError];
+            }
+        }
+        if (menuSubpictureAttributesData) {
+            memcpy(&vts_mat.vtsm_subp_attr, [menuSubpictureAttributesData bytes], sizeof(subp_attr_t));
+        }
+    }
+
+
+    /*  Title Set Video / Audio / Subpicture Attributes
+     */
+    if (videoAttributes) {
+        NSError* videoAttributesError = nil;
+        NSData* videoAttributesData = [videoAttributes saveAsData:errors ? &videoAttributesError : NULL];
+        if (videoAttributesError) {
+            if (videoAttributesError.code == kDKMultipleErrorsError) {
+                [errors addObjectsFromArray:[videoAttributesError.userInfo objectForKey:NSDetailedErrorsKey]];
+            } else {
+                [errors addObject:videoAttributesError];
+            }
+        }
+        if (videoAttributesData) {
+            memcpy(&vts_mat.vts_video_attr, [videoAttributesData bytes], sizeof(video_attr_t));
+        }
+    } else if (errors) {
+        [errors addObject:DKErrorWithCode(kDKNumberOfVideoAttributesError, nil)];
+    }
+    uint16_t nr_of_vts_audio_streams = [audioAttributes count];
+    if (nr_of_vts_audio_streams > 8) {
+        if (errors) {
+            [errors addObject:DKErrorWithCode(kDKNumberOfAudioStreamsError, nil)];
+        }
+        nr_of_vts_audio_streams = 8;
+    }
+    if (nr_of_vts_audio_streams) {
+        OSWriteBigInt16(&vts_mat.nr_of_vts_audio_streams, 0, nr_of_vts_audio_streams);
+        for (int i = 0; i < nr_of_vts_audio_streams; i++) {
+            NSError* audioAttributesError = nil;
+            NSData* audioAttributesData = [[audioAttributes objectAtIndex:i] saveAsData:errors ? &audioAttributesError : NULL];
+            if (audioAttributesError) {
+                if (audioAttributesError.code == kDKMultipleErrorsError) {
+                    [errors addObjectsFromArray:[audioAttributesError.userInfo objectForKey:NSDetailedErrorsKey]];
+                } else {
+                    [errors addObject:audioAttributesError];
+                }
+            }
+            if (audioAttributesData) {
+                memcpy(&vts_mat.vts_audio_attr[i], [audioAttributesData bytes], sizeof(audio_attr_t));
+            }
+        }
+    }
+    uint16_t nr_of_vts_subp_streams = [subpictureAttributes count];
+    if (nr_of_vts_subp_streams > 32) {
+        if (errors) {
+            [errors addObject:DKErrorWithCode(kDKNumberOfSubpictureStreamsError, nil)];
+        }
+        nr_of_vts_subp_streams = 32;
+    }
+    if (nr_of_vts_subp_streams) {
+        OSWriteBigInt16(&vts_mat.nr_of_vts_subp_streams, 0, nr_of_vts_subp_streams);
+        for (int i = 0; i < nr_of_vts_subp_streams; i++) {
+            NSError* subpictureAttributesError = nil;
+            NSData* subpictureAttributesData = [[subpictureAttributes objectAtIndex:i] saveAsData:errors ? &subpictureAttributesError : NULL];
+            if (subpictureAttributesError) {
+                if (subpictureAttributesError.code == kDKMultipleErrorsError) {
+                    [errors addObjectsFromArray:[subpictureAttributesError.userInfo objectForKey:NSDetailedErrorsKey]];
+                } else {
+                    [errors addObject:subpictureAttributesError];
+                }
+            }
+            if (subpictureAttributesData) {
+                memcpy(&vts_mat.vts_subp_attr[i], [subpictureAttributesData bytes], sizeof(subp_attr_t));
+            }
+        }
+    }
+    
+
+    /*  Align to the next sector boundary.
+     */
+    OSWriteBigInt32(&vts_mat.vtsi_last_byte, 0, [data length]);
+    uint32_t amountToAlign = 0x800 - ([data length] & 0x07FF);
+    if (amountToAlign != 0x800) {
+        [data increaseLengthBy:amountToAlign];
+    }
+    NSAssert(([data length] & 0x07FF) == 0, @"Sections not sector-aligned?");
+    
+    
+    /*  Determine the proper order, and then write out the various sections.
+     */
+    NSMutableArray* sectionOrder = [[preferredSectionOrder mutableCopy] autorelease];
+    for (NSString* section in [DKTitleSetInformation availableSections]) {
+        if (![sectionOrder containsObject:section]) {
+            [sectionOrder addObject:section];
+        }
+    }
+    for (NSString* section in sectionOrder) {
+        NSMutableData* sectionData = nil;
+        NSAssert(([data length] & 0x07FF) == 0, @"Sections not sector-aligned?");
+
+        if ([section isEqualToString:kDKTitleSetInformationSection_VTS_PTT_SRPT]) {
+            if (![partOfTitleSearchTable count]) {
+                continue;
+            }
+            //TODO
+            OSWriteBigInt32(&vts_mat.vts_ptt_srpt, 0, [data length] >> 11);
+        } else if ([section isEqualToString:kDKTitleSetInformationSection_VTSM_C_ADT]) {
+            if (![menuCellAddressTable count]) {
+                continue;
+            }
+            //TODO
+            OSWriteBigInt32(&vts_mat.vtsm_c_adt, 0, [data length] >> 11);
+        } else if ([section isEqualToString:kDKTitleSetInformationSection_VTS_C_ADT]) {
+            if (![cellAddressTable count]) {
+                continue;
+            }
+            //TODO
+            OSWriteBigInt32(&vts_mat.vts_c_adt, 0, [data length] >> 11);
+        } else if ([section isEqualToString:kDKTitleSetInformationSection_VTSM_VOBU_ADMAP]) {
+            if (![menuVobuAddressMap length]) {
+                continue;
+            }
+            //TODO
+            OSWriteBigInt32(&vts_mat.vtsm_vobu_admap, 0, [data length] >> 11);
+        } else if ([section isEqualToString:kDKTitleSetInformationSection_VTS_VOBU_ADMAP]) {
+            if (![vobuAddressMap length]) {
+                continue;
+            }
+            //TODO
+            OSWriteBigInt32(&vts_mat.vts_vobu_admap, 0, [data length] >> 11);
+        } else if ([section isEqualToString:kDKTitleSetInformationSection_VTSM_PGCI_UT]) {
+            if (![menuProgramChainInformationTablesByLanguage count]) {
+                continue;
+            }
+            //TODO
+            OSWriteBigInt32(&vts_mat.vtsm_pgci_ut, 0, [data length] >> 11);
+        } else if ([section isEqualToString:kDKTitleSetInformationSection_VTS_PGCIT]) {
+            if (![programChainInformationTable count]) {
+                continue;
+            }
+            //TODO
+            OSWriteBigInt32(&vts_mat.vts_pgcit, 0, [data length] >> 11);
+        } else if (errors) {
+            NSLog(@"%@", section);
+            [errors addObject:DKErrorWithCode(kDKSectionNameError, nil)];
+        }
+    
+        /*  If data was generated for the section, append it to the final 
+         *  output and then pad that with zeros to the next sector boundary.
+         */
+        if (sectionData) {
+            [data appendData:sectionData];
+            uint32_t amountToAlign = 0x800 - ([data length] & 0x07FF);
+            if (amountToAlign != 0x800) {
+                [data increaseLengthBy:amountToAlign];
+            }
+        }
+    }
+
+    
+    NSAssert(([data length] & 0x07FF) == 0, @"Sections not sector-aligned?");
+    uint32_t vtsi_last_sector = [data length] >> 11;
+    OSWriteBigInt32(&vts_mat.vtsi_last_sector, 0, vtsi_last_sector - 1);
+    OSWriteBigInt32(&vts_mat.vts_last_sector, 0, (vtsi_last_sector * 2) - 1);
+    OSWriteBigInt32(&vts_mat.vtsm_vobs, 0, vtsi_last_sector);
+    
+    if (errors) {
+        int errorCount = [errors count];
+        if (0 == errorCount) {
+            *error = nil;
+        } else if (1 == errorCount) {
+            *error = [errors objectAtIndex:0];
+        } else {
+            *error = DKErrorWithCode(kDKMultipleErrorsError, errors, NSDetailedErrorsKey, nil);
+        }
+    }
+    
+    memcpy([data mutableBytes], &vts_mat, sizeof(vts_mat_t));
+    return data;
 }
 
 @end

@@ -180,8 +180,7 @@ struct vmgi_mat_t {
     uint32_t vmg_last_sector;
     uint8_t __zero_1[12];
     uint32_t vmgi_last_sector;
-    uint8_t __zero_2;
-    uint8_t specification_version;
+    uint16_t specification_version;
     uint32_t vmg_category;
     uint16_t vmg_nr_of_volumes;
     uint16_t vmg_this_volume_nr;

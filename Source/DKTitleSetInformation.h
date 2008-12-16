@@ -22,7 +22,7 @@
 
 @interface DKTitleSetInformation : NSObject {
     uint16_t specificationVersion;
-    uint32_t vts_category;
+    uint32_t categoryAndMask;
     /**/
     NSInteger index;
     NSMutableArray* programChainInformationTable;
