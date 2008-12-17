@@ -1,5 +1,6 @@
 #import "UnitTests.h"
 #import <DVDKit/DVDKit.h>
+#import "DKFileHandleDataSource.h"
 
 @implementation UnitTests
 
@@ -682,6 +683,22 @@
     //  TODO: Test for subtractive underflow, e.g. 0x0000 - 1 == 0xFFFF
 	//  TODO: Test multiplication that causes overflow, e.g. 25600 * 64 == 0x0000, not 0x190000.
     
+}
+
+- (void) testLoadAndDecodeOf_VIDEO_TS_IFO_01
+{
+    NSFileHandle* ifoHandle = [NSFileHandle fileHandleForReadingAtPath:[[NSBundle bundleForClass:[self class]] pathForResource:@"VIDEO_TS.IFO.01" ofType:nil]];
+    STAssertTrue(ifoHandle != nil, @"Unable to open a file handle for the resource.");
+    
+    id<DKDataSource> dataSource = [[[DKFileHandleDataSource alloc] initWithFileHandle:ifoHandle] autorelease];
+    STAssertTrue(dataSource != nil, @"Unable to create a data source.");
+    
+    NSError* error = nil;
+    DKMainMenuInformation* mainMenuInformation = [DKMainMenuInformation mainMenuInformationWithDataSource:dataSource error:&error];
+    STAssertTrue(!error, @"VIDEO_TS.IFO.01 should decode without errors.");
+    STAssertTrue(mainMenuInformation != nil, @"mainMenuInformation should not be nil.");
+
+    // TODO: Add tests
 }
 
 @end

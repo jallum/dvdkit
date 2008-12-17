@@ -12,6 +12,8 @@
 		F9694AEA0EF94BFE006A8F4D /* DVDKit.m in Sources */ = {isa = PBXBuildFile; fileRef = F9694AE90EF94BFE006A8F4D /* DVDKit.m */; };
 		F9694AF20EF94C40006A8F4D /* UnitTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F9694AF10EF94C40006A8F4D /* UnitTests.m */; };
 		F9694AF80EF94C73006A8F4D /* DVDKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8DC2EF5B0486A6940098B216 /* DVDKit.framework */; };
+		F9694B210EF96060006A8F4D /* DKFileHandleDataSource.m in Sources */ = {isa = PBXBuildFile; fileRef = F9694B200EF96060006A8F4D /* DKFileHandleDataSource.m */; };
+		F9694B610EF96215006A8F4D /* VIDEO_TS.IFO.01 in Resources */ = {isa = PBXBuildFile; fileRef = F9694B600EF96215006A8F4D /* VIDEO_TS.IFO.01 */; };
 		F98A625A0E8C700300071926 /* DKCellAddress.h in Headers */ = {isa = PBXBuildFile; fileRef = F98A62420E8C700300071926 /* DKCellAddress.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F98A625B0E8C700300071926 /* DKCellAddress.m in Sources */ = {isa = PBXBuildFile; fileRef = F98A62430E8C700300071926 /* DKCellAddress.m */; };
 		F98A625C0E8C700300071926 /* DKCellPlayback.h in Headers */ = {isa = PBXBuildFile; fileRef = F98A62440E8C700300071926 /* DKCellPlayback.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -67,6 +69,9 @@
 		F9694AE90EF94BFE006A8F4D /* DVDKit.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DVDKit.m; sourceTree = "<group>"; };
 		F9694AF00EF94C40006A8F4D /* UnitTests.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UnitTests.h; sourceTree = "<group>"; };
 		F9694AF10EF94C40006A8F4D /* UnitTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UnitTests.m; sourceTree = "<group>"; };
+		F9694B1F0EF96060006A8F4D /* DKFileHandleDataSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DKFileHandleDataSource.h; sourceTree = "<group>"; };
+		F9694B200EF96060006A8F4D /* DKFileHandleDataSource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DKFileHandleDataSource.m; sourceTree = "<group>"; };
+		F9694B600EF96215006A8F4D /* VIDEO_TS.IFO.01 */ = {isa = PBXFileReference; lastKnownFileType = file; path = VIDEO_TS.IFO.01; sourceTree = "<group>"; };
 		F98A62420E8C700300071926 /* DKCellAddress.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DKCellAddress.h; sourceTree = "<group>"; };
 		F98A62430E8C700300071926 /* DKCellAddress.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DKCellAddress.m; sourceTree = "<group>"; };
 		F98A62440E8C700300071926 /* DKCellPlayback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DKCellPlayback.h; sourceTree = "<group>"; };
@@ -107,13 +112,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				8DC2EF570486A6940098B216 /* Cocoa.framework in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		F908713E0EEEC2B6003B7507 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -227,10 +225,21 @@
 		3CAA088E0EEC73A10080C4FD /* Unit Tests */ = {
 			isa = PBXGroup;
 			children = (
+				F9694B4F0EF961C4006A8F4D /* Resources */,
 				F9694AF00EF94C40006A8F4D /* UnitTests.h */,
 				F9694AF10EF94C40006A8F4D /* UnitTests.m */,
+				F9694B1F0EF96060006A8F4D /* DKFileHandleDataSource.h */,
+				F9694B200EF96060006A8F4D /* DKFileHandleDataSource.m */,
 			);
 			path = "Unit Tests";
+			sourceTree = "<group>";
+		};
+		F9694B4F0EF961C4006A8F4D /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				F9694B600EF96215006A8F4D /* VIDEO_TS.IFO.01 */,
+			);
+			path = Resources;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -281,21 +290,6 @@
 			productReference = 8DC2EF5B0486A6940098B216 /* DVDKit.framework */;
 			productType = "com.apple.product-type.framework";
 		};
-		F908713F0EEEC2B6003B7507 /* TestTheTestTool */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = F90871450EEEC2BA003B7507 /* Build configuration list for PBXNativeTarget "TestTheTestTool" */;
-			buildPhases = (
-				F908713D0EEEC2B6003B7507 /* Sources */,
-				F908713E0EEEC2B6003B7507 /* Frameworks */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			name = TestTheTestTool;
-			productName = TestTheTestTool;
-			productType = "com.apple.product-type.tool";
-		};
 		F9AE38880EF1907300DAC94F /* Unit Tests */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = F9AE388D0EF1907400DAC94F /* Build configuration list for PBXNativeTarget "Unit Tests" */;
@@ -329,7 +323,6 @@
 			targets = (
 				8DC2EF4F0486A6940098B216 /* DVDKit */,
 				F9AE38880EF1907300DAC94F /* Unit Tests */,
-				F908713F0EEEC2B6003B7507 /* TestTheTestTool */,
 			);
 		};
 /* End PBXProject section */
@@ -349,6 +342,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F9694B610EF96215006A8F4D /* VIDEO_TS.IFO.01 in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -393,18 +387,12 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		F908713D0EEEC2B6003B7507 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		F9AE38850EF1907300DAC94F /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 				F9694AF20EF94C40006A8F4D /* UnitTests.m in Sources */,
+				F9694B210EF96060006A8F4D /* DKFileHandleDataSource.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -503,52 +491,6 @@
 			};
 			name = Release;
 		};
-		F90871420EEEC2B6003B7507 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				COPY_PHASE_STRIP = NO;
-				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_ENABLE_FIX_AND_CONTINUE = YES;
-				GCC_MODEL_TUNING = G5;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
-				INSTALL_PATH = /usr/local/bin;
-				OTHER_LDFLAGS = (
-					"-framework",
-					Foundation,
-					"-framework",
-					AppKit,
-				);
-				PREBINDING = NO;
-				PRODUCT_NAME = TestTheTestTool;
-			};
-			name = Debug;
-		};
-		F90871430EEEC2B6003B7507 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				COPY_PHASE_STRIP = YES;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				GCC_ENABLE_FIX_AND_CONTINUE = NO;
-				GCC_MODEL_TUNING = G5;
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
-				INSTALL_PATH = /usr/local/bin;
-				OTHER_LDFLAGS = (
-					"-framework",
-					Foundation,
-					"-framework",
-					AppKit,
-				);
-				PREBINDING = NO;
-				PRODUCT_NAME = TestTheTestTool;
-				ZERO_LINK = NO;
-			};
-			name = Release;
-		};
 		F9AE388B0EF1907400DAC94F /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -620,15 +562,6 @@
 			buildConfigurations = (
 				1DEB91B208733DA50010E9CD /* Debug */,
 				1DEB91B308733DA50010E9CD /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		F90871450EEEC2BA003B7507 /* Build configuration list for PBXNativeTarget "TestTheTestTool" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				F90871420EEEC2B6003B7507 /* Debug */,
-				F90871430EEEC2B6003B7507 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
