@@ -22,7 +22,7 @@
 #import "DVDKit.h"
 #import "DVDKit+Private.h"
 
-NSString* const DVDCommandException = @"DVDCommand";
+NSString* const DKCommandException = @"DKCommand";
 
 @implementation DKCommand
 @synthesize bits;
@@ -69,14 +69,20 @@ NSString* const DVDCommandException = @"DVDCommand";
     return self;
 }
 
+- (void) dealloc
+{
+    [description release];
+    [super dealloc];
+}
+
 - (void) executeAgainstVirtualMachine:(DKVirtualMachine*)virtualMachine
 {
 #ifdef DEBUG
-    NSLog(@"%@", self);
+//    NSLog(@"%@", self);
 #endif
     uint8_t type = [self bitsInRange:NSMakeRange(63, 3)];
     if (type > 6) {
-        [NSException raise:DVDCommandException format:@"%s(%d)", __FILE__, __LINE__];
+        [NSException raise:DKCommandException format:@"%s(%d)", __FILE__, __LINE__];
     } else switch (type) {
         case 0: {
             uint8_t command = [self bitsInRange:NSMakeRange(51, 4)];
@@ -98,7 +104,7 @@ NSString* const DVDCommandException = @"DVDCommand";
                 }
                     
                 default: {
-                    [NSException raise:DVDCommandException format:@"%s(%d)", __FILE__, __LINE__];
+                    [NSException raise:DKCommandException format:@"%s(%d)", __FILE__, __LINE__];
                 }
             }
             break;
@@ -180,7 +186,7 @@ NSString* const DVDCommandException = @"DVDCommand";
                     }
                         
                     default: {
-                        [NSException raise:DVDCommandException format:@"%s(%d)", __FILE__, __LINE__];
+                        [NSException raise:DKCommandException format:@"%s(%d)", __FILE__, __LINE__];
                     }
                 }
             } else {
@@ -215,7 +221,7 @@ NSString* const DVDCommandException = @"DVDCommand";
                     }
                         
                     default: {
-                        [NSException raise:DVDCommandException format:@"%s(%d)", __FILE__, __LINE__];
+                        [NSException raise:DKCommandException format:@"%s(%d)", __FILE__, __LINE__];
                     }
                 }
             }
@@ -262,7 +268,7 @@ NSString* const DVDCommandException = @"DVDCommand";
                     }
                         
                     default: {
-                        [NSException raise:DVDCommandException format:@"%s(%d)", __FILE__, __LINE__];
+                        [NSException raise:DKCommandException format:@"%s(%d)", __FILE__, __LINE__];
                     }
                 }
                 if (!comparison) switch ([self bitsInRange:NSMakeRange(51, 4)]) {
@@ -301,7 +307,7 @@ NSString* const DVDCommandException = @"DVDCommand";
                     }
                         
                     default: {
-                        [NSException raise:DVDCommandException format:@"%s(%d)", __FILE__, __LINE__];
+                        [NSException raise:DKCommandException format:@"%s(%d)", __FILE__, __LINE__];
                     }
                 }
             }
@@ -359,7 +365,7 @@ NSString* const DVDCommandException = @"DVDCommand";
                         }
                             
                         default: {
-                            [NSException raise:DVDCommandException format:@"%s(%d)", __FILE__, __LINE__];
+                            [NSException raise:DKCommandException format:@"%s(%d)", __FILE__, __LINE__];
                         }
                     }
                 }
@@ -434,7 +440,7 @@ NSString* const DVDCommandException = @"DVDCommand";
         }
                 
         default: {
-            [NSException raise:DVDCommandException format:@"%s(%d)", __FILE__, __LINE__];
+            [NSException raise:DKCommandException format:@"%s(%d)", __FILE__, __LINE__];
         }
     }
 }
@@ -443,21 +449,23 @@ static void appendMnemonic(DKCommand* command, NSMutableString* string);
 
 - (NSString*) description
 {
-    NSMutableString* string = [NSMutableString string];
-    if (self->row >= 0) {
-        [string appendFormat:@"(%03d) ", row + 1];
-    } else {
-        [string appendString:@"      "];
+    if (!description) {
+        description = [[NSMutableString alloc] init];
+        if (self->row >= 0) {
+            [description appendFormat:@"(%03d) ", row + 1];
+        } else {
+            [description appendString:@"      "];
+        }
+        [description appendFormat:@"%016llx | ", bits];
+        int length = [description length];
+        @try {
+            appendMnemonic(self, description);
+        } @catch (id exception) {
+            [description deleteCharactersInRange:NSMakeRange(length, [description length] - length)];
+            [description appendString:@"<INVALID INSTRUCTION>"];
+        }
     }
-    [string appendFormat:@"%016llx | ", bits];
-    int length = [string length];
-    @try {
-        appendMnemonic(self, string);
-    } @catch (id exception) {
-        [string deleteCharactersInRange:NSMakeRange(length, [string length] - length)];
-        [string appendString:@"<INVALID INSTRUCTION>"];
-    }
-    return string;
+    return description;
 }
 
 @end
@@ -500,7 +508,7 @@ static void appendMnemonic(DKCommand* command, NSMutableString* string);
             return value1 < value2;
         }
     }
-    [NSException raise:DVDCommandException format:@"%s(%d)", __FILE__, __LINE__];
+    [NSException raise:DKCommandException format:@"%s(%d)", __FILE__, __LINE__];
     return 0; /* Never Reached */
 }
 
@@ -542,7 +550,7 @@ static void appendMnemonic(DKCommand* command, NSMutableString* string);
             return value1 ^ value2;
         }
     }
-    [NSException raise:DVDCommandException format:@"%s(%d)", __FILE__, __LINE__];
+    [NSException raise:DKCommandException format:@"%s(%d)", __FILE__, __LINE__];
     return 0; /* Never Reached */
 }
 
@@ -648,7 +656,7 @@ static void appendRegOrData3(DKCommand* command, NSMutableString* string, int im
         if (isprint(i & 0xff) && isprint((i>>8) & 0xff)) {
             [string appendFormat:@" (\"%c%c\")", (char)((i>>8) & 0xff), (char)(i & 0xff)];
         } else {
-            [NSException raise:DVDCommandException format:@"%s(%d)", __FILE__, __LINE__];
+            [NSException raise:DKCommandException format:@"%s(%d)", __FILE__, __LINE__];
         }
     } else {
         appendRegister([command bitsInRange:NSMakeRange(start, 8)], string);
@@ -749,7 +757,7 @@ static void appendSpecial(DKCommand* command, NSMutableString* string)
         }
             
         default: {
-            [NSException raise:DVDCommandException format:@"%s(%d)", __FILE__, __LINE__];
+            [NSException raise:DKCommandException format:@"%s(%d)", __FILE__, __LINE__];
         }
     }
 }
@@ -764,7 +772,7 @@ static void appendLinkSub(DKCommand* command, NSMutableString* string)
             [string appendFormat:@" (button %d)", button];
         }
     } else {
-        [NSException raise:DVDCommandException format:@"%s(%d)", __FILE__, __LINE__];
+        [NSException raise:DKCommandException format:@"%s(%d)", __FILE__, __LINE__];
     }
 }
 
@@ -778,7 +786,7 @@ static void appendLink(DKCommand* command, NSMutableString* string, int optional
     switch (op) {
         case 0: {
             if (!optional) {
-                [NSException raise:DVDCommandException format:@"%s(%d)", __FILE__, __LINE__];
+                [NSException raise:DKCommandException format:@"%s(%d)", __FILE__, __LINE__];
             }
             break;
         }
@@ -821,7 +829,7 @@ static void appendLink(DKCommand* command, NSMutableString* string, int optional
         }
         
         default: {
-            [NSException raise:DVDCommandException format:@"%s(%d)", __FILE__, __LINE__];
+            [NSException raise:DKCommandException format:@"%s(%d)", __FILE__, __LINE__];
         }
     }
 }
@@ -872,7 +880,7 @@ static void appendJump(DKCommand* command, NSMutableString* string)
                 }
 
                 default: {
-                    [NSException raise:DVDCommandException format:@"%s(%d)", __FILE__, __LINE__];
+                    [NSException raise:DKCommandException format:@"%s(%d)", __FILE__, __LINE__];
                 }
             }
             break;
@@ -901,14 +909,14 @@ static void appendJump(DKCommand* command, NSMutableString* string)
                 }
 
                 default: {
-                    [NSException raise:DVDCommandException format:@"%s(%d)", __FILE__, __LINE__];
+                    [NSException raise:DKCommandException format:@"%s(%d)", __FILE__, __LINE__];
                 }
             }
             break;
         }
 
         default: {
-            [NSException raise:DVDCommandException format:@"%s(%d)", __FILE__, __LINE__];
+            [NSException raise:DKCommandException format:@"%s(%d)", __FILE__, __LINE__];
         }
     }
 }
@@ -922,7 +930,7 @@ static void appendSystemSet(DKCommand* command, NSMutableString* string)
                     appendSystemRegister(i, string);
                     [string appendFormat:@" = "];
                     appendRegOrData2(command, string, [command bitsInRange:NSMakeRange(60, 1)], 47 - (i*8) );
-                    [string appendFormat:@" "];
+//                    [string appendFormat:@" "];
                 }
             }
             break;
@@ -966,7 +974,7 @@ static void appendSystemSet(DKCommand* command, NSMutableString* string)
         }
             
         default: {
-            [NSException raise:DVDCommandException format:@"%s(%d)", __FILE__, __LINE__];
+            [NSException raise:DKCommandException format:@"%s(%d)", __FILE__, __LINE__];
         }
     }
 }
@@ -1070,14 +1078,14 @@ void appendMnemonic(DKCommand* command, NSMutableString* string)
         }
             
         default: {
-            [NSException raise:DVDCommandException format:@"%s(%d)", __FILE__, __LINE__];
+            [NSException raise:DKCommandException format:@"%s(%d)", __FILE__, __LINE__];
         }
     }
 }
 
 @end
 
-@implementation DKVirtualMachine (DVDCommand)
+@implementation DKVirtualMachine (DKCommand)
 
 - (uint16_t) registerForCode:(uint8_t)rn
 {
@@ -1086,7 +1094,7 @@ void appendMnemonic(DKCommand* command, NSMutableString* string)
     } else if ((rn >= 0x80) && (rn <= 0x97)) {
         return [self systemParameterRegister:rn - 0x80];
     } else {
-        [NSException raise:DVDCommandException format:@"%s(%d)", __FILE__, __LINE__];
+        [NSException raise:DKCommandException format:@"%s(%d)", __FILE__, __LINE__];
         return 0; /* Never Reached */
     }
 }
@@ -1098,7 +1106,7 @@ void appendMnemonic(DKCommand* command, NSMutableString* string)
     } else if ((rn >= 0x80) && (rn <= 0x97)) {
         [self setValue:value forSystemParameterRegister:rn - 0x80];
     } else {
-        [NSException raise:DVDCommandException format:@"%s(%d)", __FILE__, __LINE__];
+        [NSException raise:DKCommandException format:@"%s(%d)", __FILE__, __LINE__];
     }
 }
 

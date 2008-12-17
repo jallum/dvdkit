@@ -9,7 +9,9 @@
 /* Begin PBXBuildFile section */
 		8DC2EF530486A6940098B216 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C1666FE841158C02AAC07 /* InfoPlist.strings */; };
 		8DC2EF570486A6940098B216 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7B1FEA5585E11CA2CBB /* Cocoa.framework */; };
-		F90870040EEDE69D003B7507 /* DVDKit.m in Sources */ = {isa = PBXBuildFile; fileRef = F90870030EEDE69D003B7507 /* DVDKit.m */; };
+		F9694AEA0EF94BFE006A8F4D /* DVDKit.m in Sources */ = {isa = PBXBuildFile; fileRef = F9694AE90EF94BFE006A8F4D /* DVDKit.m */; };
+		F9694AF20EF94C40006A8F4D /* UnitTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F9694AF10EF94C40006A8F4D /* UnitTests.m */; };
+		F9694AF80EF94C73006A8F4D /* DVDKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8DC2EF5B0486A6940098B216 /* DVDKit.framework */; };
 		F98A625A0E8C700300071926 /* DKCellAddress.h in Headers */ = {isa = PBXBuildFile; fileRef = F98A62420E8C700300071926 /* DKCellAddress.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F98A625B0E8C700300071926 /* DKCellAddress.m in Sources */ = {isa = PBXBuildFile; fileRef = F98A62430E8C700300071926 /* DKCellAddress.m */; };
 		F98A625C0E8C700300071926 /* DKCellPlayback.h in Headers */ = {isa = PBXBuildFile; fileRef = F98A62440E8C700300071926 /* DKCellPlayback.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -44,6 +46,16 @@
 		F9A9DB7B0EE6E17700D2F1AC /* DKSubpictureAttributes.m in Sources */ = {isa = PBXBuildFile; fileRef = F9A9DB790EE6E17700D2F1AC /* DKSubpictureAttributes.m */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXContainerItemProxy section */
+		F9AE388E0EF1907900DAC94F /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 8DC2EF4F0486A6940098B216;
+			remoteInfo = DVDKit;
+		};
+/* End PBXContainerItemProxy section */
+
 /* Begin PBXFileReference section */
 		0867D69BFE84028FC02AAC07 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
 		0867D6A5FE840307C02AAC07 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = /System/Library/Frameworks/AppKit.framework; sourceTree = "<absolute>"; };
@@ -52,7 +64,9 @@
 		8DC2EF5A0486A6940098B216 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		8DC2EF5B0486A6940098B216 /* DVDKit.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = DVDKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		D2F7E79907B2D74100F64583 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = /System/Library/Frameworks/CoreData.framework; sourceTree = "<absolute>"; };
-		F90870030EEDE69D003B7507 /* DVDKit.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DVDKit.m; sourceTree = "<group>"; };
+		F9694AE90EF94BFE006A8F4D /* DVDKit.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DVDKit.m; sourceTree = "<group>"; };
+		F9694AF00EF94C40006A8F4D /* UnitTests.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UnitTests.h; sourceTree = "<group>"; };
+		F9694AF10EF94C40006A8F4D /* UnitTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UnitTests.m; sourceTree = "<group>"; };
 		F98A62420E8C700300071926 /* DKCellAddress.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DKCellAddress.h; sourceTree = "<group>"; };
 		F98A62430E8C700300071926 /* DKCellAddress.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DKCellAddress.m; sourceTree = "<group>"; };
 		F98A62440E8C700300071926 /* DKCellPlayback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DKCellPlayback.h; sourceTree = "<group>"; };
@@ -96,6 +110,21 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		F908713E0EEEC2B6003B7507 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F9AE38860EF1907300DAC94F /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F9694AF80EF94C73006A8F4D /* DVDKit.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -110,6 +139,7 @@
 		0867D691FE84028FC02AAC07 /* DVDKit */ = {
 			isa = PBXGroup;
 			children = (
+				3CAA088E0EEC73A10080C4FD /* Unit Tests */,
 				F98A62F30E8C7E7F00071926 /* README */,
 				F98A63580E8C8E1200071926 /* LICENSE */,
 				08FB77AEFE84172EC02AAC07 /* Source */,
@@ -142,7 +172,7 @@
 			isa = PBXGroup;
 			children = (
 				F98A624B0E8C700300071926 /* DVDKit.h */,
-				F90870030EEDE69D003B7507 /* DVDKit.m */,
+				F9694AE90EF94BFE006A8F4D /* DVDKit.m */,
 				F9A9D9210EE5916E00D2F1AC /* DVDKit+Private.h */,
 				F98A62420E8C700300071926 /* DKCellAddress.h */,
 				F98A62430E8C700300071926 /* DKCellAddress.m */,
@@ -194,6 +224,15 @@
 			name = "Other Frameworks";
 			sourceTree = "<group>";
 		};
+		3CAA088E0EEC73A10080C4FD /* Unit Tests */ = {
+			isa = PBXGroup;
+			children = (
+				F9694AF00EF94C40006A8F4D /* UnitTests.h */,
+				F9694AF10EF94C40006A8F4D /* UnitTests.m */,
+			);
+			path = "Unit Tests";
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
@@ -242,6 +281,39 @@
 			productReference = 8DC2EF5B0486A6940098B216 /* DVDKit.framework */;
 			productType = "com.apple.product-type.framework";
 		};
+		F908713F0EEEC2B6003B7507 /* TestTheTestTool */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = F90871450EEEC2BA003B7507 /* Build configuration list for PBXNativeTarget "TestTheTestTool" */;
+			buildPhases = (
+				F908713D0EEEC2B6003B7507 /* Sources */,
+				F908713E0EEEC2B6003B7507 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = TestTheTestTool;
+			productName = TestTheTestTool;
+			productType = "com.apple.product-type.tool";
+		};
+		F9AE38880EF1907300DAC94F /* Unit Tests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = F9AE388D0EF1907400DAC94F /* Build configuration list for PBXNativeTarget "Unit Tests" */;
+			buildPhases = (
+				F9AE38840EF1907300DAC94F /* Resources */,
+				F9AE38850EF1907300DAC94F /* Sources */,
+				F9AE38860EF1907300DAC94F /* Frameworks */,
+				F9AE38870EF1907300DAC94F /* ShellScript */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				F9AE388F0EF1907900DAC94F /* PBXTargetDependency */,
+			);
+			name = "Unit Tests";
+			productName = "Unit Tests";
+			productType = "com.apple.product-type.bundle";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -256,6 +328,8 @@
 			projectRoot = "";
 			targets = (
 				8DC2EF4F0486A6940098B216 /* DVDKit */,
+				F9AE38880EF1907300DAC94F /* Unit Tests */,
+				F908713F0EEEC2B6003B7507 /* TestTheTestTool */,
 			);
 		};
 /* End PBXProject section */
@@ -271,7 +345,30 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		F9AE38840EF1907300DAC94F /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		F9AE38870EF1907300DAC94F /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Run the unit tests in this test bundle.\n\"${SYSTEM_DEVELOPER_DIR}/Tools/RunUnitTests\"\n";
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		8DC2EF540486A6940098B216 /* Sources */ = {
@@ -292,11 +389,34 @@
 				F9A9DB730EE6E13C00D2F1AC /* DKVideoAttributes.m in Sources */,
 				F9A9DB770EE6E15000D2F1AC /* DKAudioAttributes.m in Sources */,
 				F9A9DB7B0EE6E17700D2F1AC /* DKSubpictureAttributes.m in Sources */,
-				F90870040EEDE69D003B7507 /* DVDKit.m in Sources */,
+				F9694AEA0EF94BFE006A8F4D /* DVDKit.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F908713D0EEEC2B6003B7507 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F9AE38850EF1907300DAC94F /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F9694AF20EF94C40006A8F4D /* UnitTests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		F9AE388F0EF1907900DAC94F /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 8DC2EF4F0486A6940098B216 /* DVDKit */;
+			targetProxy = F9AE388E0EF1907900DAC94F /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
 		089C1666FE841158C02AAC07 /* InfoPlist.strings */ = {
@@ -383,6 +503,106 @@
 			};
 			name = Release;
 		};
+		F90871420EEEC2B6003B7507 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
+				INSTALL_PATH = /usr/local/bin;
+				OTHER_LDFLAGS = (
+					"-framework",
+					Foundation,
+					"-framework",
+					AppKit,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = TestTheTestTool;
+			};
+			name = Debug;
+		};
+		F90871430EEEC2B6003B7507 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_MODEL_TUNING = G5;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
+				INSTALL_PATH = /usr/local/bin;
+				OTHER_LDFLAGS = (
+					"-framework",
+					Foundation,
+					"-framework",
+					AppKit,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = TestTheTestTool;
+				ZERO_LINK = NO;
+			};
+			name = Release;
+		};
+		F9AE388B0EF1907400DAC94F /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COPY_PHASE_STRIP = NO;
+				FRAMEWORK_SEARCH_PATHS = "$(DEVELOPER_LIBRARY_DIR)/Frameworks";
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Cocoa.framework/Headers/Cocoa.h";
+				INFOPLIST_FILE = "Unit Tests/Info.plist";
+				INSTALL_PATH = "$(USER_LIBRARY_DIR)/Bundles";
+				OTHER_LDFLAGS = (
+					"-framework",
+					Cocoa,
+					"-framework",
+					SenTestingKit,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = "Unit Tests";
+				WRAPPER_EXTENSION = octest;
+			};
+			name = Debug;
+		};
+		F9AE388C0EF1907400DAC94F /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				FRAMEWORK_SEARCH_PATHS = "$(DEVELOPER_LIBRARY_DIR)/Frameworks";
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Cocoa.framework/Headers/Cocoa.h";
+				INFOPLIST_FILE = "Unit Tests/Info.plist";
+				INSTALL_PATH = "$(USER_LIBRARY_DIR)/Bundles";
+				OTHER_LDFLAGS = (
+					"-framework",
+					Cocoa,
+					"-framework",
+					SenTestingKit,
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = "Unit Tests";
+				WRAPPER_EXTENSION = octest;
+				ZERO_LINK = NO;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -400,6 +620,24 @@
 			buildConfigurations = (
 				1DEB91B208733DA50010E9CD /* Debug */,
 				1DEB91B308733DA50010E9CD /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		F90871450EEEC2BA003B7507 /* Build configuration list for PBXNativeTarget "TestTheTestTool" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F90871420EEEC2B6003B7507 /* Debug */,
+				F90871430EEEC2B6003B7507 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		F9AE388D0EF1907400DAC94F /* Build configuration list for PBXNativeTarget "Unit Tests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F9AE388B0EF1907400DAC94F /* Debug */,
+				F9AE388C0EF1907400DAC94F /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
