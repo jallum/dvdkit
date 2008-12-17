@@ -60,12 +60,12 @@ NSString* const DVDCellPlaybackException = @"DVDCellPlayback";
 
         /*  Pick out the values of fields that are endian-sensitive.
          */
-        stillTime = OSReadBigInt8(cell_playback, offsetof(cell_playback_t, still_time));
-        postCommandIndex = OSReadBigInt8(cell_playback, offsetof(cell_playback_t, cell_cmd_nr));
-        firstSector = OSReadBigInt32(cell_playback, offsetof(cell_playback_t, first_sector));
-        firstInterleavingUnitSector = OSReadBigInt32(cell_playback, offsetof(cell_playback_t, first_ilvu_end_sector));
-        lastVideoObjectUnitStartSector = OSReadBigInt32(cell_playback, offsetof(cell_playback_t, last_vobu_start_sector));
-        lastSector = OSReadBigInt32(cell_playback, offsetof(cell_playback_t, last_sector));
+        stillTime = OSReadBigInt8(&cell_playback->still_time, 0);
+        postCommandIndex = OSReadBigInt8(&cell_playback->cell_cmd_nr, 0);
+        firstSector = OSReadBigInt32(&cell_playback->first_sector, 0);
+        firstInterleavingUnitSector = OSReadBigInt32(&cell_playback->first_ilvu_end_sector, 0);
+        lastVideoObjectUnitStartSector = OSReadBigInt32(&cell_playback->last_vobu_start_sector, 0);
+        lastSector = OSReadBigInt32(&cell_playback->last_sector, 0);
 
         /*  Sanity checking.
          */
@@ -103,12 +103,12 @@ NSString* const DVDCellPlaybackException = @"DVDCellPlayback";
     
     /*  Pick out the values of fields that are endian-sensitive.
      */
-    OSWriteBigInt8(cell_playback, offsetof(cell_playback_t, still_time), stillTime);
-    OSWriteBigInt8(cell_playback, offsetof(cell_playback_t, cell_cmd_nr), postCommandIndex);
-    OSWriteBigInt32(cell_playback, offsetof(cell_playback_t, first_sector), firstSector);
-    OSWriteBigInt32(cell_playback, offsetof(cell_playback_t, first_ilvu_end_sector), firstInterleavingUnitSector);
-    OSWriteBigInt32(cell_playback, offsetof(cell_playback_t, last_vobu_start_sector), lastVideoObjectUnitStartSector);
-    OSWriteBigInt32(cell_playback, offsetof(cell_playback_t, last_sector), lastSector);
+    OSWriteBigInt8(&cell_playback->still_time, 0, stillTime);
+    OSWriteBigInt8(&cell_playback->cell_cmd_nr, 0, postCommandIndex);
+    OSWriteBigInt32(&cell_playback->first_sector, 0, firstSector);
+    OSWriteBigInt32(&cell_playback->first_ilvu_end_sector, 0, firstInterleavingUnitSector);
+    OSWriteBigInt32(&cell_playback->last_vobu_start_sector, 0, lastVideoObjectUnitStartSector);
+    OSWriteBigInt32(&cell_playback->last_sector, 0, lastSector);
     
     return data;
 }

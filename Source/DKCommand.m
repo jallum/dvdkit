@@ -78,7 +78,7 @@ NSString* const DKCommandException = @"DKCommand";
 - (void) executeAgainstVirtualMachine:(DKVirtualMachine*)virtualMachine
 {
 #ifdef DEBUG
-//    NSLog(@"%@", self);
+    NSLog(@"%@", self);
 #endif
     uint8_t type = [self bitsInRange:NSMakeRange(63, 3)];
     if (type > 6) {

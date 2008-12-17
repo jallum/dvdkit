@@ -39,6 +39,7 @@
     NSAssert([data length] >= sizeof(ptt_info_t), @"wtf?");
     if (self = [super init]) {
         const ptt_info_t* ptt_info = [data bytes];
+    
         programChainNumber = OSReadBigInt16(&ptt_info->pgcn, 0);
         programNumber = OSReadBigInt16(&ptt_info->pgn, 0);
     }
@@ -49,8 +50,10 @@
 {
     NSMutableData* data = [NSMutableData dataWithLength:sizeof(ptt_info_t)];
     ptt_info_t* ptt_info = [data mutableBytes];
+    
     OSWriteBigInt16(&ptt_info->pgcn, 0, programChainNumber);
     OSWriteBigInt16(&ptt_info->pgn, 0, programNumber);
+    
     return data;
 }
 

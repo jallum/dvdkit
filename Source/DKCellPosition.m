@@ -49,6 +49,7 @@
     NSAssert([data length] == sizeof(cell_position_t), @"wtf?");
     if (self = [super init]) {
         const cell_position_t* cell_position = [data bytes];
+        
         number = OSReadBigInt8(&cell_position->cell_nr, 0);
         vobId = OSReadBigInt16(&cell_position->vob_id_nr, 0);
     }
