@@ -33,11 +33,20 @@ NSString* const kDKTitleSetInformationSection_VTSM_PGCI_UT      = @"vtsm_pgci_ut
 NSString* const kDKTitleSetInformationSection_VTS_PGCIT         = @"vts_pgcit";
 
 @interface DKTitleSetInformation (Private)
-- (NSMutableArray*) _readPartOfTitleSearchTableFromDataSource:(id<DKDataSource>)dataSource offset:(uint32_t)offset errors:(NSMutableArray*)errors;
-- (NSMutableArray*) _readCellAddressTableFromDataSource:(id<DKDataSource>)dataSource offset:(uint32_t)offset errors:(NSMutableArray*)errors;
-- (NSData*) _readVobuAddressMapFromDataSource:(id<DKDataSource>)dataSource offset:(uint32_t)offset errors:(NSMutableArray*)errors;
-- (NSMutableArray*) _readProgramChainInformationTableFromDataSource:(id<DKDataSource>)dataSource offset:(uint32_t)offset errors:(NSMutableArray*)errors;
-- (NSMutableDictionary*) _readMenuProgramChainInformationTablesByLanguageFromDataSource:(id<DKDataSource>)dataSource offset:(uint32_t)offset errors:(NSMutableArray*)errors;
+/*  Read  */
++ (NSMutableArray*) _readPartOfTitleSearchTableFromDataSource:(id<DKDataSource>)dataSource offset:(uint32_t)offset errors:(NSMutableArray*)errors;
++ (NSMutableArray*) _readCellAddressTableFromDataSource:(id<DKDataSource>)dataSource offset:(uint32_t)offset errors:(NSMutableArray*)errors;
++ (NSMutableData*) _readVobuAddressMapFromDataSource:(id<DKDataSource>)dataSource offset:(uint32_t)offset errors:(NSMutableArray*)errors;
++ (NSMutableArray*) _readProgramChainInformationTableFromDataSource:(id<DKDataSource>)dataSource offset:(uint32_t)offset errors:(NSMutableArray*)errors;
++ (NSMutableDictionary*) _readMenuProgramChainInformationTablesByLanguageFromDataSource:(id<DKDataSource>)dataSource offset:(uint32_t)offset errors:(NSMutableArray*)errors;
+
+
+/*  Save  */
++ (NSMutableData*) _saveMenuProgramChainInformationTablesByLanguage:(NSDictionary*)menuProgramChainInformationTablesByLanguage errors:(NSMutableArray*)errors;
++ (NSMutableData*) _saveProgramChainInformationTable:(NSArray*)programChainInformationTable errors:(NSMutableArray*)errors;
++ (NSMutableData*) _saveVobuAddressMap:(NSData*)vobuAddressMap errors:(NSMutableArray*)errors;
++ (NSMutableData*) _saveCellAddressTable:(NSArray*)cellAddressTable errors:(NSMutableArray*)errors;
++ (NSMutableData*) _savePartOfTitleSearchTable:(NSArray*)partOfTitleSearchTable errors:(NSMutableArray*)errors;
 @end
 
 @implementation DKTitleSetInformation
@@ -158,37 +167,37 @@ NSString* const kDKTitleSetInformationSection_VTS_PGCIT         = @"vts_pgcit";
         uint32_t offset_of_vts_ptt_srpt = OSReadBigInt32(&vts_mat->vts_ptt_srpt, 0);
         if (offset_of_vts_ptt_srpt && (offset_of_vts_ptt_srpt <= vtsi_last_sector)) {
             [sectionOrdering setObject:kDKTitleSetInformationSection_VTS_PTT_SRPT forKey:[NSNumber numberWithUnsignedInt:offset_of_vts_ptt_srpt]];
-            partOfTitleSearchTable = [[self _readPartOfTitleSearchTableFromDataSource:dataSource offset:offset_of_vts_ptt_srpt errors:errors] retain];
+            partOfTitleSearchTable = [[DKTitleSetInformation _readPartOfTitleSearchTableFromDataSource:dataSource offset:offset_of_vts_ptt_srpt errors:errors] retain];
         }
         uint32_t offset_of_vtsm_c_adt = OSReadBigInt32(&vts_mat->vtsm_c_adt, 0);
         if (offset_of_vtsm_c_adt && (offset_of_vtsm_c_adt <= vtsi_last_sector)) {
             [sectionOrdering setObject:kDKTitleSetInformationSection_VTSM_C_ADT forKey:[NSNumber numberWithUnsignedInt:offset_of_vtsm_c_adt]];
-            menuCellAddressTable = [[self _readCellAddressTableFromDataSource:dataSource offset:offset_of_vtsm_c_adt errors:errors] retain];
+            menuCellAddressTable = [[DKTitleSetInformation _readCellAddressTableFromDataSource:dataSource offset:offset_of_vtsm_c_adt errors:errors] retain];
         }
         uint32_t offset_of_vts_c_adt = OSReadBigInt32(&vts_mat->vts_c_adt, 0);
         if (offset_of_vts_c_adt && (offset_of_vts_c_adt <= vtsi_last_sector)) {
             [sectionOrdering setObject:kDKTitleSetInformationSection_VTS_C_ADT forKey:[NSNumber numberWithUnsignedInt:offset_of_vts_c_adt]];
-            cellAddressTable = [[self _readCellAddressTableFromDataSource:dataSource offset:offset_of_vts_c_adt errors:errors] retain];
+            cellAddressTable = [[DKTitleSetInformation _readCellAddressTableFromDataSource:dataSource offset:offset_of_vts_c_adt errors:errors] retain];
         }
         uint32_t offset_of_vtsm_vobu_admap = OSReadBigInt32(&vts_mat->vtsm_vobu_admap, 0);
         if (offset_of_vtsm_vobu_admap && (offset_of_vtsm_vobu_admap <= vtsi_last_sector)) {
             [sectionOrdering setObject:kDKTitleSetInformationSection_VTSM_VOBU_ADMAP forKey:[NSNumber numberWithUnsignedInt:offset_of_vtsm_vobu_admap]];
-            menuVobuAddressMap = [[self _readVobuAddressMapFromDataSource:dataSource offset:offset_of_vtsm_vobu_admap errors:errors] retain];
+            menuVobuAddressMap = [[DKTitleSetInformation _readVobuAddressMapFromDataSource:dataSource offset:offset_of_vtsm_vobu_admap errors:errors] retain];
         }
         uint32_t offset_of_vts_vobu_admap = OSReadBigInt32(&vts_mat->vts_vobu_admap, 0);
         if (offset_of_vts_vobu_admap && (offset_of_vts_vobu_admap <= vtsi_last_sector)) {
             [sectionOrdering setObject:kDKTitleSetInformationSection_VTS_VOBU_ADMAP forKey:[NSNumber numberWithUnsignedInt:offset_of_vts_vobu_admap]];
-            vobuAddressMap = [[self _readVobuAddressMapFromDataSource:dataSource offset:offset_of_vts_vobu_admap errors:errors] retain];
+            vobuAddressMap = [[DKTitleSetInformation _readVobuAddressMapFromDataSource:dataSource offset:offset_of_vts_vobu_admap errors:errors] retain];
         }
         uint32_t offset_of_vts_pgcit = OSReadBigInt32(&vts_mat->vts_pgcit, 0);
         if (offset_of_vts_pgcit && (offset_of_vts_pgcit <= vtsi_last_sector)) {
             [sectionOrdering setObject:kDKTitleSetInformationSection_VTS_PGCIT forKey:[NSNumber numberWithUnsignedInt:offset_of_vts_pgcit]];
-            programChainInformationTable = [[self _readProgramChainInformationTableFromDataSource:dataSource offset:offset_of_vts_pgcit errors:errors] retain];
+            programChainInformationTable = [[DKTitleSetInformation _readProgramChainInformationTableFromDataSource:dataSource offset:offset_of_vts_pgcit errors:errors] retain];
         }
         uint32_t offset_of_vtsm_pgci_ut = OSReadBigInt32(&vts_mat->vtsm_pgci_ut, 0);
         if (offset_of_vtsm_pgci_ut && (offset_of_vtsm_pgci_ut <= vtsi_last_sector)) {
             [sectionOrdering setObject:kDKTitleSetInformationSection_VTSM_PGCI_UT forKey:[NSNumber numberWithUnsignedInt:offset_of_vtsm_pgci_ut]];
-            menuProgramChainInformationTablesByLanguage = [[self _readMenuProgramChainInformationTablesByLanguageFromDataSource:dataSource offset:offset_of_vtsm_pgci_ut errors:errors] retain];
+            menuProgramChainInformationTablesByLanguage = [[DKTitleSetInformation _readMenuProgramChainInformationTablesByLanguageFromDataSource:dataSource offset:offset_of_vtsm_pgci_ut errors:errors] retain];
         }
         
         
@@ -212,7 +221,7 @@ NSString* const kDKTitleSetInformationSection_VTS_PGCIT         = @"vts_pgcit";
     return self;
 }
 
-- (NSMutableArray*) _readPartOfTitleSearchTableFromDataSource:(id<DKDataSource>)dataSource offset:(uint32_t)offset errors:(NSMutableArray*)errors
++ (NSMutableArray*) _readPartOfTitleSearchTableFromDataSource:(id<DKDataSource>)dataSource offset:(uint32_t)offset errors:(NSMutableArray*)errors
 {
     NSData* data = [dataSource requestDataOfLength:1 << 11 fromOffset:offset << 11];
     NSAssert(data && ([data length] == 1 << 11), @"wtf?"); 
@@ -261,7 +270,7 @@ NSString* const kDKTitleSetInformationSection_VTS_PGCIT         = @"vts_pgcit";
     return table;
 }
 
-- (NSMutableArray*) _readCellAddressTableFromDataSource:(id<DKDataSource>)dataSource offset:(uint32_t)offset errors:(NSMutableArray*)errors
++ (NSMutableArray*) _readCellAddressTableFromDataSource:(id<DKDataSource>)dataSource offset:(uint32_t)offset errors:(NSMutableArray*)errors
 {
     NSData* data = [dataSource requestDataOfLength:1 << 11 fromOffset:offset << 11];
     const vts_c_adt_t* vts_c_adt = [data bytes];
@@ -293,7 +302,7 @@ NSString* const kDKTitleSetInformationSection_VTS_PGCIT         = @"vts_pgcit";
     return table;
 }
 
-- (NSData*) _readVobuAddressMapFromDataSource:(id<DKDataSource>)dataSource offset:(uint32_t)offset errors:(NSMutableArray*)errors
++ (NSMutableData*) _readVobuAddressMapFromDataSource:(id<DKDataSource>)dataSource offset:(uint32_t)offset errors:(NSMutableArray*)errors
 {
     NSData* data = [dataSource requestDataOfLength:1 << 11 fromOffset:offset << 11];
     uint32_t last_byte = 1 + OSReadBigInt32([data bytes], 0);
@@ -309,10 +318,10 @@ NSString* const kDKTitleSetInformationSection_VTS_PGCIT         = @"vts_pgcit";
      *  TODO: Additional Decoding  
      */
     
-    return [data subdataWithRange:NSMakeRange(4, last_byte - 4)];
+    return [NSMutableData dataWithData:[data subdataWithRange:NSMakeRange(4, last_byte - 4)]];
 }
             
-- (NSMutableArray*) _readProgramChainInformationTableFromDataSource:(id<DKDataSource>)dataSource offset:(uint32_t)offset errors:(NSMutableArray*)errors
++ (NSMutableArray*) _readProgramChainInformationTableFromDataSource:(id<DKDataSource>)dataSource offset:(uint32_t)offset errors:(NSMutableArray*)errors
 {
     NSData* data = [dataSource requestDataOfLength:1 << 11 fromOffset:offset << 11];
     NSAssert(data && ([data length] == 1 << 11), @"wtf?"); 
@@ -347,7 +356,7 @@ NSString* const kDKTitleSetInformationSection_VTS_PGCIT         = @"vts_pgcit";
     return table;
 }
 
-- (NSMutableDictionary*) _readMenuProgramChainInformationTablesByLanguageFromDataSource:(id<DKDataSource>)dataSource offset:(uint32_t)offset errors:(NSMutableArray*)errors
++ (NSMutableDictionary*) _readMenuProgramChainInformationTablesByLanguageFromDataSource:(id<DKDataSource>)dataSource offset:(uint32_t)offset errors:(NSMutableArray*)errors
 {
     NSData* data = [dataSource requestDataOfLength:1 << 11 fromOffset:offset << 11];
     NSAssert(data && ([data length] == 1 << 11), @"wtf?"); 
@@ -601,43 +610,43 @@ NSString* const kDKTitleSetInformationSection_VTS_PGCIT         = @"vts_pgcit";
             if (![partOfTitleSearchTable count]) {
                 continue;
             }
-            //TODO
+            sectionData = [DKTitleSetInformation _savePartOfTitleSearchTable:partOfTitleSearchTable errors:errors];
             OSWriteBigInt32(&vts_mat.vts_ptt_srpt, 0, [data length] >> 11);
         } else if ([section isEqualToString:kDKTitleSetInformationSection_VTSM_C_ADT]) {
             if (![menuCellAddressTable count]) {
                 continue;
             }
-            //TODO
+            sectionData = [DKTitleSetInformation _saveCellAddressTable:menuCellAddressTable errors:errors];
             OSWriteBigInt32(&vts_mat.vtsm_c_adt, 0, [data length] >> 11);
         } else if ([section isEqualToString:kDKTitleSetInformationSection_VTS_C_ADT]) {
             if (![cellAddressTable count]) {
                 continue;
             }
-            //TODO
+            sectionData = [DKTitleSetInformation _saveCellAddressTable:cellAddressTable errors:errors];
             OSWriteBigInt32(&vts_mat.vts_c_adt, 0, [data length] >> 11);
         } else if ([section isEqualToString:kDKTitleSetInformationSection_VTSM_VOBU_ADMAP]) {
             if (![menuVobuAddressMap length]) {
                 continue;
             }
-            //TODO
+            sectionData = [DKTitleSetInformation _saveVobuAddressMap:menuVobuAddressMap errors:errors];
             OSWriteBigInt32(&vts_mat.vtsm_vobu_admap, 0, [data length] >> 11);
         } else if ([section isEqualToString:kDKTitleSetInformationSection_VTS_VOBU_ADMAP]) {
             if (![vobuAddressMap length]) {
                 continue;
             }
-            //TODO
+            sectionData = [DKTitleSetInformation _saveVobuAddressMap:vobuAddressMap errors:errors];
             OSWriteBigInt32(&vts_mat.vts_vobu_admap, 0, [data length] >> 11);
         } else if ([section isEqualToString:kDKTitleSetInformationSection_VTSM_PGCI_UT]) {
             if (![menuProgramChainInformationTablesByLanguage count]) {
                 continue;
             }
-            //TODO
+            sectionData = [DKTitleSetInformation _saveMenuProgramChainInformationTablesByLanguage:menuProgramChainInformationTablesByLanguage errors:errors];
             OSWriteBigInt32(&vts_mat.vtsm_pgci_ut, 0, [data length] >> 11);
         } else if ([section isEqualToString:kDKTitleSetInformationSection_VTS_PGCIT]) {
             if (![programChainInformationTable count]) {
                 continue;
             }
-            //TODO
+            sectionData = [DKTitleSetInformation _saveProgramChainInformationTable:programChainInformationTable errors:errors];
             OSWriteBigInt32(&vts_mat.vts_pgcit, 0, [data length] >> 11);
         } else if (errors) {
             NSLog(@"%@", section);
@@ -677,5 +686,184 @@ NSString* const kDKTitleSetInformationSection_VTS_PGCIT         = @"vts_pgcit";
     memcpy([data mutableBytes], &vts_mat, sizeof(vts_mat_t));
     return data;
 }
+
++ (NSMutableData*) _saveMenuProgramChainInformationTablesByLanguage:(NSDictionary*)menuProgramChainInformationTablesByLanguage errors:(NSMutableArray*)errors
+{
+    uint16_t nr_of_lus = [menuProgramChainInformationTablesByLanguage count];
+    if (nr_of_lus > 99) {
+        if (errors) {
+            [errors addObject:DKErrorWithCode(kDKNumberOfMenuProgramChainLanguageUnitsError, nil)];
+        }
+        nr_of_lus = 99;
+    }
+    
+    NSMutableData* data = [NSMutableData dataWithLength:sizeof(vtsm_pgci_ut_t) + (nr_of_lus * sizeof(vtsm_lu_t))];
+    int i = 0;
+    for (NSNumber* languageCode in menuProgramChainInformationTablesByLanguage) {
+        NSArray* table = [menuProgramChainInformationTablesByLanguage objectForKey:languageCode];
+        uint32_t vtsm_lu_start_byte = sizeof(vtsm_pgci_ut_t) + (i * sizeof(vtsm_lu_t));
+        
+        uint32_t vtsm_pgc_start_byte = [data length];
+        uint16_t nr_of_pgci_srp = [table count];
+        [data increaseLengthBy:sizeof(vtsm_pgc_t) + (nr_of_pgci_srp * sizeof(pgci_srp_t))];
+        int j = 0;
+        for (DKProgramChainSearchPointer* programChainSearchPointer in table) {
+            pgci_srp_t pgci_srp;
+            bzero(&pgci_srp, sizeof(pgci_srp_t));
+            OSWriteBigInt8(&pgci_srp.entry_id, 0, [programChainSearchPointer entryId]);
+            OSWriteBigInt16(&pgci_srp.ptl_id_mask, 0, [programChainSearchPointer ptl_id_mask]);
+            OSWriteBigInt32(&pgci_srp.pgc_start_byte, 0, [data length] - vtsm_pgc_start_byte);
+            [data replaceBytesInRange:NSMakeRange(vtsm_pgc_start_byte + sizeof(vtsm_pgc_t) + (j * sizeof(pgci_srp_t)), sizeof(pgci_srp_t)) withBytes:&pgci_srp];
+            j++;
+            
+            NSError* programChainError = nil;
+            NSData* programChainData = [programChainSearchPointer.programChain saveAsData:errors ? &programChainError : NULL];
+            if (programChainError) {
+                if (programChainError.code == kDKMultipleErrorsError) {
+                    [errors addObjectsFromArray:[programChainError.userInfo objectForKey:NSDetailedErrorsKey]];
+                } else {
+                    [errors addObject:programChainError];
+                }
+            }
+            if (programChainData) {
+                [data appendData:programChainData];
+            }
+        }
+        
+        vtsm_pgc_t vtsm_pgc;
+        bzero(&vtsm_pgc, sizeof(vtsm_pgc_t));
+        OSWriteBigInt16(&vtsm_pgc.nr_of_pgci_srp, 0, nr_of_pgci_srp);
+        OSWriteBigInt32(&vtsm_pgc.last_byte, 0, [data length] - vtsm_pgc_start_byte - 1);
+        [data replaceBytesInRange:NSMakeRange(vtsm_pgc_start_byte, sizeof(vtsm_pgc_t)) withBytes:&vtsm_pgc];
+        
+        vtsm_lu_t vtsm_lu;
+        bzero(&vtsm_lu, sizeof(vtsm_lu_t));
+        OSWriteBigInt16(&vtsm_lu.lang_code, 0, [languageCode unsignedShortValue]);
+        OSWriteBigInt8(&vtsm_lu.exists, 0, 0x80);
+        OSWriteBigInt32(&vtsm_lu.pgcit_start_byte, 0, vtsm_pgc_start_byte);
+        [data replaceBytesInRange:NSMakeRange(vtsm_lu_start_byte, sizeof(vtsm_lu_t)) withBytes:&vtsm_lu];
+        i++;
+    }
+    
+    vtsm_pgci_ut_t vtsm_pgci_ut;
+    bzero(&vtsm_pgci_ut, sizeof(vtsm_pgci_ut));
+    OSWriteBigInt16(&vtsm_pgci_ut.nr_of_lus, 0, nr_of_lus);
+    OSWriteBigInt32(&vtsm_pgci_ut.last_byte, 0, [data length] - 1);
+    [data replaceBytesInRange:NSMakeRange(0, sizeof(vtsm_pgci_ut_t)) withBytes:&vtsm_pgci_ut];
+    
+    return data;
+}
+
++ (NSMutableData*) _saveProgramChainInformationTable:(NSArray*)programChainInformationTable errors:(NSMutableArray*)errors
+{
+    uint16_t nr_of_pgci_srp = [programChainInformationTable count];
+    NSMutableData* data = [NSMutableData dataWithLength:sizeof(vtsm_pgc_t) + (nr_of_pgci_srp * sizeof(pgci_srp_t))];
+
+    int i = 0;
+    for (DKProgramChainSearchPointer* programChainSearchPointer in programChainInformationTable) {
+        pgci_srp_t pgci_srp;
+        bzero(&pgci_srp, sizeof(pgci_srp_t));
+        OSWriteBigInt8(&pgci_srp.entry_id, 0, [programChainSearchPointer entryId]);
+        OSWriteBigInt16(&pgci_srp.ptl_id_mask, 0, [programChainSearchPointer ptl_id_mask]);
+        OSWriteBigInt32(&pgci_srp.pgc_start_byte, 0, [data length]);
+        [data replaceBytesInRange:NSMakeRange(sizeof(vtsm_pgc_t) + (i * sizeof(pgci_srp_t)), sizeof(pgci_srp_t)) withBytes:&pgci_srp];
+        i++;
+        
+        NSError* programChainError = nil;
+        NSData* programChainData = [programChainSearchPointer.programChain saveAsData:errors ? &programChainError : NULL];
+        if (programChainError) {
+            if (programChainError.code == kDKMultipleErrorsError) {
+                [errors addObjectsFromArray:[programChainError.userInfo objectForKey:NSDetailedErrorsKey]];
+            } else {
+                [errors addObject:programChainError];
+            }
+        }
+        if (programChainData) {
+            [data appendData:programChainData];
+        }
+    }
+    
+    vtsm_pgc_t vtsm_pgc;
+    bzero(&vtsm_pgc, sizeof(vtsm_pgc_t));
+    OSWriteBigInt16(&vtsm_pgc.nr_of_pgci_srp, 0, nr_of_pgci_srp);
+    OSWriteBigInt32(&vtsm_pgc.last_byte, 0, [data length] - 1);
+    [data replaceBytesInRange:NSMakeRange(0, sizeof(vtsm_pgc_t)) withBytes:&vtsm_pgc];
+
+    return data;
+}
+
++ (NSMutableData*) _saveVobuAddressMap:(NSData*)vobuAddressMap errors:(NSMutableArray*)errors
+{
+    uint32_t last_byte = sizeof(uint32_t) + [vobuAddressMap length];
+    NSMutableData* data = [NSMutableData dataWithLength:last_byte];
+    uint8_t* base = [data mutableBytes];
+    OSWriteBigInt32(base, 0, last_byte - 1);
+    
+    memcpy(base + 4, [vobuAddressMap bytes], [vobuAddressMap length]);
+    
+    return data;
+}
+
++ (NSMutableData*) _saveCellAddressTable:(NSArray*)cellAddressTable errors:(NSMutableArray*)errors
+{
+    uint16_t nr_of_c_adts = [cellAddressTable count];
+    uint32_t last_byte = sizeof(vmgm_c_adt_t) + (nr_of_c_adts * sizeof(cell_adr_t));
+    NSMutableData* data = [NSMutableData dataWithLength:last_byte];
+    uint8_t* base = [data mutableBytes];
+    OSWriteBigInt16(base, offsetof(vmgm_c_adt_t, nr_of_c_adts), nr_of_c_adts);
+    OSWriteBigInt32(base, offsetof(vmgm_c_adt_t, last_byte), last_byte - 1);
+    
+    for (int i = 0, p = sizeof(vmgm_c_adt_t); i < nr_of_c_adts; i++, p += sizeof(cell_adr_t)) {
+        NSError* cell_adr_error = nil;
+        NSData* cell_adr_data = [[cellAddressTable objectAtIndex:i] saveAsData:errors ? &cell_adr_error : NULL];
+        if (cell_adr_error) {
+            if (cell_adr_error.code == kDKMultipleErrorsError) {
+                [errors addObjectsFromArray:[cell_adr_error.userInfo objectForKey:NSDetailedErrorsKey]];
+            } else {
+                [errors addObject:cell_adr_error];
+            }
+        }
+        if (cell_adr_data) {
+            memcpy(base + p, [cell_adr_data bytes], sizeof(cell_adr_t));
+        }
+    }
+    
+    return data;
+}
+
++ (NSMutableData*) _savePartOfTitleSearchTable:(NSArray*)partOfTitleSearchTable errors:(NSMutableArray*)errors
+{
+    uint16_t nr_of_srpts = [partOfTitleSearchTable count];
+    NSMutableData* data = [NSMutableData dataWithLength:sizeof(vts_ptt_srpt_t) + (nr_of_srpts * sizeof(uint32_t))];
+
+    for (int i = 0, p = sizeof(vts_ptt_srpt_t); i < nr_of_srpts; i++, p += sizeof(uint32_t)) {
+        uint32_t start_byte = OSSwapHostToBigInt32([data length]);
+        [data replaceBytesInRange:NSMakeRange(p, sizeof(uint32_t)) withBytes:&start_byte];
+
+        for (DKPartOfTitle* partOfTitle in [partOfTitleSearchTable objectAtIndex:i]) {
+            NSError* vts_ptt_srpt_error = nil;
+            NSData* vts_ptt_srpt_data = [partOfTitle saveAsData:errors ? &vts_ptt_srpt_error : NULL];
+            if (vts_ptt_srpt_error) {
+                if (vts_ptt_srpt_error.code == kDKMultipleErrorsError) {
+                    [errors addObjectsFromArray:[vts_ptt_srpt_error.userInfo objectForKey:NSDetailedErrorsKey]];
+                } else {
+                    [errors addObject:vts_ptt_srpt_error];
+                }
+            }
+            if (vts_ptt_srpt_data) {
+                [data appendData:vts_ptt_srpt_data];
+            }
+        }
+    }
+    
+    vts_ptt_srpt_t vts_ptt_srpt;
+    bzero(&vts_ptt_srpt, sizeof(vts_ptt_srpt_t));
+    OSWriteBigInt16(&vts_ptt_srpt.nr_of_srpts, 0, nr_of_srpts);
+    OSWriteBigInt32(&vts_ptt_srpt.last_byte, 0, [data length] - 1);
+    [data replaceBytesInRange:NSMakeRange(0, sizeof(vts_ptt_srpt_t)) withBytes:&vts_ptt_srpt];
+    
+    return data;
+}
+
 
 @end

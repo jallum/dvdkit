@@ -29,6 +29,8 @@
 
 - (id) initWithData:(NSData*)data error:(NSError**)error;
 
+- (NSData*) saveAsData:(NSError**)error;
+
 @property (readonly) uint16_t programChainNumber;
 @property (readonly) uint16_t programNumber;
 

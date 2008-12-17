@@ -43,16 +43,6 @@ typedef struct audio_attr_t audio_attr_t;
 struct audio_attr_t {
     uint16_t
 #if BYTE_ORDER == LITTLE_ENDIAN
-    audio_format : 3,
-    multichannel_extension : 1,
-    lang_type : 2,
-    application_mode : 2,
-    /**/
-    quantization : 2,
-    sample_frequency : 2,
-    __zero_1 : 1,
-    channels : 3;
-#else
     application_mode : 2,
     lang_type : 2,
     multichannel_extension : 1,
@@ -62,6 +52,16 @@ struct audio_attr_t {
     __zero_1 : 1,
     sample_frequency : 2,
     quantization : 2;
+#else
+    audio_format : 3,
+    multichannel_extension : 1,
+    lang_type : 2,
+    application_mode : 2,
+    /**/
+    quantization : 2,
+    sample_frequency : 2,
+    __zero_1 : 1,
+    channels : 3;
 #endif
     uint16_t lang_code;
     uint8_t lang_extension;
@@ -102,18 +102,17 @@ struct audio_attr_t {
 
 typedef struct subp_attr_t subp_attr_t;
 struct subp_attr_t {
-    uint16_t
+    uint8_t
 #if BYTE_ORDER == LITTLE_ENDIAN
-    __zero_2 : 8, 
     lang_type : 2,
     __zero_1 : 3,
     code_mode : 3;
 #else
     code_mode : 3,
     __zero_1 : 3,
-    lang_type : 2,
-    __zero_2 : 8;
+    lang_type : 2;
 #endif
+    uint8_t __zero_2;
     uint16_t lang_code;
     uint8_t lang_extension;
     uint8_t code_extension;
@@ -215,45 +214,47 @@ struct vmgi_mat_t {
 } __attribute__ ((packed));
 
 typedef struct vts_mat_t vts_mat_t;
-struct vts_mat_t {
-    uint8_t vts_identifier[12];
-    uint32_t vts_last_sector;
-    uint8_t __zero_1[12];
-    uint32_t vtsi_last_sector;
-    uint16_t specification_version;
-    uint32_t vts_category;
-    uint8_t __zero_2[90];
-    uint32_t vtsi_last_byte;
-    uint8_t __zero_3[60];
+struct vts_mat_t {                      //  Offset
+                                        //  -----
+    uint8_t vts_identifier[12];         //  0x000
+    uint32_t vts_last_sector;           //  0x00C
+    uint8_t __zero_1[12];               //  0x010
+    uint32_t vtsi_last_sector;          //  0x01C
+    uint16_t specification_version;     //  0x020
+    uint32_t vts_category;              //  0x022
+    uint8_t __zero_2[90];               //  0x026
+    uint32_t vtsi_last_byte;            //  0x080
+    uint8_t __zero_3[60];               //  0x084
     /**/
-    uint32_t vtsm_vobs;       /* sector */
-    uint32_t vtstt_vobs;      /* sector */
+    uint32_t vtsm_vobs;                 //  0x0C0
+    uint32_t vtstt_vobs;                //  0x0C4
     /**/
-    uint32_t vts_ptt_srpt;    /* sector */
-    uint32_t vts_pgcit;       /* sector */
-    uint32_t vtsm_pgci_ut;    /* sector */
-    uint32_t vts_tmapt;       /* sector */
-    uint32_t vtsm_c_adt;      /* sector */
-    uint32_t vtsm_vobu_admap; /* sector */
-    uint32_t vts_c_adt;       /* sector */
-    uint32_t vts_vobu_admap;  /* sector */
+    uint32_t vts_ptt_srpt;              //  0x0C8
+    uint32_t vts_pgcit;                 //  0x0CC
+    uint32_t vtsm_pgci_ut;              //  0x0D0
+    uint32_t vts_tmapt;                 //  0x0D4
+    uint32_t vtsm_c_adt;                //  0x0D8
+    uint32_t vtsm_vobu_admap;           //  0x0DC
+    uint32_t vts_c_adt;                 //  0x0E0
+    uint32_t vts_vobu_admap;            //  0x0E4
     /**/
-    uint8_t __zero_4[24];
-    	 
-    video_attr_t vtsm_video_attr;
-    uint16_t nr_of_vtsm_audio_streams;
-    audio_attr_t vtsm_audio_attr[8];
-    uint16_t nr_of_vtsm_subp_streams;
-    subp_attr_t vtsm_subp_attr;
-    uint8_t __zero_6[164];
-    	 
+    uint8_t __zero_4[24];               //  0x0E8
+    /**/
+    video_attr_t vtsm_video_attr;       //  0x100
+    uint16_t nr_of_vtsm_audio_streams;  //  0x102
+    audio_attr_t vtsm_audio_attr[8];    //  0x104
+    uint8_t __zero_6[16];               //  0x144
+    uint16_t nr_of_vtsm_subp_streams;   //  0x154
+    subp_attr_t vtsm_subp_attr;         //  0x156
+    uint8_t __zero_7[164];          
+    /**/   	 
     video_attr_t vts_video_attr;
     uint16_t nr_of_vts_audio_streams;
     audio_attr_t vts_audio_attr[8];
-    uint8_t __zero_7[16];
+    uint8_t __zero_8[16];
     uint16_t nr_of_vts_subp_streams;
     subp_attr_t vts_subp_attr[32];
-    uint8_t __zero_8[2];
+    uint8_t __zero_9[2];
     multichannel_ext_t vts_mu_audio_attr[8];
 } __attribute__ ((packed));
 
