@@ -40,6 +40,7 @@
     NSMutableArray* partOfTitleSearchTable;
     NSMutableArray* cellAddressTable;
     NSData* vobuAddressMap;
+    NSData* timeMapTable;
     /**/
     NSArray* preferredSectionOrder;
 }

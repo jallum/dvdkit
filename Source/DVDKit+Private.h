@@ -461,6 +461,12 @@ struct vts_c_adt_t {
     uint32_t last_byte;
 } __attribute__ ((packed));
 
+typedef struct vts_tmapti_t vts_tmapti_t;
+struct vts_tmapti_t {
+    uint16_t nr_of_pgcs;
+    uint16_t __zero_1;
+    uint32_t last_byte;
+};
 
 
 @interface DKVirtualMachine (DVDCommand)

@@ -31,15 +31,16 @@ NSString* const kDKTitleSetInformationSection_VTSM_VOBU_ADMAP   = @"vtsm_vobu_ad
 NSString* const kDKTitleSetInformationSection_VTS_VOBU_ADMAP    = @"vts_vobu_admap";
 NSString* const kDKTitleSetInformationSection_VTSM_PGCI_UT      = @"vtsm_pgci_ut";
 NSString* const kDKTitleSetInformationSection_VTS_PGCIT         = @"vts_pgcit";
+NSString* const kDKTitleSetInformationSection_VTS_TMAPT         = @"vts_tmapt";
 
 @interface DKTitleSetInformation (Private)
 /*  Read  */
 + (NSMutableArray*) _readPartOfTitleSearchTableFromDataSource:(id<DKDataSource>)dataSource offset:(uint32_t)offset errors:(NSMutableArray*)errors;
 + (NSMutableArray*) _readCellAddressTableFromDataSource:(id<DKDataSource>)dataSource offset:(uint32_t)offset errors:(NSMutableArray*)errors;
++ (NSData*) _readTimeMapTableFromDataSource:(id<DKDataSource>)dataSource offset:(uint32_t)offset errors:(NSMutableArray*)errors;
 + (NSMutableData*) _readVobuAddressMapFromDataSource:(id<DKDataSource>)dataSource offset:(uint32_t)offset errors:(NSMutableArray*)errors;
 + (NSMutableArray*) _readProgramChainInformationTableFromDataSource:(id<DKDataSource>)dataSource offset:(uint32_t)offset errors:(NSMutableArray*)errors;
 + (NSMutableDictionary*) _readMenuProgramChainInformationTablesByLanguageFromDataSource:(id<DKDataSource>)dataSource offset:(uint32_t)offset errors:(NSMutableArray*)errors;
-
 
 /*  Save  */
 + (NSMutableData*) _saveMenuProgramChainInformationTablesByLanguage:(NSDictionary*)menuProgramChainInformationTablesByLanguage errors:(NSMutableArray*)errors;
@@ -47,6 +48,7 @@ NSString* const kDKTitleSetInformationSection_VTS_PGCIT         = @"vts_pgcit";
 + (NSMutableData*) _saveVobuAddressMap:(NSData*)vobuAddressMap errors:(NSMutableArray*)errors;
 + (NSMutableData*) _saveCellAddressTable:(NSArray*)cellAddressTable errors:(NSMutableArray*)errors;
 + (NSMutableData*) _savePartOfTitleSearchTable:(NSArray*)partOfTitleSearchTable errors:(NSMutableArray*)errors;
++ (NSMutableData*) _saveTimeMapTable:(NSData*)timeMapTable errors:(NSMutableArray*)errors;
 @end
 
 @implementation DKTitleSetInformation
@@ -66,6 +68,7 @@ NSString* const kDKTitleSetInformationSection_VTS_PGCIT         = @"vts_pgcit";
             kDKTitleSetInformationSection_VTS_VOBU_ADMAP,
             kDKTitleSetInformationSection_VTSM_PGCI_UT,
             kDKTitleSetInformationSection_VTS_PGCIT,
+            kDKTitleSetInformationSection_VTS_TMAPT,
             nil
         ];
     }
@@ -199,6 +202,11 @@ NSString* const kDKTitleSetInformationSection_VTS_PGCIT         = @"vts_pgcit";
             [sectionOrdering setObject:kDKTitleSetInformationSection_VTSM_PGCI_UT forKey:[NSNumber numberWithUnsignedInt:offset_of_vtsm_pgci_ut]];
             menuProgramChainInformationTablesByLanguage = [[DKTitleSetInformation _readMenuProgramChainInformationTablesByLanguageFromDataSource:dataSource offset:offset_of_vtsm_pgci_ut errors:errors] retain];
         }
+        uint32_t offset_of_vts_tmapt = OSReadBigInt32(&vts_mat->vts_tmapt, 0);
+        if (offset_of_vts_tmapt && (offset_of_vts_tmapt <= vtsi_last_sector)) {
+            [sectionOrdering setObject:kDKTitleSetInformationSection_VTS_TMAPT forKey:[NSNumber numberWithUnsignedInt:offset_of_vts_tmapt]];
+            timeMapTable = [[DKTitleSetInformation _readTimeMapTableFromDataSource:dataSource offset:offset_of_vts_tmapt errors:errors] retain];
+        }
         
         
         /*  Using the information gathered while reading, determine the order
@@ -302,7 +310,26 @@ NSString* const kDKTitleSetInformationSection_VTS_PGCIT         = @"vts_pgcit";
     return table;
 }
 
-+ (NSMutableData*) _readVobuAddressMapFromDataSource:(id<DKDataSource>)dataSource offset:(uint32_t)offset errors:(NSMutableArray*)errors
++ (NSData*) _readTimeMapTableFromDataSource:(id<DKDataSource>)dataSource offset:(uint32_t)offset errors:(NSMutableArray*)errors
+{
+    NSData* data = [dataSource requestDataOfLength:1 << 11 fromOffset:offset << 11];
+    uint32_t last_byte = 1 + OSReadBigInt32([data bytes], 4);
+    
+    /*  Have we already read all that we need?  */
+    if (last_byte > [data length]) {
+        data = [dataSource requestDataOfLength:last_byte fromOffset:(offset << 11)];
+    } else {
+        data = [data subdataWithRange:NSMakeRange(0, last_byte)];
+    }
+    
+    /*  
+     *  TODO: Additional Decoding  
+     */
+    
+    return data;
+}
+
++ (NSData*) _readVobuAddressMapFromDataSource:(id<DKDataSource>)dataSource offset:(uint32_t)offset errors:(NSMutableArray*)errors
 {
     NSData* data = [dataSource requestDataOfLength:1 << 11 fromOffset:offset << 11];
     uint32_t last_byte = 1 + OSReadBigInt32([data bytes], 0);
@@ -318,7 +345,7 @@ NSString* const kDKTitleSetInformationSection_VTS_PGCIT         = @"vts_pgcit";
      *  TODO: Additional Decoding  
      */
     
-    return [NSMutableData dataWithData:[data subdataWithRange:NSMakeRange(4, last_byte - 4)]];
+    return [data subdataWithRange:NSMakeRange(4, last_byte - 4)];
 }
             
 + (NSMutableArray*) _readProgramChainInformationTableFromDataSource:(id<DKDataSource>)dataSource offset:(uint32_t)offset errors:(NSMutableArray*)errors
@@ -648,6 +675,12 @@ NSString* const kDKTitleSetInformationSection_VTS_PGCIT         = @"vts_pgcit";
             }
             sectionData = [DKTitleSetInformation _saveProgramChainInformationTable:programChainInformationTable errors:errors];
             OSWriteBigInt32(&vts_mat.vts_pgcit, 0, [data length] >> 11);
+        } else if ([section isEqualToString:kDKTitleSetInformationSection_VTS_TMAPT]) {
+            if (![timeMapTable length]) {
+                continue;
+            }
+            sectionData = [DKTitleSetInformation _saveTimeMapTable:timeMapTable errors:errors];
+            OSWriteBigInt32(&vts_mat.vts_tmapt, 0, [data length] >> 11);
         } else if (errors) {
             NSLog(@"%@", section);
             [errors addObject:DKErrorWithCode(kDKSectionNameError, nil)];
@@ -863,6 +896,11 @@ NSString* const kDKTitleSetInformationSection_VTS_PGCIT         = @"vts_pgcit";
     [data replaceBytesInRange:NSMakeRange(0, sizeof(vts_ptt_srpt_t)) withBytes:&vts_ptt_srpt];
     
     return data;
+}
+
++ (NSMutableData*) _saveTimeMapTable:(NSData*)timeMapTable errors:(NSMutableArray*)errors
+{
+    return [NSMutableData dataWithData:timeMapTable];
 }
 
 
