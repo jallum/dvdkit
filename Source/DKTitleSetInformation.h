@@ -54,7 +54,7 @@
 @property (readonly) NSArray* partOfTitleSearchTable;
 
 - (NSArray*) menuProgramChainInformationTableForLanguageCode:(uint16_t)languageCode;
-- (NSData*) saveAsData:(NSError**)error;
+- (NSData*) saveAsData:(NSError**)error lengthOfMenuVOB:(uint32_t)lengthOfMenuVOB lengthOfVideoVOB:(uint32_t)lengthOfVideoVOB;
 
 @end
 
