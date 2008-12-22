@@ -689,34 +689,33 @@
 	[[DKCommand commandWith64Bits:0x71000001FFFF0000L] executeAgainstVirtualMachine:vm];
 	STAssertTrue([vm generalPurposeRegister:1] == 0xFFFF, @"71000001FFFF0000 | g[1] = 0xFFFF");
 	
-			
-	
-		// When we try to overflow, we should get back the original result.
-		//  7300000100010000 | g[1] += 0x1
+
+    // When we try to overflow, we should get back the original result.
+    //  7300000100010000 | g[1] += 0x1
 	[[DKCommand commandWith64Bits:0x7300000100010000L] executeAgainstVirtualMachine:vm];
 	STAssertTrue([vm generalPurposeRegister:1] == 0xFFFF, @"7300000100010000 | g[1] += 0x1");
 	
 	
-		//  Now we set up the test for underflow
-		//  7100000100000000 | g[1] = 0x0000
+    //  Now we set up the test for underflow
+    //  7100000100000000 | g[1] = 0x0000
 	[[DKCommand commandWith64Bits:0x7100000100000000L] executeAgainstVirtualMachine:vm];
 	STAssertTrue([vm generalPurposeRegister:1] == 0x0000, @"7100000100000000 | g[1] = 0x0000");
 	
 	
-		// When we try to underflow, we should get back 0x0000.
-		//  7400000100010000 | g[1] -= 0x1
+    // When we try to underflow, we should get back 0x0000.
+    //  7400000100010000 | g[1] -= 0x1
 	[[DKCommand commandWith64Bits:0x7400000100010000L] executeAgainstVirtualMachine:vm];
-	   STAssertTrue([vm generalPurposeRegister:1] == 0x0000, @"7400000100010000 | g[1] -= 0x1");
+    STAssertTrue([vm generalPurposeRegister:1] == 0x0000, @"7400000100010000 | g[1] -= 0x1");
 	
 		
-	    //  First, we set up the test for overflow from mutiplication
-		//  710000010000 | g[1] = 0x6400
+    //  First, we set up the test for overflow from mutiplication
+    //  710000010000 | g[1] = 0x6400
 	[[DKCommand commandWith64Bits:0x7100000164000000L] executeAgainstVirtualMachine:vm];
 	STAssertTrue([vm generalPurposeRegister:1] == 0x6400, @"7100000164000000 | g[1] = 0x6400");
 	
 	
-		// When we try to overflow, we should get back 0xFFFF.
-		//  7500000100640000 | g[1] *= 0x64
+    // When we try to overflow, we should get back 0xFFFF.
+    //  7500000100640000 | g[1] *= 0x64
 	[[DKCommand commandWith64Bits:0x7500000100640000L] executeAgainstVirtualMachine:vm];
 	STAssertTrue([vm generalPurposeRegister:1] == 0xFFFF, @"7500000100640000 | g[1] *= 0x64");
     

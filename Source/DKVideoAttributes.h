@@ -11,7 +11,7 @@
     BOOL letterboxed;
     DKPictureSize picture_size;
     /**/
-    BOOL bit_rate;
+    BOOL constantBitRate;
     BOOL line21_cc_2;
     BOOL line21_cc_1;
 }
