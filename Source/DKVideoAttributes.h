@@ -16,6 +16,8 @@
     BOOL line21_cc_1;
 }
 
+@property (assign) DKMPEGVersion mpeg_version;
+
 + (id) videoAttributesWithData:(NSData*)data;
 
 - (id) initWithData:(NSData*)data;

@@ -17,6 +17,9 @@ static DKPictureSize PICTURE_SIZE_TABLE[4][4] = {
 
 @implementation DKVideoAttributes
 
+
+@synthesize mpeg_version;
+
 + (id) videoAttributesWithData:(NSData*)data
 {
     return [[[DKVideoAttributes alloc] initWithData:data] autorelease];

@@ -54,6 +54,12 @@
 + (id) mainMenuInformationWithDataSource:(id<DKDataSource>)dataSource error:(NSError**)error;
 
 - (id) initWithDataSource:(id<DKDataSource>)dataSource error:(NSError**)error;
+@property (assign) uint16_t specificationVersion;
+@property (assign) uint16_t numberOfVolumes;
+@property (assign) uint16_t volumeNumber;
+@property (assign) uint16_t numberOfTitleSets;
+@property (assign) DKVideoAttributes* menuVideoAttributes;
+
 
 @property (retain) DKProgramChain* firstPlayProgramChain;
 @property (readonly) NSArray* titleTrackSearchPointerTable;
