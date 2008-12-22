@@ -37,6 +37,8 @@
     uint32_t firstInterleavingUnitSector;
     uint32_t lastVideoObjectUnitStartSector;
     uint32_t lastSector;
+    /**/
+    id userInfo;
 }
 
 + (id) cellPlaybackWithData:(NSData*)data;
@@ -50,6 +52,7 @@
 @property (readonly) uint8_t postCommandIndex;
 @property (readonly) DKBlockType blockType;
 @property (readonly) DKBlockMode blockMode;
+@property (retain) id userInfo;
 
 @end
 

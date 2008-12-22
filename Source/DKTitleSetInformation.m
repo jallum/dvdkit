@@ -711,7 +711,7 @@ NSString* const kDKTitleSetInformationSection_VTS_TMAPT         = @"vts_tmapt";
     } else if (lengthOfVideoVOB) {
         vtstt_vobs = vtsi_last_sector;
     }
-    uint32_t vts_last_sector = vtstt_vobs + lengthOfVideoVOB + vtsi_last_sector;
+    uint32_t vts_last_sector = MAX(vtsm_vobs, vtstt_vobs) + lengthOfVideoVOB + vtsi_last_sector;
     OSWriteBigInt32(&vts_mat.vtsm_vobs, 0, vtsm_vobs);
     OSWriteBigInt32(&vts_mat.vtstt_vobs, 0, vtstt_vobs);
     OSWriteBigInt32(&vts_mat.vts_last_sector, 0, vts_last_sector - 1);

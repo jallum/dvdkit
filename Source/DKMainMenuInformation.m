@@ -602,7 +602,7 @@ NSString* const kDKManagerInformationSection_VMGM_VOBU_ADMAP  = @"vmgm_vobu_adma
     
     /*  Append the first play program chain
      */
-    OSWriteBigInt32(&vmgi_mat, offsetof(vmgi_mat_t, first_play_pgc), [data length]);
+    OSWriteBigInt32(&vmgi_mat.first_play_pgc, 0, [data length]);
     if (firstPlayProgramChain) {
         NSError* firstPlayProgramChainError = nil;
         NSData* firstPlayProgramChainData = [firstPlayProgramChain saveAsData:errors ? &firstPlayProgramChainError : NULL];
@@ -623,7 +623,7 @@ NSString* const kDKManagerInformationSection_VMGM_VOBU_ADMAP  = @"vmgm_vobu_adma
     
     /*  Align to the next sector boundary.
      */
-    OSWriteBigInt32(&vmgi_mat, offsetof(vmgi_mat_t, vmgi_last_byte), [data length]);
+    OSWriteBigInt32(&vmgi_mat.vmgi_last_byte, 0, [data length] - 1);
     uint32_t amountToAlign = 0x800 - ([data length] & 0x07FF);
     if (amountToAlign != 0x800) {
         [data increaseLengthBy:amountToAlign];

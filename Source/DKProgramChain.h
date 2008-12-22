@@ -39,6 +39,8 @@
     NSMutableArray* programMap;
     NSMutableArray* cellPlaybackTable;
     NSMutableArray* cellPositionTable;
+    /**/
+    id userInfo;
 }
 
 + (id) programChainWithData:(NSData*)data error:(NSError**)error;
@@ -56,6 +58,7 @@
 @property (readonly) uint16_t nextProgramChainNumber;
 @property (readonly) uint16_t previousProgramChainNumber;
 @property (readonly) uint16_t goUpProgramChainNumber;
+@property (retain) id userInfo;
 
 @end
 
