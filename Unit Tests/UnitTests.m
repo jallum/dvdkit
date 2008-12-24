@@ -758,9 +758,6 @@
 	// Point of sale code should be 0x0000000000000000
 	STAssertTrue([mainMenuInformation pointOfSaleCode] == 0x0000000000000000, @"Point of sale should be 0x0000000000000000.");
 
-	// Vmgm Vobs start sector should be 
-	STAssertTrue([mainMenuInformation vmgm_vobs] == 0x0000000a, @"Vmgm Vobs start sector should be 0x0000000a.");
-
 	
 	// Video compression should be mpeg-2
 	STAssertTrue([[mainMenuInformation menuVideoAttributes] mpeg_version] == kDKMPEGVersion2, @"Video compression should be MPEG-2.");
@@ -778,7 +775,11 @@
 	
 	// Picture size should be 720x480
 	STAssertTrue([[mainMenuInformation menuVideoAttributes] picture_size] ==  kDKPictureSize720x480, @"Picture size should be 720x480.");
-	//Todo:  bit_rate
+	
+	// Bit rate should be variable
+	STAssertTrue([[mainMenuInformation menuVideoAttributes] constantBitRate] ==  NO, @"Bit rate should be variable.");
+	
+	
 	//Todo:  line21_cc_2;
     //Todo:   line21_cc_1;
 	

@@ -26,7 +26,7 @@ static DKPictureSize PICTURE_SIZE_TABLE[4][4] = {
 @synthesize film_mode;
 @synthesize letterboxed;
 @synthesize picture_size;
-@synthesize bit_rate;
+@synthesize constantBitRate;
 @synthesize line21_cc_2;
 @synthesize line21_cc_1;
 

@@ -61,7 +61,7 @@
 @property (assign) uint8_t side;
 @property (assign) uint16_t numberOfTitleSets;
 @property (assign) uint64_t pointOfSaleCode;
-@property (assign) uint32_t vmgm_vobs;
+
 
 
 @property (assign) DKVideoAttributes* menuVideoAttributes;

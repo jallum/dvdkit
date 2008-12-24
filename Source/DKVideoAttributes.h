@@ -22,7 +22,7 @@
 @property (assign) BOOL film_mode;
 @property (assign) BOOL letterboxed;
 @property (assign) DKPictureSize picture_size;
-@property (assign) BOOL bit_rate;
+@property (assign) BOOL constantBitRate;
 @property (assign) BOOL line21_cc_2;
 @property (assign) BOOL line21_cc_1;
 
