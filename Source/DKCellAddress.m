@@ -38,12 +38,12 @@
 {
     NSAssert(data && [data length] == sizeof(cell_adr_t), @"wtf?");
     if (self = [super init]) {
-        const void* cell_adr = [data bytes];
+        const cell_adr_t* cell_adr = [data bytes];
         
-        vob_id = OSReadBigInt16(cell_adr, offsetof(cell_adr_t, vob_id));
-        cell_id = OSReadBigInt8(cell_adr, offsetof(cell_adr_t, cell_id));
-        start_sector = OSReadBigInt32(cell_adr, offsetof(cell_adr_t, start_sector));
-        last_sector = OSReadBigInt32(cell_adr, offsetof(cell_adr_t, last_sector));
+        vob_id = OSReadBigInt16(&cell_adr->vob_id, 0);
+        cell_id = OSReadBigInt8(&cell_adr->cell_id, 0);
+        start_sector = OSReadBigInt32(&cell_adr->start_sector, 0);
+        last_sector = OSReadBigInt32(&cell_adr->last_sector, 0);
     }
     return self;
 }

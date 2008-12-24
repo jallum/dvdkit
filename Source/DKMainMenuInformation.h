@@ -61,16 +61,14 @@
 @property (assign) uint8_t side;
 @property (assign) uint16_t numberOfTitleSets;
 @property (assign) uint64_t pointOfSaleCode;
-
-
-
 @property (assign) DKVideoAttributes* menuVideoAttributes;
-
-
+/**/
 @property (retain) DKProgramChain* firstPlayProgramChain;
-@property (readonly) NSArray* titleTrackSearchPointerTable;
+@property (retain) NSArray* titleTrackSearchPointerTable;
 @property (readonly) NSDictionary* menuProgramChainInformationTablesByLanguage;
 @property (readonly) uint16_t regionMask;
+@property (retain) NSArray* cellAddressTable;
+
 
 - (DKTitleTrackSearchPointer*) titleTrackSearchPointerForTitleSet:(uint16_t)vts track:(uint8_t)ttn;
 - (NSArray*) menuProgramChainInformationTableForLanguageCode:(uint16_t)languageCode;

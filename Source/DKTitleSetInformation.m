@@ -53,8 +53,24 @@ NSString* const kDKTitleSetInformationSection_VTS_TMAPT         = @"vts_tmapt";
 
 @implementation DKTitleSetInformation
 @synthesize index;
-@synthesize programChainInformationTable;
 @synthesize partOfTitleSearchTable;
+
+@synthesize menuVideoAttributes;
+@synthesize menuAudioAttributes;
+@synthesize menuSubpictureAttributes;
+@synthesize menuProgramChainInformationTablesByLanguage;
+@synthesize menuCellAddressTable;
+@synthesize menuVobuAddressMap;
+
+@synthesize videoAttributes;
+@synthesize audioAttributes;
+@synthesize subpictureAttributes;
+@synthesize programChainInformationTable;
+@synthesize cellAddressTable;
+
+@synthesize vobuAddressMap;
+@synthesize timeMapTable;
+
 
 + (NSArray*) availableSections
 {
@@ -700,18 +716,21 @@ NSString* const kDKTitleSetInformationSection_VTS_TMAPT         = @"vts_tmapt";
     
     NSAssert(([data length] & 0x07FF) == 0, @"Sections not sector-aligned?");
     uint32_t vtsi_last_sector = [data length] >> 11;
-    OSWriteBigInt32(&vts_mat.vtsi_last_sector, 0, vtsi_last_sector - 1);
     uint32_t vtsm_vobs = 0;
     uint32_t vtstt_vobs = 0;
+    uint32_t vts_last_sector = vtsi_last_sector * 2;
     if (lengthOfMenuVOB > 0) {
         vtsm_vobs = vtsi_last_sector;
+        vts_last_sector += lengthOfMenuVOB;
         if (lengthOfVideoVOB) {
             vtstt_vobs = vtsm_vobs + lengthOfMenuVOB;
+            vts_last_sector += lengthOfVideoVOB;
         }
     } else if (lengthOfVideoVOB) {
         vtstt_vobs = vtsi_last_sector;
+        vts_last_sector += lengthOfVideoVOB;
     }
-    uint32_t vts_last_sector = MAX(vtsm_vobs, vtstt_vobs) + lengthOfVideoVOB + vtsi_last_sector;
+    OSWriteBigInt32(&vts_mat.vtsi_last_sector, 0, vtsi_last_sector - 1);
     OSWriteBigInt32(&vts_mat.vtsm_vobs, 0, vtsm_vobs);
     OSWriteBigInt32(&vts_mat.vtstt_vobs, 0, vtstt_vobs);
     OSWriteBigInt32(&vts_mat.vts_last_sector, 0, vts_last_sector - 1);

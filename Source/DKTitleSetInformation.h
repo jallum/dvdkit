@@ -50,8 +50,24 @@
 - (id) initWithDataSource:(id<DKDataSource>)dataSource index:(uint16_t)index error:(NSError**)error;
 
 @property (readonly) NSInteger index;
-@property (readonly) NSArray* programChainInformationTable;
 @property (readonly) NSArray* partOfTitleSearchTable;
+
+@property (retain) DKVideoAttributes* menuVideoAttributes;
+@property (retain) NSArray* menuAudioAttributes;
+@property (retain) DKSubpictureAttributes* menuSubpictureAttributes;
+@property (retain) NSDictionary* menuProgramChainInformationTablesByLanguage;
+@property (retain) NSArray* menuCellAddressTable;
+@property (retain) NSData* menuVobuAddressMap;
+
+@property (retain) DKVideoAttributes* videoAttributes;
+@property (retain) NSArray* audioAttributes;
+@property (retain) NSArray* subpictureAttributes;
+@property (retain) NSArray* programChainInformationTable;
+@property (retain) NSArray* cellAddressTable;
+
+@property (retain) NSData* vobuAddressMap;
+@property (retain) NSData* timeMapTable;
+
 
 - (NSArray*) menuProgramChainInformationTableForLanguageCode:(uint16_t)languageCode;
 - (NSData*) saveAsData:(NSError**)error lengthOfMenuVOB:(uint32_t)lengthOfMenuVOB lengthOfVideoVOB:(uint32_t)lengthOfVideoVOB;

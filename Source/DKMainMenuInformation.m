@@ -51,8 +51,6 @@ NSString* const kDKManagerInformationSection_VMGM_VOBU_ADMAP  = @"vmgm_vobu_adma
 @end
 
 @implementation DKMainMenuInformation
-
-
 @synthesize specificationVersion;
 @synthesize categoryAndMask;
 @synthesize numberOfVolumes;
@@ -60,13 +58,12 @@ NSString* const kDKManagerInformationSection_VMGM_VOBU_ADMAP  = @"vmgm_vobu_adma
 @synthesize side;
 @synthesize numberOfTitleSets;
 @synthesize pointOfSaleCode;
-
-
-
+/**/
 @synthesize firstPlayProgramChain;
 @synthesize titleTrackSearchPointerTable;
 @synthesize menuProgramChainInformationTablesByLanguage;
 @synthesize menuVideoAttributes;
+@synthesize cellAddressTable;
 
 + (NSArray*) availableSections
 {
@@ -711,13 +708,15 @@ NSString* const kDKManagerInformationSection_VMGM_VOBU_ADMAP  = @"vmgm_vobu_adma
     
     NSAssert(([data length] & 0x07FF) == 0, @"Sections not sector-aligned?");
     uint32_t vmgi_last_sector = [data length] >> 11;
-    OSWriteBigInt32(&vmgi_mat.vmgi_last_sector, 0, vmgi_last_sector - 1);
-    OSWriteBigInt32(&vmgi_mat.vmg_last_sector, 0, (vmgi_last_sector * 2) - 1);
     uint32_t vmgm_vobs = 0;
+    uint32_t vmg_last_sector = vmgi_last_sector * 2;
     if (lengthOfMenuVOB) {
-        vmgm_vobs = vmgi_last_sector * 2;
+        vmgm_vobs = vmgi_last_sector;
+        vmg_last_sector += lengthOfMenuVOB;
     }
+    OSWriteBigInt32(&vmgi_mat.vmgi_last_sector, 0, vmgi_last_sector - 1);
     OSWriteBigInt32(&vmgi_mat.vmgm_vobs, 0, vmgm_vobs);
+    OSWriteBigInt32(&vmgi_mat.vmg_last_sector, 0, vmg_last_sector - 1);
     
     if (errors) {
         int errorCount = [errors count];
