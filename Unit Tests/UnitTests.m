@@ -738,19 +738,56 @@
 	// Specification version number should be 0.0
 	STAssertTrue([mainMenuInformation specificationVersion] == 0, @"Specification version number should be 0.0.");
 	
+	// Category and Mask
+	STAssertTrue([mainMenuInformation categoryAndMask] == 0x00fe0000, @"Category/Mask should be 0x00fe0000.");
+	
+	
 	// Number of volumes should be 1
 	STAssertTrue([mainMenuInformation numberOfVolumes] == 1, @"Number of volumes should be 1.");
 	
 	// This volume should be 1
 	STAssertTrue([mainMenuInformation volumeNumber] == 1, @"Volume number should be 1.");
 	
+	// This side should be 1
+	STAssertTrue([mainMenuInformation side] == 1, @"Side should be 1.");
+	
+	
+	
 	// Number of title sets should be 8
 	STAssertTrue([mainMenuInformation numberOfTitleSets] == 8, @"Number of title sets should be 8.");
 
-	// Video attributes:  video compression should be mpeg-2
-	STAssertTrue([[mainMenuInformation menuVideoAttributes] mpeg_version] == kDKMPEGVersion2, @"Video compression should be MPEG-2.");
+	// Point of sale code should be 0x0000000000000000
+	STAssertTrue([mainMenuInformation pointOfSaleCode] == 0x0000000000000000, @"Point of sale should be 0x0000000000000000.");
+
+	// Vmgm Vobs start sector should be 
+	STAssertTrue([mainMenuInformation vmgm_vobs] == 0x0000000a, @"Vmgm Vobs start sector should be 0x0000000a.");
 
 	
+	// Video compression should be mpeg-2
+	STAssertTrue([[mainMenuInformation menuVideoAttributes] mpeg_version] == kDKMPEGVersion2, @"Video compression should be MPEG-2.");
+
+	// Video format should be NTSC
+	STAssertTrue([[mainMenuInformation menuVideoAttributes] video_format] == kDKVideoFormatNTSC, @"Video format should be NTSC.");
+	
+	// Display aspect ratio should be 16:9
+	STAssertTrue([[mainMenuInformation menuVideoAttributes] display_aspect_ratio] ==  kDKAspectRatio16By9, @"Aspect ratio should be 16:9.");
+	//Todo:  check on film mode
+	
+	// Letterboxed should be true
+	// Todo:  This looks to be true when dumped out using ifo_dump, but we are returning false.  Need to research this.
+	//STAssertTrue([[mainMenuInformation menuVideoAttributes] letterboxed] ==  YES, @"Letterboxed should be true.");
+	
+	// Picture size should be 720x480
+	STAssertTrue([[mainMenuInformation menuVideoAttributes] picture_size] ==  kDKPictureSize720x480, @"Picture size should be 720x480.");
+	//Todo:  bit_rate
+	//Todo:  line21_cc_2;
+    //Todo:   line21_cc_1;
+	
+	// Start of audio testing
+	
+		
+	
+
 }
 
 @end

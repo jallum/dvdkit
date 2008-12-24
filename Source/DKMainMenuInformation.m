@@ -51,10 +51,17 @@ NSString* const kDKManagerInformationSection_VMGM_VOBU_ADMAP  = @"vmgm_vobu_adma
 @end
 
 @implementation DKMainMenuInformation
+
+
 @synthesize specificationVersion;
+@synthesize categoryAndMask;
 @synthesize numberOfVolumes;
 @synthesize volumeNumber;
+@synthesize side;
 @synthesize numberOfTitleSets;
+@synthesize pointOfSaleCode;
+@synthesize vmgm_vobs;
+
 
 @synthesize firstPlayProgramChain;
 @synthesize titleTrackSearchPointerTable;

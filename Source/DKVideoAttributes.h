@@ -17,6 +17,24 @@
 }
 
 @property (assign) DKMPEGVersion mpeg_version;
+@property (assign) DKVideoFormat video_format;
+@property (assign) DKAspectRatio display_aspect_ratio;
+@property (assign) BOOL film_mode;
+@property (assign) BOOL letterboxed;
+@property (assign) DKPictureSize picture_size;
+@property (assign) BOOL bit_rate;
+@property (assign) BOOL line21_cc_2;
+@property (assign) BOOL line21_cc_1;
+
+
+
+
+
+
+
+
+
+
 
 + (id) videoAttributesWithData:(NSData*)data;
 

@@ -20,6 +20,17 @@ static DKPictureSize PICTURE_SIZE_TABLE[4][4] = {
 
 @synthesize mpeg_version;
 
+
+@synthesize video_format;
+@synthesize display_aspect_ratio;
+@synthesize film_mode;
+@synthesize letterboxed;
+@synthesize picture_size;
+@synthesize bit_rate;
+@synthesize line21_cc_2;
+@synthesize line21_cc_1;
+
+
 + (id) videoAttributesWithData:(NSData*)data
 {
     return [[[DKVideoAttributes alloc] initWithData:data] autorelease];

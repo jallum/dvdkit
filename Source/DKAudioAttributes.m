@@ -3,6 +3,17 @@
 
 @implementation DKAudioAttributes
 
+@synthesize audio_format;
+@synthesize has_multichannel_extension;
+@synthesize application_mode;
+@synthesize quantization;
+@synthesize sample_frequency;
+@synthesize channels;
+@synthesize lang_code;
+@synthesize lang_extension;
+@synthesize code_extension;
+@synthesize app_info_value;
+
 + (id) audioAttributesWithData:(NSData*)data
 {
     return [[[DKAudioAttributes alloc] initWithData:data] autorelease];
