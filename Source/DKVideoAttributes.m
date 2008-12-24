@@ -52,7 +52,7 @@ static DKPictureSize PICTURE_SIZE_TABLE[4][4] = {
         letterboxed = video_attr->letterboxed;
         picture_size = PICTURE_SIZE_TABLE[video_attr->video_format][video_attr->picture_size];
         /**/
-        bit_rate = video_attr->bit_rate;
+        constantBitRate = video_attr->bit_rate;
         line21_cc_2 = video_attr->line21_cc_2;
         line21_cc_1 = video_attr->line21_cc_1;
     }
@@ -72,7 +72,7 @@ static DKPictureSize PICTURE_SIZE_TABLE[4][4] = {
     video_attr->film_mode = film_mode;
     video_attr->letterboxed = letterboxed;
     video_attr->picture_size = picture_size & 0x03;
-    video_attr->bit_rate = bit_rate;
+    video_attr->bit_rate = constantBitRate;
     video_attr->line21_cc_1 = line21_cc_1;
     video_attr->line21_cc_2 = line21_cc_2;
 

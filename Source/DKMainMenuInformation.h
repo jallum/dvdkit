@@ -33,7 +33,7 @@
     uint8_t side;
     uint16_t numberOfTitleSets;
     uint64_t pointOfSaleCode;
-    uint32_t vmgm_vobs;
+    NSString* providerId;
     /**/
     DKVideoAttributes* menuVideoAttributes;
     NSArray* menuAudioAttributes;
@@ -75,7 +75,7 @@
 - (DKTitleTrackSearchPointer*) titleTrackSearchPointerForTitleSet:(uint16_t)vts track:(uint8_t)ttn;
 - (NSArray*) menuProgramChainInformationTableForLanguageCode:(uint16_t)languageCode;
 
-- (NSData*) saveAsData:(NSError**)error;
+- (NSData*) saveAsData:(NSError**)error lengthOfMenuVOB:(uint32_t)lengthOfMenuVOB;
 
 @end
 

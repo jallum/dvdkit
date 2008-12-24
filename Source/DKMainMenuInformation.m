@@ -108,14 +108,16 @@ NSString* const kDKManagerInformationSection_VMGM_VOBU_ADMAP  = @"vmgm_vobu_adma
         
         /*
          */
-        specificationVersion = OSReadBigInt8(&vmgi_mat->specification_version, 0);
+        specificationVersion = OSReadBigInt16(&vmgi_mat->specification_version, 0);
         categoryAndMask = OSReadBigInt32(&vmgi_mat->vmg_category, 0);
         numberOfVolumes = OSReadBigInt16(&vmgi_mat->vmg_nr_of_volumes, 0);
         volumeNumber = OSReadBigInt16(&vmgi_mat->vmg_this_volume_nr, 0);
         side = OSReadBigInt8(&vmgi_mat->disc_side, 0);
         numberOfTitleSets = OSReadBigInt16(&vmgi_mat->vmg_nr_of_title_sets, 0);
         pointOfSaleCode = OSReadBigInt64(&vmgi_mat->vmg_pos_code, 0);
-        vmgm_vobs = OSReadBigInt32(&vmgi_mat->vmgm_vobs, 0);
+        providerId = [NSString stringWithCString:(const char*)&vmgi_mat->provider_identifier length:sizeof(vmgi_mat->provider_identifier)];
+        
+        uint32_t vmgm_vobs = OSReadBigInt32(&vmgi_mat->vmgm_vobs, 0);
         
         
         /*  Sanity checks / Data Repair
@@ -519,15 +521,14 @@ NSString* const kDKManagerInformationSection_VMGM_VOBU_ADMAP  = @"vmgm_vobu_adma
     return categoryAndMask & 0x1FF;
 }
 
-- (NSData*) saveAsData:(NSError**)error
+- (NSData*) saveAsData:(NSError**)error lengthOfMenuVOB:(uint32_t)lengthOfMenuVOB
 {
     NSMutableArray* errors = !error ? nil : [NSMutableArray array];
-    NSMutableData* data = [NSMutableData data];
+    NSMutableData* data = [NSMutableData dataWithLength:MAX(sizeof(vmgi_mat_t), 0x400)];
     
     
     /*
      */
-    [data increaseLengthBy:sizeof(vmgi_mat_t)];  
     vmgi_mat_t vmgi_mat;
     bzero(&vmgi_mat, sizeof(vmgi_mat_t));
     memcpy(vmgi_mat.vmg_identifier, "DVDVIDEO-VMG", sizeof(vmgi_mat.vmg_identifier));
@@ -542,7 +543,9 @@ NSString* const kDKManagerInformationSection_VMGM_VOBU_ADMAP  = @"vmgm_vobu_adma
     OSWriteBigInt8(&vmgi_mat.disc_side, 0, side);
     OSWriteBigInt16(&vmgi_mat.vmg_nr_of_title_sets, 0, numberOfTitleSets);
     OSWriteBigInt64(&vmgi_mat.vmg_pos_code, 0, pointOfSaleCode);
-    OSWriteBigInt32(&vmgi_mat.vmgm_vobs, 0, vmgm_vobs);
+    if (providerId) {
+        [providerId getBytes:&vmgi_mat.provider_identifier maxLength:sizeof(vmgi_mat.provider_identifier) usedLength:NULL encoding:NSUTF8StringEncoding options:NSStringEncodingConversionAllowLossy range:NSMakeRange(0, MIN([providerId length], sizeof(vmgi_mat.provider_identifier))) remainingRange:NULL];
+    }
     
     
     /*  Menu Video / Audio / Subpicture Attributes
@@ -606,7 +609,7 @@ NSString* const kDKManagerInformationSection_VMGM_VOBU_ADMAP  = @"vmgm_vobu_adma
     
     /*  Append the first play program chain
      */
-    OSWriteBigInt32(&vmgi_mat, offsetof(vmgi_mat_t, first_play_pgc), [data length]);
+    OSWriteBigInt32(&vmgi_mat.first_play_pgc, 0, [data length]);
     if (firstPlayProgramChain) {
         NSError* firstPlayProgramChainError = nil;
         NSData* firstPlayProgramChainData = [firstPlayProgramChain saveAsData:errors ? &firstPlayProgramChainError : NULL];
@@ -627,7 +630,7 @@ NSString* const kDKManagerInformationSection_VMGM_VOBU_ADMAP  = @"vmgm_vobu_adma
     
     /*  Align to the next sector boundary.
      */
-    OSWriteBigInt32(&vmgi_mat, offsetof(vmgi_mat_t, vmgi_last_byte), [data length]);
+    OSWriteBigInt32(&vmgi_mat.vmgi_last_byte, 0, [data length] - 1);
     uint32_t amountToAlign = 0x800 - ([data length] & 0x07FF);
     if (amountToAlign != 0x800) {
         [data increaseLengthBy:amountToAlign];
@@ -710,7 +713,11 @@ NSString* const kDKManagerInformationSection_VMGM_VOBU_ADMAP  = @"vmgm_vobu_adma
     uint32_t vmgi_last_sector = [data length] >> 11;
     OSWriteBigInt32(&vmgi_mat.vmgi_last_sector, 0, vmgi_last_sector - 1);
     OSWriteBigInt32(&vmgi_mat.vmg_last_sector, 0, (vmgi_last_sector * 2) - 1);
-    OSWriteBigInt32(&vmgi_mat.vmgm_vobs, 0, vmgi_last_sector);
+    uint32_t vmgm_vobs = 0;
+    if (lengthOfMenuVOB) {
+        vmgm_vobs = vmgi_last_sector * 2;
+    }
+    OSWriteBigInt32(&vmgi_mat.vmgm_vobs, 0, vmgm_vobs);
     
     if (errors) {
         int errorCount = [errors count];

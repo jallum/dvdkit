@@ -34,6 +34,7 @@ NSString* const DVDProgramChainException = @"DVDProgramChain";
 @synthesize nextProgramChainNumber;
 @synthesize previousProgramChainNumber;
 @synthesize goUpProgramChainNumber;
+@synthesize userInfo;
 
 static NSArray* NO_ELEMENTS;
 

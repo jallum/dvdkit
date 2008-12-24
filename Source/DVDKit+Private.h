@@ -186,7 +186,7 @@ struct vmgi_mat_t {
     uint8_t disc_side;
     uint8_t __zero_3[19];
     uint16_t vmg_nr_of_title_sets;
-    int8_t provider_identifier[32];
+    uint8_t provider_identifier[32];
     uint64_t vmg_pos_code;
     uint8_t __zero_4[24];
     uint32_t vmgi_last_byte;

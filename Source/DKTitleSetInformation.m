@@ -466,14 +466,13 @@ NSString* const kDKTitleSetInformationSection_VTS_TMAPT         = @"vts_tmapt";
     return table;
 }
 
-- (NSData*) saveAsData:(NSError**)error
+- (NSData*) saveAsData:(NSError**)error lengthOfMenuVOB:(uint32_t)lengthOfMenuVOB lengthOfVideoVOB:(uint32_t)lengthOfVideoVOB
 {
     NSMutableArray* errors = !error ? nil : [NSMutableArray array];
-    NSMutableData* data = [NSMutableData data];
+    NSMutableData* data = [NSMutableData dataWithLength:sizeof(vts_mat_t)];
     
     /*
      */
-    [data increaseLengthBy:sizeof(vts_mat_t)];  
     vts_mat_t vts_mat;
     bzero(&vts_mat, sizeof(vts_mat_t));
     memcpy(vts_mat.vts_identifier, "DVDVIDEO-VTS", sizeof(vts_mat.vts_identifier));
@@ -613,11 +612,11 @@ NSString* const kDKTitleSetInformationSection_VTS_TMAPT         = @"vts_tmapt";
 
     /*  Align to the next sector boundary.
      */
-    OSWriteBigInt32(&vts_mat.vtsi_last_byte, 0, [data length]);
     uint32_t amountToAlign = 0x800 - ([data length] & 0x07FF);
     if (amountToAlign != 0x800) {
         [data increaseLengthBy:amountToAlign];
     }
+    OSWriteBigInt32(&vts_mat.vtsi_last_byte, 0, [data length] - 1);
     NSAssert(([data length] & 0x07FF) == 0, @"Sections not sector-aligned?");
     
     
@@ -702,8 +701,20 @@ NSString* const kDKTitleSetInformationSection_VTS_TMAPT         = @"vts_tmapt";
     NSAssert(([data length] & 0x07FF) == 0, @"Sections not sector-aligned?");
     uint32_t vtsi_last_sector = [data length] >> 11;
     OSWriteBigInt32(&vts_mat.vtsi_last_sector, 0, vtsi_last_sector - 1);
-    OSWriteBigInt32(&vts_mat.vts_last_sector, 0, (vtsi_last_sector * 2) - 1);
-    OSWriteBigInt32(&vts_mat.vtsm_vobs, 0, vtsi_last_sector);
+    uint32_t vtsm_vobs = 0;
+    uint32_t vtstt_vobs = 0;
+    if (lengthOfMenuVOB > 0) {
+        vtsm_vobs = vtsi_last_sector;
+        if (lengthOfVideoVOB) {
+            vtstt_vobs = vtsm_vobs + lengthOfMenuVOB;
+        }
+    } else if (lengthOfVideoVOB) {
+        vtstt_vobs = vtsi_last_sector;
+    }
+    uint32_t vts_last_sector = MAX(vtsm_vobs, vtstt_vobs) + lengthOfVideoVOB + vtsi_last_sector;
+    OSWriteBigInt32(&vts_mat.vtsm_vobs, 0, vtsm_vobs);
+    OSWriteBigInt32(&vts_mat.vtstt_vobs, 0, vtstt_vobs);
+    OSWriteBigInt32(&vts_mat.vts_last_sector, 0, vts_last_sector - 1);
     
     if (errors) {
         int errorCount = [errors count];
