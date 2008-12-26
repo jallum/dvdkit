@@ -336,9 +336,9 @@ struct pgci_srp_t {
     uint32_t pgc_start_byte;
 } __attribute__ ((packed));
 
-typedef struct vmgm_c_adt_t vmgm_c_adt_t;
-struct vmgm_c_adt_t {
-    uint16_t nr_of_c_adts;
+typedef struct c_adt_t c_adt_t;
+struct c_adt_t {
+    uint16_t nr_of_vob_ids;
     uint16_t __zero_1;
     uint32_t last_byte;
 } __attribute__ ((packed));
@@ -445,20 +445,6 @@ typedef struct ptt_info_t ptt_info_t;
 struct ptt_info_t {
     uint16_t pgcn;
     uint16_t pgn;
-} __attribute__ ((packed));
-
-typedef struct vtsm_c_adt_t vtsm_c_adt_t;
-struct vtsm_c_adt_t {
-    uint16_t nr_of_c_adts;
-    uint16_t __zero_1;
-    uint32_t last_byte;
-} __attribute__ ((packed));
-
-typedef struct vts_c_adt_t vts_c_adt_t;
-struct vts_c_adt_t {
-    uint16_t nr_of_c_adts;
-    uint16_t __zero_1;
-    uint32_t last_byte;
 } __attribute__ ((packed));
 
 typedef struct vts_tmapti_t vts_tmapti_t;

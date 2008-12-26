@@ -429,19 +429,9 @@ NSString* const kDKManagerInformationSection_VMGM_VOBU_ADMAP  = @"vmgm_vobu_adma
 + (NSMutableArray*) _readCellAddressTableFromDataSource:(id<DKDataSource>)dataSource offset:(uint32_t)offset errors:(NSMutableArray*)errors
 {
     NSData* data = [dataSource requestDataOfLength:1 << 11 fromOffset:offset << 11];
-    NSAssert(data && ([data length] == 1 << 11), @"wtf?"); 
-    const vmgm_c_adt_t* vmgm_c_adt = [data bytes];
-    uint16_t nr_of_c_adts = OSReadBigInt16(&vmgm_c_adt->nr_of_c_adts, 0);
-    uint32_t last_byte = 1 + OSReadBigInt32(&vmgm_c_adt->last_byte, 0);
-    
-    /*  Sanity Checking / Data Repair  */
-    uint32_t calculated_nr_of_c_adts = (last_byte - sizeof(vmgm_c_adt_t)) / sizeof(cell_adr_t);
-    if (nr_of_c_adts != calculated_nr_of_c_adts) {
-        if (errors) {
-            [errors addObject:DKErrorWithCode(kDKMenuCellAddressTableError, [NSString stringWithFormat:DKLocalizedString(@"Corrected nr_of_c_adts (was %d, is now %d)", nil), nr_of_c_adts, calculated_nr_of_c_adts], NSLocalizedDescriptionKey, nil)];
-        }
-        nr_of_c_adts = calculated_nr_of_c_adts;
-    } 
+    const c_adt_t* c_adt = [data bytes];
+    uint16_t nr_of_vob_ids = OSReadBigInt16(&c_adt->nr_of_vob_ids, 0);
+    uint32_t last_byte = 1 + OSReadBigInt32(&c_adt->last_byte, 0);
     
     /*  Have we already read all that we need?  */
     if (last_byte > [data length]) {
@@ -451,9 +441,18 @@ NSString* const kDKManagerInformationSection_VMGM_VOBU_ADMAP  = @"vmgm_vobu_adma
     }
     
     /*  Parse the table  */
-    NSMutableArray* table = [NSMutableArray arrayWithCapacity:nr_of_c_adts];
-    for (int i = 1, p = sizeof(vmgm_c_adt_t); i <= nr_of_c_adts; i++, p += sizeof(cell_adr_t)) {
-        [table addObject:[DKCellAddress cellAddressWithData:[data subdataWithRange:NSMakeRange(p, sizeof(cell_adr_t))]]];
+    NSMutableSet* vobCellIdTags = [NSMutableSet set];
+    NSMutableArray* table = [NSMutableArray arrayWithCapacity:nr_of_vob_ids];
+    uint32_t nr_of_entries = (last_byte - sizeof(c_adt_t)) / sizeof(cell_adr_t);
+    for (int i = 1, p = sizeof(c_adt_t); i <= nr_of_entries; i++, p += sizeof(cell_adr_t)) {
+        DKCellAddress* cellAddress = [DKCellAddress cellAddressWithData:[data subdataWithRange:NSMakeRange(p, sizeof(cell_adr_t))]];
+        NSNumber* tag = [NSNumber numberWithInt:(cellAddress.cell_id << 0x10) | cellAddress.vob_id];
+        if ([vobCellIdTags containsObject:tag]) {
+            [errors addObject:DKErrorWithCode(kDKMenuCellAddressTableError, [NSString stringWithFormat:DKLocalizedString(@"Duplicate VOB/Cell detected (%d.%d), skipping.", nil), cellAddress.vob_id, cellAddress.cell_id], NSLocalizedDescriptionKey, nil)];
+        } else {
+            [vobCellIdTags addObject:tag];
+            [table addObject:cellAddress];
+        }
     }
     
     return table;
@@ -829,16 +828,21 @@ NSString* const kDKManagerInformationSection_VMGM_VOBU_ADMAP  = @"vmgm_vobu_adma
 
 + (NSMutableData*) _saveCellAddressTable:(NSArray*)cellAddressTable errors:(NSMutableArray*)errors
 {
-    uint16_t nr_of_c_adts = [cellAddressTable count];
-    uint32_t last_byte = sizeof(vmgm_c_adt_t) + (nr_of_c_adts * sizeof(cell_adr_t));
+    uint16_t nr_of_vob_ids = 0;
+    uint16_t nr_of_entries = [cellAddressTable count];
+    for (DKCellAddress* cellAddress in cellAddressTable) {
+    }
+    uint32_t last_byte = sizeof(c_adt_t) + (nr_of_entries * sizeof(cell_adr_t));
     NSMutableData* data = [NSMutableData dataWithLength:last_byte];
-    uint8_t* base = [data mutableBytes];
-    OSWriteBigInt16(base, offsetof(vmgm_c_adt_t, nr_of_c_adts), nr_of_c_adts);
-    OSWriteBigInt32(base, offsetof(vmgm_c_adt_t, last_byte), last_byte - 1);
+    c_adt_t* c_adt = [data mutableBytes];
     
-    for (int i = 0, p = sizeof(vmgm_c_adt_t); i < nr_of_c_adts; i++, p += sizeof(cell_adr_t)) {
+    for (int i = 0, p = sizeof(c_adt_t); i < nr_of_vob_ids; i++, p += sizeof(cell_adr_t)) {
+        DKCellAddress* cellAddress = [cellAddressTable objectAtIndex:i];
+        if (cellAddress.vob_id > nr_of_vob_ids) {
+            nr_of_vob_ids = cellAddress.vob_id;
+        }
         NSError* cell_adr_error = nil;
-        NSData* cell_adr_data = [[cellAddressTable objectAtIndex:i] saveAsData:errors ? &cell_adr_error : NULL];
+        NSData* cell_adr_data = [cellAddress saveAsData:errors ? &cell_adr_error : NULL];
         if (cell_adr_error) {
             if (cell_adr_error.code == kDKMultipleErrorsError) {
                 [errors addObjectsFromArray:[cell_adr_error.userInfo objectForKey:NSDetailedErrorsKey]];
@@ -847,9 +851,12 @@ NSString* const kDKManagerInformationSection_VMGM_VOBU_ADMAP  = @"vmgm_vobu_adma
             }
         }
         if (cell_adr_data) {
-            memcpy(base + p, [cell_adr_data bytes], sizeof(cell_adr_t));
+            [data replaceBytesInRange:NSMakeRange(p, sizeof(cell_adr_t)) withBytes:[cell_adr_data bytes]];
         }
     }
+    
+    OSWriteBigInt16(&c_adt->nr_of_vob_ids, 0, nr_of_vob_ids);
+    OSWriteBigInt32(&c_adt->last_byte, 0, last_byte - 1);
     
     return data;
 }
