@@ -117,6 +117,7 @@ enum {
     [programChain release];
     [titleInformation release];
     [userInfo release];
+    [delegate release];
     [super dealloc];
 }
 
@@ -130,6 +131,7 @@ enum {
         [copy->programChain retain];
         [copy->titleInformation retain];
         [copy->userInfo retain];
+        [copy->delegate retain];
     }
     return copy;
 }
@@ -139,6 +141,9 @@ enum {
     if (delegate != _delegate) {
         [delegate release];
         delegate = [_delegate retain];
+
+        delegateHasWillExecuteProgramChain = [delegate respondsToSelector:@selector(virtualMachine:willExecuteProgramChain:)];
+        delegateHasWillExecuteCommandAtIndexOfSectionForProgramChain = [delegate respondsToSelector:@selector(virtualMachine:willExecuteCommandAtIndex:ofSection:forProgramChain:)];
     }
 }
 
@@ -234,6 +239,9 @@ enum {
                 case PGC_CHANGED: {
                     [programChain release];
                     programChain = [[[[self pgcit] objectAtIndex:(SPRM[6] - 1)] programChain] retain];
+                    if (delegateHasWillExecuteProgramChain) {
+                        [delegate virtualMachine:self willExecuteProgramChain:programChain];
+                    }
                     state = PGC_START;
                     break;
                 }
@@ -742,8 +750,23 @@ enum {
 - (void) executeCommands:(NSArray*)commands withState:(int)_state
 {
     const int maxCommand = [commands count];
+    int section;
+    if (_state == PGC_PRE_COMMANDS) {
+        section = kDKProgramChainSectionPreCommand;
+    } else if (_state == PGC_CELL) {
+        section = kDKProgramChainSectionCellCommand;
+    } else if (_state == PGC_POST_COMMANDS) {
+        section = kDKProgramChainSectionPostCommand;
+    } else {
+        [NSException raise:DVDVirtualMachineException format:@"%s (%d)", __FILE__, __LINE__];
+    }
     for (instructionCounter = 0; (state == _state) && instructionCounter < maxCommand; ) {
-        [self executeCommand:[commands objectAtIndex:instructionCounter++]];
+        DKCommand* command = [commands objectAtIndex:instructionCounter];
+        if (delegateHasWillExecuteCommandAtIndexOfSectionForProgramChain) {
+            [delegate virtualMachine:self willExecuteCommandAtIndex:instructionCounter ofSection:section forProgramChain:programChain];
+        }
+        instructionCounter++;
+        [self executeCommand:command];
     }
 }
 

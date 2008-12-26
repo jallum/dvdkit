@@ -56,8 +56,12 @@
     int instructionCounter;
     DKTitleTrackSearchPointer* titleInformation;
     int cell;
-    id delegate;
+    /**/
     id userInfo;
+    /**/
+    id delegate;
+    BOOL delegateHasWillExecuteProgramChain;
+    BOOL delegateHasWillExecuteCommandAtIndexOfSectionForProgramChain;
 }
 
 + (id) virtualMachineWithDataSource:(id)delegate;
@@ -131,8 +135,15 @@
 
 @end
 
+typedef enum {
+    kDKProgramChainSectionPreCommand,
+    kDKProgramChainSectionCellCommand,
+    kDKProgramChainSectionPostCommand,
+} DKProgramChainSection;
+
 @interface NSObject (DVDVirtualMachineDelegate)
 
-- (void) virtualMachine:(DKVirtualMachine*)virtualMachine didExecuteCommand:(DKCommand*)command;
+- (void) virtualMachine:(DKVirtualMachine*)virtualMachine willExecuteProgramChain:(DKProgramChain*)programChain;
+- (void) virtualMachine:(DKVirtualMachine*)virtualMachine willExecuteCommandAtIndex:(int)index ofSection:(DKProgramChainSection)section forProgramChain:(DKProgramChain*)programChain;
 
 @end

@@ -65,7 +65,7 @@
 /**/
 @property (retain) DKProgramChain* firstPlayProgramChain;
 @property (retain) NSArray* titleTrackSearchPointerTable;
-@property (readonly) NSDictionary* menuProgramChainInformationTablesByLanguage;
+@property (retain) NSDictionary* menuProgramChainInformationTablesByLanguage;
 @property (readonly) uint16_t regionMask;
 @property (retain) NSArray* cellAddressTable;
 
