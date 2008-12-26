@@ -877,7 +877,7 @@ NSString* const kDKTitleSetInformationSection_VTS_TMAPT         = @"vts_tmapt";
     NSMutableData* data = [NSMutableData dataWithLength:last_byte];
     c_adt_t* c_adt = [data mutableBytes];
     
-    for (int i = 0, p = sizeof(c_adt_t); i < nr_of_vob_ids; i++, p += sizeof(cell_adr_t)) {
+    for (int i = 0, p = sizeof(c_adt_t); i < nr_of_entries; i++, p += sizeof(cell_adr_t)) {
         DKCellAddress* cellAddress = [cellAddressTable objectAtIndex:i];
         if (cellAddress.vob_id > nr_of_vob_ids) {
             nr_of_vob_ids = cellAddress.vob_id;
