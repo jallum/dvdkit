@@ -62,7 +62,8 @@
 @property (assign) uint16_t numberOfTitleSets;
 @property (assign) uint64_t pointOfSaleCode;
 @property (assign) DKVideoAttributes* menuVideoAttributes;
-/**/
+@property (assign) NSArray* menuAudioAttributes;
+
 @property (retain) DKProgramChain* firstPlayProgramChain;
 @property (retain) NSArray* titleTrackSearchPointerTable;
 @property (readonly) NSDictionary* menuProgramChainInformationTablesByLanguage;

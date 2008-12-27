@@ -782,8 +782,47 @@
 	
 	//Todo:  line21_cc_2;
     //Todo:   line21_cc_1;
-	
+	// I don't see a value for these in the reference ifo, so I'm not sure what to do for testing these.
 	// Start of audio testing
+	// Since there is only one audio stream in the reference ifo, we will assert on stream count first.
+	STAssertTrue([[mainMenuInformation menuAudioAttributes] count] == 1, @"Audio stream count should be 1.");
+
+	DKAudioAttributes* menuAudioAttributes = [[mainMenuInformation menuAudioAttributes] objectAtIndex:0];  
+	// Audio format should be AC3
+	STAssertTrue([menuAudioAttributes audio_format] == kDKAudioFormatAC3, @"Audio stream format should be AC3.");
+	
+	// Multichannel extension should be false
+	STAssertTrue([menuAudioAttributes has_multichannel_extension] == NO, @"Multichannel extension should be false.");
+	
+	
+	// Application mode should be unspecified
+	STAssertTrue([menuAudioAttributes application_mode] ==  kDKAudioApplocationModeUnspecified, @"Application extension should be unspecified.");
+
+	// Quantization should be zero
+	//Note:  I wasn't able to get the quantization value from ifo_dump, so I'm not sure if this is correct or not
+	STAssertTrue([menuAudioAttributes quantization] ==  3, @"Quantization should be 0.");
+
+	// Sampling frequency should be 48kbps
+	// The sample frequency value is zero, so this assert is failing
+	
+	STAssertTrue([menuAudioAttributes sample_frequency] ==  48, @"Sampling rate should be 48kbps.");
+
+	// Channels should be two
+	STAssertTrue([menuAudioAttributes channels] ==  2, @"Number of channels should be 2.");
+
+	// Language code should be zero
+	STAssertTrue([menuAudioAttributes lang_code] ==  0, @"Language code should be 0.");
+
+	// Language extension should be zero
+	STAssertTrue([menuAudioAttributes lang_extension] ==  0, @"Language extension should be 0.");
+
+	// Code extension should be zero
+	STAssertTrue([menuAudioAttributes code_extension] ==  0, @"Code extension should be 0.");
+
+	// Application information should be zero
+	STAssertTrue([menuAudioAttributes app_info_value] ==  0, @"Application information should be 0.");
+
+	
 	
 		
 	
