@@ -3,6 +3,12 @@
 
 @implementation DKSubpictureAttributes
 
+@synthesize code_mode;
+@synthesize lang_code;
+@synthesize lang_extension;
+@synthesize code_extension;
+
+
 + (id) subpictureAttributesWithData:(NSData*)data
 {
     return [[[DKSubpictureAttributes alloc] initWithData:data] autorelease];

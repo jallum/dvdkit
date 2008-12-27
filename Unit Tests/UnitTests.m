@@ -798,9 +798,9 @@
 	// Application mode should be unspecified
 	STAssertTrue([menuAudioAttributes application_mode] ==  kDKAudioApplocationModeUnspecified, @"Application extension should be unspecified.");
 
-	// Quantization should be zero
+	// Quantization should be three
 	//Note:  I wasn't able to get the quantization value from ifo_dump, so I'm not sure if this is correct or not
-	STAssertTrue([menuAudioAttributes quantization] ==  3, @"Quantization should be 0.");
+	STAssertTrue([menuAudioAttributes quantization] ==  3, @"Quantization should be 3.");
 
 	// Sampling frequency should be 48kbps
 	// The sample frequency value is zero, so this assert is failing
@@ -822,6 +822,97 @@
 	// Application information should be zero
 	STAssertTrue([menuAudioAttributes app_info_value] ==  0, @"Application information should be 0.");
 
+	
+	// Start of SubPicture testing
+	// Number of subpicture streams should be 1
+	STAssertTrue([[mainMenuInformation menuSubpictureAttributes] code_mode] ==  0, @"Subpicture stream count should be 1.");
+
+	// Start of First Play PGC testing
+	// Playback time should be 00:00:00.00 @ 29.97 fps
+	STAssertTrue([[mainMenuInformation firstPlayProgramChain] playback_time ].frame_u, @"Playback time should be 192.");
+
+	// All prohibited user operations should be equal to 0
+	STAssertTrue([[mainMenuInformation firstPlayProgramChain] prohibitedUserOperations].__zero_1 == 0, @"Prohibited user operations should be 0.");
+	STAssertTrue([[mainMenuInformation firstPlayProgramChain] prohibitedUserOperations].angle_change == 0, @"Prohibited user operations should be 0.");
+	STAssertTrue([[mainMenuInformation firstPlayProgramChain] prohibitedUserOperations].angle_menu_call == 0, @"Prohibited user operations should be 0.");
+	STAssertTrue([[mainMenuInformation firstPlayProgramChain] prohibitedUserOperations].audio_menu_call == 0, @"Prohibited user operations should be 0.");
+	STAssertTrue([[mainMenuInformation firstPlayProgramChain] prohibitedUserOperations].audio_stream_change == 0, @"Prohibited user operations should be 0.");
+	STAssertTrue([[mainMenuInformation firstPlayProgramChain] prohibitedUserOperations].backward_scan == 0, @"Prohibited user operations should be 0.");
+	STAssertTrue([[mainMenuInformation firstPlayProgramChain] prohibitedUserOperations].button_select_or_activate == 0, @"Prohibited user operations should be 0.");
+	STAssertTrue([[mainMenuInformation firstPlayProgramChain] prohibitedUserOperations].chapter_menu_call == 0, @"Prohibited user operations should be 0.");
+	STAssertTrue([[mainMenuInformation firstPlayProgramChain] prohibitedUserOperations].chapter_search_or_play == 0, @"Prohibited user operations should be 0.");
+	STAssertTrue([[mainMenuInformation firstPlayProgramChain] prohibitedUserOperations].forward_scan == 0, @"Prohibited user operations should be 0.");
+	STAssertTrue([[mainMenuInformation firstPlayProgramChain] prohibitedUserOperations].go_up == 0, @"Prohibited user operations should be 0.");
+	STAssertTrue([[mainMenuInformation firstPlayProgramChain] prohibitedUserOperations].karaoke_audio_pres_mode_change == 0, @"Prohibited user operations should be 0.");
+	STAssertTrue([[mainMenuInformation firstPlayProgramChain] prohibitedUserOperations].next_pg_search == 0, @"Prohibited user operations should be 0.");
+	STAssertTrue([[mainMenuInformation firstPlayProgramChain] prohibitedUserOperations].pause_on == 0, @"Prohibited user operations should be 0.");
+	STAssertTrue([[mainMenuInformation firstPlayProgramChain] prohibitedUserOperations].prev_or_top_pg_search == 0, @"Prohibited user operations should be 0.");
+	STAssertTrue([[mainMenuInformation firstPlayProgramChain] prohibitedUserOperations].resume == 0, @"Prohibited user operations should be 0.");
+	STAssertTrue([[mainMenuInformation firstPlayProgramChain] prohibitedUserOperations].root_menu_call == 0, @"Prohibited user operations should be 0.");
+	STAssertTrue([[mainMenuInformation firstPlayProgramChain] prohibitedUserOperations].still_off == 0, @"Prohibited user operations should be 0.");
+	STAssertTrue([[mainMenuInformation firstPlayProgramChain] prohibitedUserOperations].stop == 0, @"Prohibited user operations should be 0.");
+	STAssertTrue([[mainMenuInformation firstPlayProgramChain] prohibitedUserOperations].subpic_menu_call == 0, @"Prohibited user operations should be 0.");
+	STAssertTrue([[mainMenuInformation firstPlayProgramChain] prohibitedUserOperations].subpic_stream_change == 0, @"Prohibited user operations should be 0.");
+	STAssertTrue([[mainMenuInformation firstPlayProgramChain] prohibitedUserOperations].time_or_chapter_search == 0, @"Prohibited user operations should be 0.");
+	STAssertTrue([[mainMenuInformation firstPlayProgramChain] prohibitedUserOperations].title_menu_call == 0, @"Prohibited user operations should be 0.");
+	STAssertTrue([[mainMenuInformation firstPlayProgramChain] prohibitedUserOperations].title_or_time_play == 0, @"Prohibited user operations should be 0.");
+	STAssertTrue([[mainMenuInformation firstPlayProgramChain] prohibitedUserOperations].title_play == 0, @"Prohibited user operations should be 0.");
+	STAssertTrue([[mainMenuInformation firstPlayProgramChain] prohibitedUserOperations].video_pres_mode_change == 0, @"Prohibited user operations should be 0.");
+	
+	
+	//Todo:  I'm not sure what these values should be.  Ifo_dump doesn't list these as being in our reference ifo
+	//audio_control[8];
+    //subp_control[32];
+	
+	// Next program chain number should be zero
+	STAssertTrue([[mainMenuInformation firstPlayProgramChain] nextProgramChainNumber] == 0, @"Next program chain number should be 0.");
+	
+	// Previous program chain number should be zero
+	STAssertTrue([[mainMenuInformation firstPlayProgramChain] previousProgramChainNumber] == 0, @"Previous program chain number should be 0.");
+	
+	
+	// GoUp program chain number should be zero
+	STAssertTrue([[mainMenuInformation firstPlayProgramChain] goUpProgramChainNumber] == 0, @"GoUp program chain number should be 0.");
+	
+	//Todo:  still_time??
+	
+	//Todo:  pg_playback_mode
+	
+	//Todo:  palette
+
+	//Todo:  precommands - I'm not sure how to compare the bits from the DKCommand with the ifo_dump
+	
+	// Post commands count should be zero
+	STAssertTrue([[[mainMenuInformation firstPlayProgramChain] postCommands] count] == 0, @"Post commands count should be 0.");
+	
+	// Cell commands count should be zero
+	STAssertTrue([[[mainMenuInformation firstPlayProgramChain] cellCommands] count] == 0, @"Cell commands count should be 0.");
+	
+	// Program map count should be zero
+	STAssertTrue([[[mainMenuInformation firstPlayProgramChain] programMap] count] == 0, @"Program map count should be 0.");
+	
+	// Cell playback count should be zero
+	STAssertTrue([[[mainMenuInformation firstPlayProgramChain] cellPlaybackTable] count] == 0, @"Cell playback count should be 0.");
+	
+	
+	// Cell position count should be zero
+	STAssertTrue([[[mainMenuInformation firstPlayProgramChain] cellPositionTable] count] == 0, @"Cell position count should be 0.");
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	
 	
 		

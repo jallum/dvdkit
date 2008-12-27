@@ -63,6 +63,7 @@
 @property (assign) uint64_t pointOfSaleCode;
 @property (assign) DKVideoAttributes* menuVideoAttributes;
 @property (assign) NSArray* menuAudioAttributes;
+@property (assign) DKSubpictureAttributes* menuSubpictureAttributes;
 
 @property (retain) DKProgramChain* firstPlayProgramChain;
 @property (retain) NSArray* titleTrackSearchPointerTable;

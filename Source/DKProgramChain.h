@@ -43,22 +43,43 @@
     id userInfo;
 }
 
+@property (assign) DKTime playback_time;
+@property (assign) DKUserOperationFlags prohibitedUserOperations;
+@property (assign) uint16_t nextProgramChainNumber;
+@property (assign) uint16_t previousProgramChainNumber;
+@property (assign) uint16_t goUpProgramChainNumber;
+@property (assign) uint8_t still_time;
+@property (assign) uint8_t pg_playback_mode;
+@property (assign) NSMutableArray* preCommands;
+@property (assign) NSMutableArray* postCommands;
+@property (assign) NSMutableArray* cellCommands;
+@property (assign) NSMutableArray* programMap;
+@property (assign) NSMutableArray* cellPlaybackTable;
+@property (assign) NSMutableArray* cellPositionTable;
+@property (assign) id userInfo;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 + (id) programChainWithData:(NSData*)data error:(NSError**)error;
 
 - (id) initWithData:(NSData*)data error:(NSError**)error;
 
 - (NSData*) saveAsData:(NSError**)error;
 
-@property (readonly) DKUserOperationFlags prohibitedUserOperations;
-@property (readonly) NSArray* preCommands;
-@property (readonly) NSArray* cellCommands;
-@property (readonly) NSArray* postCommands;
-@property (readonly) NSArray* programMap;
-@property (readonly) NSArray* cellPlaybackTable;
-@property (readonly) uint16_t nextProgramChainNumber;
-@property (readonly) uint16_t previousProgramChainNumber;
-@property (readonly) uint16_t goUpProgramChainNumber;
-@property (retain) id userInfo;
+
 
 @end
 

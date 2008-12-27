@@ -58,12 +58,14 @@ NSString* const kDKManagerInformationSection_VMGM_VOBU_ADMAP  = @"vmgm_vobu_adma
 @synthesize side;
 @synthesize numberOfTitleSets;
 @synthesize pointOfSaleCode;
+@synthesize menuVideoAttributes;
+@synthesize menuAudioAttributes;
+@synthesize menuSubpictureAttributes;
 
 @synthesize firstPlayProgramChain;
 @synthesize titleTrackSearchPointerTable;
 @synthesize menuProgramChainInformationTablesByLanguage;
-@synthesize menuVideoAttributes;
-@synthesize menuAudioAttributes;
+
 @synthesize cellAddressTable;
 
 + (NSArray*) availableSections

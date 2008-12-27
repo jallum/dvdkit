@@ -25,15 +25,20 @@
 NSString* const DVDProgramChainException = @"DVDProgramChain";
 
 @implementation DKProgramChain
+
+@synthesize playback_time;
 @synthesize prohibitedUserOperations;
-@synthesize preCommands;
-@synthesize cellCommands;
-@synthesize postCommands;
-@synthesize programMap;
-@synthesize cellPlaybackTable;
 @synthesize nextProgramChainNumber;
 @synthesize previousProgramChainNumber;
 @synthesize goUpProgramChainNumber;
+@synthesize still_time;
+@synthesize pg_playback_mode;
+@synthesize preCommands;
+@synthesize postCommands;
+@synthesize cellCommands;
+@synthesize programMap;
+@synthesize cellPlaybackTable;
+@synthesize cellPositionTable;
 @synthesize userInfo;
 
 static NSArray* NO_ELEMENTS;
