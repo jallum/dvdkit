@@ -36,4 +36,6 @@
 
 - (id) initWithData:(NSData*)data;
 
+- (NSData*) saveAsData:(NSError**)error;
+
 @end
