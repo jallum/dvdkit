@@ -1,6 +1,7 @@
 #import "UnitTests.h"
 #import <DVDKit/DVDKit.h>
 #import "DKFileHandleDataSource.h"
+#import <DVDKit/DKTitleTrackSearchPointer.h>
 
 @implementation UnitTests
 
@@ -899,7 +900,588 @@
 	STAssertTrue([[[mainMenuInformation firstPlayProgramChain] cellPositionTable] count] == 0, @"Cell position count should be 0.");
 	
 	
+	// Start of title track search pointer table
 	
+	// Title track search pointer count should be 13
+	STAssertTrue([[mainMenuInformation titleTrackSearchPointerTable] count] == 13, @"Title track search pointer count should be 0.");
+	
+	// Now we process the title track search pointer array
+	for(int count = 0;count < [[mainMenuInformation titleTrackSearchPointerTable] count];count++)
+	{
+		
+		
+		switch (count) {
+			case 0:
+			{
+				DKTitleTrackSearchPointer* tempPointer = [[mainMenuInformation titleTrackSearchPointerTable] objectAtIndex:count];
+				
+				// Title set number should be 1
+				STAssertTrue([tempPointer title_set_nr] == 1, @"Title set number should be 1.");
+				
+				// VTS_TTN should be 1
+				STAssertTrue([tempPointer vts_ttn] == 1, @"VTS_TTN should be 1.");
+				
+				//PTT number should be 13
+				STAssertTrue([tempPointer nr_of_ptts] == 13, @"PTT number should be 13.");
+				
+				//Number of angles should be 1
+				STAssertTrue([tempPointer nr_of_angles ] == 1, @"Number of angles should be 1.");
+				
+				//Title set starting sector should be 000549b0
+				STAssertTrue([tempPointer title_set_sector ] == 0x000549b0, @"Title set starting sector should be 000549b0.");
+				
+				//Parental id  should be 0000
+				STAssertTrue([tempPointer parental_id ] == 0000, @"Parental id should be 0000.");
+				
+				//Title playback type checking
+				
+				//__zero_1 should be 0
+				STAssertTrue([tempPointer pb_ty ].__zero_1 == 0, @"__zero_1 should be 0.");
+				//chapter_search_or_play should be 0
+				STAssertTrue([tempPointer pb_ty ].chapter_search_or_play == 0, @"chapter_search_or_play should be 0.");
+				//jlc_exists_in_button_cmd should be 0
+				STAssertTrue([tempPointer pb_ty ].jlc_exists_in_button_cmd == 0, @"jlc_exists_in_button_cmd should be 0.");
+				//jlc_exists_in_cell_cmd should be 0
+				STAssertTrue([tempPointer pb_ty ].jlc_exists_in_cell_cmd == 0, @"jlc_exists_in_cell_cmd should be 0.");
+				//jlc_exists_in_prepost_cmd should be 0
+				STAssertTrue([tempPointer pb_ty ].jlc_exists_in_prepost_cmd == 1, @"jlc_exists_in_prepost_cmd should be 0.");
+				//jlc_exists_in_tt_dom should be 0
+				STAssertTrue([tempPointer pb_ty ].jlc_exists_in_tt_dom == 1, @"jlc_exists_in_tt_dom should be 0.");
+				//multi_or_random_pgc_title should be 0
+				STAssertTrue([tempPointer pb_ty ].multi_or_random_pgc_title == 0, @"multi_or_random_pgc_title should be 0.");
+				
+				//title_or_time_play should be 0
+				STAssertTrue([tempPointer pb_ty ].title_or_time_play == 0, @"title_or_time_play should be 0.");
+				
+				
+				break;
+			}
+			case 1:
+			{
+				DKTitleTrackSearchPointer* tempPointer = [[mainMenuInformation titleTrackSearchPointerTable] objectAtIndex:count];
+				
+				// Title set number should be 1
+				STAssertTrue([tempPointer title_set_nr] == 1, @"Title set number should be 1.");
+				
+				// VTS_TTN should be 2
+				STAssertTrue([tempPointer vts_ttn] == 2, @"VTS_TTN should be 2.");
+				
+				//PTT number should be 2
+				STAssertTrue([tempPointer nr_of_ptts] == 2, @"PTT number should be 2.");
+				
+				//Number of angles should be 1
+				STAssertTrue([tempPointer nr_of_angles ] == 1, @"Number of angles should be 1.");
+				
+				//Title set starting sector should be 000549b0
+				STAssertTrue([tempPointer title_set_sector ] == 0x000549b0, @"Title set starting sector should be 000549b0.");
+				
+				//Parental id  should be 0000
+				STAssertTrue([tempPointer parental_id ] == 0000, @"Parental id should be 0000.");
+				
+				//Title playback type checking
+				
+				//__zero_1 should be 0
+				STAssertTrue([tempPointer pb_ty ].__zero_1 == 0, @"__zero_1 should be 0.");
+				//chapter_search_or_play should be 0
+				STAssertTrue([tempPointer pb_ty ].chapter_search_or_play == 0, @"chapter_search_or_play should be 0.");
+				//jlc_exists_in_button_cmd should be 0
+				STAssertTrue([tempPointer pb_ty ].jlc_exists_in_button_cmd == 0, @"jlc_exists_in_button_cmd should be 0.");
+				//jlc_exists_in_cell_cmd should be 0
+				STAssertTrue([tempPointer pb_ty ].jlc_exists_in_cell_cmd == 0, @"jlc_exists_in_cell_cmd should be 0.");
+				//jlc_exists_in_prepost_cmd should be 0
+				STAssertTrue([tempPointer pb_ty ].jlc_exists_in_prepost_cmd == 1, @"jlc_exists_in_prepost_cmd should be 0.");
+				//jlc_exists_in_tt_dom should be 0
+				STAssertTrue([tempPointer pb_ty ].jlc_exists_in_tt_dom == 1, @"jlc_exists_in_tt_dom should be 0.");
+				//multi_or_random_pgc_title should be 0
+				STAssertTrue([tempPointer pb_ty ].multi_or_random_pgc_title == 0, @"multi_or_random_pgc_title should be 0.");
+				
+				//title_or_time_play should be 0
+				STAssertTrue([tempPointer pb_ty ].title_or_time_play == 0, @"title_or_time_play should be 0.");
+				break;
+			}
+			case 2:
+			{
+				DKTitleTrackSearchPointer* tempPointer = [[mainMenuInformation titleTrackSearchPointerTable] objectAtIndex:count];
+				
+				// Title set number should be 1
+				STAssertTrue([tempPointer title_set_nr] == 1, @"Title set number should be 1.");
+				
+				// VTS_TTN should be 3
+				STAssertTrue([tempPointer vts_ttn] == 3, @"VTS_TTN should be 3.");
+				
+				//PTT number should be 1
+				STAssertTrue([tempPointer nr_of_ptts] == 1, @"PTT number should be 1.");
+				
+				//Number of angles should be 1
+				STAssertTrue([tempPointer nr_of_angles ] == 1, @"Number of angles should be 1.");
+				
+				//Title set starting sector should be 000549b0
+				STAssertTrue([tempPointer title_set_sector ] == 0x000549b0, @"Title set starting sector should be 000549b0.");
+				
+				//Parental id  should be 0000
+				STAssertTrue([tempPointer parental_id ] == 0000, @"Parental id should be 0000.");
+				
+				//Title playback type checking
+				
+				//__zero_1 should be 0
+				STAssertTrue([tempPointer pb_ty ].__zero_1 == 0, @"__zero_1 should be 0.");
+				//chapter_search_or_play should be 0
+				STAssertTrue([tempPointer pb_ty ].chapter_search_or_play == 0, @"chapter_search_or_play should be 0.");
+				//jlc_exists_in_button_cmd should be 0
+				STAssertTrue([tempPointer pb_ty ].jlc_exists_in_button_cmd == 0, @"jlc_exists_in_button_cmd should be 0.");
+				//jlc_exists_in_cell_cmd should be 0
+				STAssertTrue([tempPointer pb_ty ].jlc_exists_in_cell_cmd == 0, @"jlc_exists_in_cell_cmd should be 0.");
+				//jlc_exists_in_prepost_cmd should be 0
+				STAssertTrue([tempPointer pb_ty ].jlc_exists_in_prepost_cmd == 1, @"jlc_exists_in_prepost_cmd should be 0.");
+				//jlc_exists_in_tt_dom should be 0
+				STAssertTrue([tempPointer pb_ty ].jlc_exists_in_tt_dom == 1, @"jlc_exists_in_tt_dom should be 0.");
+				//multi_or_random_pgc_title should be 0
+				STAssertTrue([tempPointer pb_ty ].multi_or_random_pgc_title == 0, @"multi_or_random_pgc_title should be 0.");
+				
+				//title_or_time_play should be 0
+				STAssertTrue([tempPointer pb_ty ].title_or_time_play == 0, @"title_or_time_play should be 0.");
+				break;
+			}
+			case 3:
+			{
+				DKTitleTrackSearchPointer* tempPointer = [[mainMenuInformation titleTrackSearchPointerTable] objectAtIndex:count];
+				
+				// Title set number should be 2
+				STAssertTrue([tempPointer title_set_nr] == 2, @"Title set number should be 2.");
+				
+				// VTS_TTN should be 1
+				STAssertTrue([tempPointer vts_ttn] == 1, @"VTS_TTN should be 1.");
+				
+				//PTT number should be 5
+				STAssertTrue([tempPointer nr_of_ptts] == 5, @"PTT number should be 5.");
+				
+				//Number of angles should be 1
+				STAssertTrue([tempPointer nr_of_angles ] == 1, @"Number of angles should be 1.");
+				
+				//Title set starting sector should be 0030cf29
+				STAssertTrue([tempPointer title_set_sector ] == 0x0030cf29, @"Title set starting sector should be 0030cf29.");
+				
+				//Parental id  should be 0000
+				STAssertTrue([tempPointer parental_id ] == 0000, @"Parental id should be 0000.");
+				
+				//Title playback type checking
+				
+				//__zero_1 should be 0
+				STAssertTrue([tempPointer pb_ty ].__zero_1 == 0, @"__zero_1 should be 0.");
+				//chapter_search_or_play should be 0
+				STAssertTrue([tempPointer pb_ty ].chapter_search_or_play == 0, @"chapter_search_or_play should be 0.");
+				//jlc_exists_in_button_cmd should be 0
+				STAssertTrue([tempPointer pb_ty ].jlc_exists_in_button_cmd == 0, @"jlc_exists_in_button_cmd should be 0.");
+				//jlc_exists_in_cell_cmd should be 0
+				STAssertTrue([tempPointer pb_ty ].jlc_exists_in_cell_cmd == 0, @"jlc_exists_in_cell_cmd should be 0.");
+				//jlc_exists_in_prepost_cmd should be 0
+				STAssertTrue([tempPointer pb_ty ].jlc_exists_in_prepost_cmd == 1, @"jlc_exists_in_prepost_cmd should be 0.");
+				//jlc_exists_in_tt_dom should be 0
+				STAssertTrue([tempPointer pb_ty ].jlc_exists_in_tt_dom == 1, @"jlc_exists_in_tt_dom should be 0.");
+				//multi_or_random_pgc_title should be 0
+				STAssertTrue([tempPointer pb_ty ].multi_or_random_pgc_title == 0, @"multi_or_random_pgc_title should be 0.");
+				
+				//title_or_time_play should be 0
+				STAssertTrue([tempPointer pb_ty ].title_or_time_play == 0, @"title_or_time_play should be 0.");
+				break;
+			}
+			case 4:
+			{
+				DKTitleTrackSearchPointer* tempPointer = [[mainMenuInformation titleTrackSearchPointerTable] objectAtIndex:count];
+				
+				// Title set number should be 3
+				STAssertTrue([tempPointer title_set_nr] == 3, @"Title set number should be 3.");
+				
+				// VTS_TTN should be 1
+				STAssertTrue([tempPointer vts_ttn] == 1, @"VTS_TTN should be 1.");
+				
+				//PTT number should be 1
+				STAssertTrue([tempPointer nr_of_ptts] == 1, @"PTT number should be 1.");
+				
+				//Number of angles should be 1
+				STAssertTrue([tempPointer nr_of_angles ] == 1, @"Number of angles should be 1.");
+				
+				//Title set starting sector should be 003269d3
+				STAssertTrue([tempPointer title_set_sector ] == 0x003269d3, @"Title set starting sector should be 003269d3.");
+				
+				//Parental id  should be 0000
+				STAssertTrue([tempPointer parental_id ] == 0000, @"Parental id should be 0000.");
+				
+				//Title playback type checking
+				
+				//__zero_1 should be 0
+				STAssertTrue([tempPointer pb_ty ].__zero_1 == 0, @"__zero_1 should be 0.");
+				//chapter_search_or_play should be 0
+				STAssertTrue([tempPointer pb_ty ].chapter_search_or_play == 0, @"chapter_search_or_play should be 0.");
+				//jlc_exists_in_button_cmd should be 1
+				STAssertTrue([tempPointer pb_ty ].jlc_exists_in_button_cmd == 1, @"jlc_exists_in_button_cmd should be 1.");
+				//jlc_exists_in_cell_cmd should be 1
+				STAssertTrue([tempPointer pb_ty ].jlc_exists_in_cell_cmd == 1, @"jlc_exists_in_cell_cmd should be 1.");
+				//jlc_exists_in_prepost_cmd should be 0
+				STAssertTrue([tempPointer pb_ty ].jlc_exists_in_prepost_cmd == 1, @"jlc_exists_in_prepost_cmd should be 0.");
+				//jlc_exists_in_tt_dom should be 0
+				STAssertTrue([tempPointer pb_ty ].jlc_exists_in_tt_dom == 1, @"jlc_exists_in_tt_dom should be 0.");
+				//multi_or_random_pgc_title should be 0
+				STAssertTrue([tempPointer pb_ty ].multi_or_random_pgc_title == 0, @"multi_or_random_pgc_title should be 0.");
+				
+				//title_or_time_play should be 0
+				STAssertTrue([tempPointer pb_ty ].title_or_time_play == 0, @"title_or_time_play should be 0.");
+				break;
+			}
+			case 5:
+			{
+				DKTitleTrackSearchPointer* tempPointer = [[mainMenuInformation titleTrackSearchPointerTable] objectAtIndex:count];
+				
+				// Title set number should be 4
+				STAssertTrue([tempPointer title_set_nr] == 4, @"Title set number should be 4.");
+				
+				// VTS_TTN should be 1
+				STAssertTrue([tempPointer vts_ttn] == 1, @"VTS_TTN should be 1.");
+				
+				//PTT number should be 1
+				STAssertTrue([tempPointer nr_of_ptts] == 1, @"PTT number should be 1.");
+				
+				//Number of angles should be 1
+				STAssertTrue([tempPointer nr_of_angles ] == 1, @"Number of angles should be 1.");
+				
+				//Title set starting sector should be 00326a28
+				STAssertTrue([tempPointer title_set_sector ] == 0x00326a28, @"Title set starting sector should be 00326a28.");
+				
+				//Parental id  should be 0000
+				STAssertTrue([tempPointer parental_id ] == 0000, @"Parental id should be 0000.");
+				
+				//Title playback type checking
+				
+				//__zero_1 should be 0
+				STAssertTrue([tempPointer pb_ty ].__zero_1 == 0, @"__zero_1 should be 0.");
+				//chapter_search_or_play should be 0
+				STAssertTrue([tempPointer pb_ty ].chapter_search_or_play == 0, @"chapter_search_or_play should be 0.");
+				//jlc_exists_in_button_cmd should be 1
+				STAssertTrue([tempPointer pb_ty ].jlc_exists_in_button_cmd == 1, @"jlc_exists_in_button_cmd should be 1.");
+				//jlc_exists_in_cell_cmd should be 1
+				STAssertTrue([tempPointer pb_ty ].jlc_exists_in_cell_cmd == 1, @"jlc_exists_in_cell_cmd should be 1.");
+				//jlc_exists_in_prepost_cmd should be 0
+				STAssertTrue([tempPointer pb_ty ].jlc_exists_in_prepost_cmd == 1, @"jlc_exists_in_prepost_cmd should be 0.");
+				//jlc_exists_in_tt_dom should be 0
+				STAssertTrue([tempPointer pb_ty ].jlc_exists_in_tt_dom == 1, @"jlc_exists_in_tt_dom should be 0.");
+				//multi_or_random_pgc_title should be 0
+				STAssertTrue([tempPointer pb_ty ].multi_or_random_pgc_title == 0, @"multi_or_random_pgc_title should be 0.");
+				
+				//title_or_time_play should be 0
+				STAssertTrue([tempPointer pb_ty ].title_or_time_play == 0, @"title_or_time_play should be 0.");
+				break;
+			}
+			case 6:
+			{
+				DKTitleTrackSearchPointer* tempPointer = [[mainMenuInformation titleTrackSearchPointerTable] objectAtIndex:count];
+				
+				// Title set number should be 5
+				STAssertTrue([tempPointer title_set_nr] == 5, @"Title set number should be 5.");
+				
+				// VTS_TTN should be 1
+				STAssertTrue([tempPointer vts_ttn] == 1, @"VTS_TTN should be 1.");
+				
+				//PTT number should be 1
+				STAssertTrue([tempPointer nr_of_ptts] == 1, @"PTT number should be 1.");
+				
+				//Number of angles should be 1
+				STAssertTrue([tempPointer nr_of_angles ] == 1, @"Number of angles should be 1.");
+				
+				//Title set starting sector should be 0033f8d9
+				STAssertTrue([tempPointer title_set_sector ] == 0x0033f8d9, @"Title set starting sector should be 0033f8d9.");
+				
+				//Parental id  should be 0000
+				STAssertTrue([tempPointer parental_id ] == 0000, @"Parental id should be 0000.");
+				
+				//Title playback type checking
+				
+				//__zero_1 should be 0
+				STAssertTrue([tempPointer pb_ty ].__zero_1 == 0, @"__zero_1 should be 0.");
+				//chapter_search_or_play should be 0
+				STAssertTrue([tempPointer pb_ty ].chapter_search_or_play == 0, @"chapter_search_or_play should be 0.");
+				//jlc_exists_in_button_cmd should be 1
+				STAssertTrue([tempPointer pb_ty ].jlc_exists_in_button_cmd == 1, @"jlc_exists_in_button_cmd should be 1.");
+				//jlc_exists_in_cell_cmd should be 1
+				STAssertTrue([tempPointer pb_ty ].jlc_exists_in_cell_cmd == 1, @"jlc_exists_in_cell_cmd should be 1.");
+				//jlc_exists_in_prepost_cmd should be 0
+				STAssertTrue([tempPointer pb_ty ].jlc_exists_in_prepost_cmd == 1, @"jlc_exists_in_prepost_cmd should be 0.");
+				//jlc_exists_in_tt_dom should be 0
+				STAssertTrue([tempPointer pb_ty ].jlc_exists_in_tt_dom == 1, @"jlc_exists_in_tt_dom should be 0.");
+				//multi_or_random_pgc_title should be 0
+				STAssertTrue([tempPointer pb_ty ].multi_or_random_pgc_title == 0, @"multi_or_random_pgc_title should be 0.");
+				
+				//title_or_time_play should be 0
+				STAssertTrue([tempPointer pb_ty ].title_or_time_play == 0, @"title_or_time_play should be 0.");
+				break;
+			}
+			case 7:
+			{
+				DKTitleTrackSearchPointer* tempPointer = [[mainMenuInformation titleTrackSearchPointerTable] objectAtIndex:count];
+				
+				// Title set number should be 6
+				STAssertTrue([tempPointer title_set_nr] == 6, @"Title set number should be 6.");
+				
+				// VTS_TTN should be 1
+				STAssertTrue([tempPointer vts_ttn] == 1, @"VTS_TTN should be 1.");
+				
+				//PTT number should be 73
+				STAssertTrue([tempPointer nr_of_ptts] == 73, @"PTT number should be 73.");
+				
+				//Number of angles should be 1
+				STAssertTrue([tempPointer nr_of_angles ] == 1, @"Number of angles should be 1.");
+				
+				//Title set starting sector should be 0035878a
+				STAssertTrue([tempPointer title_set_sector ] == 0x0035878a, @"Title set starting sector should be 0035878a.");
+				
+				//Parental id  should be 0000
+				STAssertTrue([tempPointer parental_id ] == 0000, @"Parental id should be 0000.");
+				
+				//Title playback type checking
+				
+				//__zero_1 should be 0
+				STAssertTrue([tempPointer pb_ty ].__zero_1 == 0, @"__zero_1 should be 0.");
+				//chapter_search_or_play should be 0
+				STAssertTrue([tempPointer pb_ty ].chapter_search_or_play == 0, @"chapter_search_or_play should be 0.");
+				//jlc_exists_in_button_cmd should be 1
+				STAssertTrue([tempPointer pb_ty ].jlc_exists_in_button_cmd == 1, @"jlc_exists_in_button_cmd should be 1.");
+				//jlc_exists_in_cell_cmd should be 1
+				STAssertTrue([tempPointer pb_ty ].jlc_exists_in_cell_cmd == 1, @"jlc_exists_in_cell_cmd should be 1.");
+				//jlc_exists_in_prepost_cmd should be 0
+				STAssertTrue([tempPointer pb_ty ].jlc_exists_in_prepost_cmd == 1, @"jlc_exists_in_prepost_cmd should be 0.");
+				//jlc_exists_in_tt_dom should be 0
+				STAssertTrue([tempPointer pb_ty ].jlc_exists_in_tt_dom == 1, @"jlc_exists_in_tt_dom should be 0.");
+				//multi_or_random_pgc_title should be 1
+				STAssertTrue([tempPointer pb_ty ].multi_or_random_pgc_title == 1, @"multi_or_random_pgc_title should be 1.");
+				
+				//title_or_time_play should be 0
+				STAssertTrue([tempPointer pb_ty ].title_or_time_play == 0, @"title_or_time_play should be 0.");
+				break;
+			}
+			case 8:
+			{
+				DKTitleTrackSearchPointer* tempPointer = [[mainMenuInformation titleTrackSearchPointerTable] objectAtIndex:count];
+				
+				// Title set number should be 7
+				STAssertTrue([tempPointer title_set_nr] == 7, @"Title set number should be 7.");
+				
+				// VTS_TTN should be 1
+				STAssertTrue([tempPointer vts_ttn] == 1, @"VTS_TTN should be 1.");
+				
+				//PTT number should be 1
+				STAssertTrue([tempPointer nr_of_ptts] == 1, @"PTT number should be 1.");
+				
+				//Number of angles should be 1
+				STAssertTrue([tempPointer nr_of_angles ] == 1, @"Number of angles should be 1.");
+				
+				//Title set starting sector should be 0037187b
+				STAssertTrue([tempPointer title_set_sector ] == 0x0037187b, @"Title set starting sector should be 0037187b.");
+				
+				//Parental id  should be 0000
+				STAssertTrue([tempPointer parental_id ] == 0000, @"Parental id should be 0000.");
+				
+				//Title playback type checking
+				
+				//__zero_1 should be 0
+				STAssertTrue([tempPointer pb_ty ].__zero_1 == 0, @"__zero_1 should be 0.");
+				//chapter_search_or_play should be 0
+				STAssertTrue([tempPointer pb_ty ].chapter_search_or_play == 0, @"chapter_search_or_play should be 0.");
+				//jlc_exists_in_button_cmd should be 1
+				STAssertTrue([tempPointer pb_ty ].jlc_exists_in_button_cmd == 1, @"jlc_exists_in_button_cmd should be 1.");
+				//jlc_exists_in_cell_cmd should be 1
+				STAssertTrue([tempPointer pb_ty ].jlc_exists_in_cell_cmd == 1, @"jlc_exists_in_cell_cmd should be 1.");
+				//jlc_exists_in_prepost_cmd should be 0
+				STAssertTrue([tempPointer pb_ty ].jlc_exists_in_prepost_cmd == 1, @"jlc_exists_in_prepost_cmd should be 0.");
+				//jlc_exists_in_tt_dom should be 0
+				STAssertTrue([tempPointer pb_ty ].jlc_exists_in_tt_dom == 1, @"jlc_exists_in_tt_dom should be 0.");
+				//multi_or_random_pgc_title should be 0
+				STAssertTrue([tempPointer pb_ty ].multi_or_random_pgc_title == 0, @"multi_or_random_pgc_title should be 0.");
+				
+				//title_or_time_play should be 0
+				STAssertTrue([tempPointer pb_ty ].title_or_time_play == 0, @"title_or_time_play should be 0.");
+				break;
+			}
+			case 9:
+			{
+				DKTitleTrackSearchPointer* tempPointer = [[mainMenuInformation titleTrackSearchPointerTable] objectAtIndex:count];
+				
+				// Title set number should be 8
+				STAssertTrue([tempPointer title_set_nr] == 8, @"Title set number should be 8.");
+				
+				// VTS_TTN should be 1
+				STAssertTrue([tempPointer vts_ttn] == 1, @"VTS_TTN should be 1.");
+				
+				//PTT number should be 1
+				STAssertTrue([tempPointer nr_of_ptts] == 1, @"PTT number should be 1.");
+				
+				//Number of angles should be 1
+				STAssertTrue([tempPointer nr_of_angles ] == 1, @"Number of angles should be 1.");
+				
+				//Title set starting sector should be 0037a98c
+				STAssertTrue([tempPointer title_set_sector ] == 0x0037a98c, @"Title set starting sector should be 0037a98c.");
+				
+				//Parental id  should be 0000
+				STAssertTrue([tempPointer parental_id ] == 0000, @"Parental id should be 0000.");
+				
+				//Title playback type checking
+				
+				//__zero_1 should be 0
+				STAssertTrue([tempPointer pb_ty ].__zero_1 == 0, @"__zero_1 should be 0.");
+				//chapter_search_or_play should be 0
+				STAssertTrue([tempPointer pb_ty ].chapter_search_or_play == 0, @"chapter_search_or_play should be 0.");
+				//jlc_exists_in_button_cmd should be 1
+				STAssertTrue([tempPointer pb_ty ].jlc_exists_in_button_cmd == 1, @"jlc_exists_in_button_cmd should be 1.");
+				//jlc_exists_in_cell_cmd should be 1
+				STAssertTrue([tempPointer pb_ty ].jlc_exists_in_cell_cmd == 1, @"jlc_exists_in_cell_cmd should be 1.");
+				//jlc_exists_in_prepost_cmd should be 0
+				STAssertTrue([tempPointer pb_ty ].jlc_exists_in_prepost_cmd == 1, @"jlc_exists_in_prepost_cmd should be 0.");
+				//jlc_exists_in_tt_dom should be 0
+				STAssertTrue([tempPointer pb_ty ].jlc_exists_in_tt_dom == 1, @"jlc_exists_in_tt_dom should be 0.");
+				//multi_or_random_pgc_title should be 0
+				STAssertTrue([tempPointer pb_ty ].multi_or_random_pgc_title == 0, @"multi_or_random_pgc_title should be 0.");
+				
+				//title_or_time_play should be 0
+				STAssertTrue([tempPointer pb_ty ].title_or_time_play == 0, @"title_or_time_play should be 0.");
+				break;
+			}
+			case 10:
+			{
+				DKTitleTrackSearchPointer* tempPointer = [[mainMenuInformation titleTrackSearchPointerTable] objectAtIndex:count];
+				
+				// Title set number should be 1
+				STAssertTrue([tempPointer title_set_nr] == 1, @"Title set number should be 1.");
+				
+				// VTS_TTN should be 4
+				STAssertTrue([tempPointer vts_ttn] == 4, @"VTS_TTN should be 4.");
+				
+				//PTT number should be 13
+				STAssertTrue([tempPointer nr_of_ptts] == 13, @"PTT number should be 13.");
+				
+				//Number of angles should be 1
+				STAssertTrue([tempPointer nr_of_angles ] == 1, @"Number of angles should be 1.");
+				
+				//Title set starting sector should be 000549b0
+				STAssertTrue([tempPointer title_set_sector ] == 0x000549b0, @"Title set starting sector should be 000549b0.");
+				
+				//Parental id  should be 0000
+				STAssertTrue([tempPointer parental_id ] == 0000, @"Parental id should be 0000.");
+				
+				//Title playback type checking
+				
+				//__zero_1 should be 0
+				STAssertTrue([tempPointer pb_ty ].__zero_1 == 0, @"__zero_1 should be 0.");
+				//chapter_search_or_play should be 0
+				STAssertTrue([tempPointer pb_ty ].chapter_search_or_play == 0, @"chapter_search_or_play should be 0.");
+				//jlc_exists_in_button_cmd should be 1
+				STAssertTrue([tempPointer pb_ty ].jlc_exists_in_button_cmd == 1, @"jlc_exists_in_button_cmd should be 1.");
+				//jlc_exists_in_cell_cmd should be 1
+				STAssertTrue([tempPointer pb_ty ].jlc_exists_in_cell_cmd == 1, @"jlc_exists_in_cell_cmd should be 1.");
+				//jlc_exists_in_prepost_cmd should be 0
+				STAssertTrue([tempPointer pb_ty ].jlc_exists_in_prepost_cmd == 1, @"jlc_exists_in_prepost_cmd should be 0.");
+				//jlc_exists_in_tt_dom should be 0
+				STAssertTrue([tempPointer pb_ty ].jlc_exists_in_tt_dom == 1, @"jlc_exists_in_tt_dom should be 0.");
+				//multi_or_random_pgc_title should be 0
+				STAssertTrue([tempPointer pb_ty ].multi_or_random_pgc_title == 0, @"multi_or_random_pgc_title should be 0.");
+				
+				//title_or_time_play should be 0
+				STAssertTrue([tempPointer pb_ty ].title_or_time_play == 0, @"title_or_time_play should be 0.");
+				break;
+			}
+			case 11:
+			{
+				DKTitleTrackSearchPointer* tempPointer = [[mainMenuInformation titleTrackSearchPointerTable] objectAtIndex:count];
+				
+				// Title set number should be 1
+				STAssertTrue([tempPointer title_set_nr] == 1, @"Title set number should be 1.");
+				
+				// VTS_TTN should be 5
+				STAssertTrue([tempPointer vts_ttn] == 5, @"VTS_TTN should be 5.");
+				
+				//PTT number should be 13
+				STAssertTrue([tempPointer nr_of_ptts] == 13, @"PTT number should be 13.");
+				
+				//Number of angles should be 1
+				STAssertTrue([tempPointer nr_of_angles ] == 1, @"Number of angles should be 1.");
+				
+				//Title set starting sector should be 000549b0
+				STAssertTrue([tempPointer title_set_sector ] == 0x000549b0, @"Title set starting sector should be 000549b0.");
+				
+				//Parental id  should be 0000
+				STAssertTrue([tempPointer parental_id ] == 0000, @"Parental id should be 0000.");
+				
+				//Title playback type checking
+				
+				//__zero_1 should be 0
+				STAssertTrue([tempPointer pb_ty ].__zero_1 == 0, @"__zero_1 should be 0.");
+				//chapter_search_or_play should be 0
+				STAssertTrue([tempPointer pb_ty ].chapter_search_or_play == 0, @"chapter_search_or_play should be 0.");
+				//jlc_exists_in_button_cmd should be 1
+				STAssertTrue([tempPointer pb_ty ].jlc_exists_in_button_cmd == 1, @"jlc_exists_in_button_cmd should be 1.");
+				//jlc_exists_in_cell_cmd should be 1
+				STAssertTrue([tempPointer pb_ty ].jlc_exists_in_cell_cmd == 1, @"jlc_exists_in_cell_cmd should be 1.");
+				//jlc_exists_in_prepost_cmd should be 0
+				STAssertTrue([tempPointer pb_ty ].jlc_exists_in_prepost_cmd == 1, @"jlc_exists_in_prepost_cmd should be 0.");
+				//jlc_exists_in_tt_dom should be 0
+				STAssertTrue([tempPointer pb_ty ].jlc_exists_in_tt_dom == 1, @"jlc_exists_in_tt_dom should be 0.");
+				//multi_or_random_pgc_title should be 0
+				STAssertTrue([tempPointer pb_ty ].multi_or_random_pgc_title == 0, @"multi_or_random_pgc_title should be 0.");
+				
+				//title_or_time_play should be 0
+				STAssertTrue([tempPointer pb_ty ].title_or_time_play == 0, @"title_or_time_play should be 0.");
+				break;
+			}
+			case 12:
+			{
+				DKTitleTrackSearchPointer* tempPointer = [[mainMenuInformation titleTrackSearchPointerTable] objectAtIndex:count];
+				
+				// Title set number should be 1
+				STAssertTrue([tempPointer title_set_nr] == 1, @"Title set number should be 1.");
+				
+				// VTS_TTN should be 6
+				STAssertTrue([tempPointer vts_ttn] == 6, @"VTS_TTN should be 6.");
+				
+				//PTT number should be 13
+				STAssertTrue([tempPointer nr_of_ptts] == 13, @"PTT number should be 13.");
+				
+				//Number of angles should be 1
+				STAssertTrue([tempPointer nr_of_angles ] == 1, @"Number of angles should be 1.");
+				
+				//Title set starting sector should be 000549b0
+				STAssertTrue([tempPointer title_set_sector ] == 0x000549b0, @"Title set starting sector should be 000549b0.");
+				
+				//Parental id  should be 0000
+				STAssertTrue([tempPointer parental_id ] == 0000, @"Parental id should be 0000.");
+				
+				//Title playback type checking
+				
+				//__zero_1 should be 0
+				STAssertTrue([tempPointer pb_ty ].__zero_1 == 0, @"__zero_1 should be 0.");
+				//chapter_search_or_play should be 0
+				STAssertTrue([tempPointer pb_ty ].chapter_search_or_play == 0, @"chapter_search_or_play should be 0.");
+				//jlc_exists_in_button_cmd should be 1
+				STAssertTrue([tempPointer pb_ty ].jlc_exists_in_button_cmd == 1, @"jlc_exists_in_button_cmd should be 1.");
+				//jlc_exists_in_cell_cmd should be 1
+				STAssertTrue([tempPointer pb_ty ].jlc_exists_in_cell_cmd == 1, @"jlc_exists_in_cell_cmd should be 1.");
+				//jlc_exists_in_prepost_cmd should be 0
+				STAssertTrue([tempPointer pb_ty ].jlc_exists_in_prepost_cmd == 1, @"jlc_exists_in_prepost_cmd should be 0.");
+				//jlc_exists_in_tt_dom should be 0
+				STAssertTrue([tempPointer pb_ty ].jlc_exists_in_tt_dom == 1, @"jlc_exists_in_tt_dom should be 0.");
+				//multi_or_random_pgc_title should be 0
+				STAssertTrue([tempPointer pb_ty ].multi_or_random_pgc_title == 0, @"multi_or_random_pgc_title should be 0.");
+				
+				//title_or_time_play should be 0
+				STAssertTrue([tempPointer pb_ty ].title_or_time_play == 0, @"title_or_time_play should be 0.");
+				break;
+			}
+			default:
+				break;
+		}
+		// Title 
+		STAssertTrue([[mainMenuInformation titleTrackSearchPointerTable] count] == 13, @"Title track search pointer count should be 13.");
+		
+		
+		
+		
+	}
 	
 	
 	

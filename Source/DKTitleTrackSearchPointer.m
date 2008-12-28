@@ -23,10 +23,14 @@
 #import "DVDKit+Private.h"
 
 @implementation DKTitleTrackSearchPointer
+@synthesize pb_ty;
+@synthesize nr_of_ptts;
+@synthesize parental_id;
+@synthesize title_set_sector;
+@synthesize title_set_nr;
+@synthesize vts_ttn;
+@synthesize nr_of_angles;
 @synthesize index;
-@synthesize angles;
-@synthesize titleSetNumber;
-@synthesize trackNumber;
 
 
 + (id) partOfTitleSearchPointerWithData:(NSData*)data index:(uint16_t)index
