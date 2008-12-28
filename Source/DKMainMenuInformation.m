@@ -58,6 +58,7 @@ NSString* const kDKManagerInformationSection_VMGM_VOBU_ADMAP  = @"vmgm_vobu_adma
 @synthesize side;
 @synthesize numberOfTitleSets;
 @synthesize pointOfSaleCode;
+@synthesize providerId;
 @synthesize menuVideoAttributes;
 @synthesize menuAudioAttributes;
 @synthesize menuSubpictureAttributes;
@@ -89,6 +90,38 @@ NSString* const kDKManagerInformationSection_VMGM_VOBU_ADMAP  = @"vmgm_vobu_adma
 + (id) mainMenuInformationWithDataSource:(id<DKDataSource>)dataSource error:(NSError**)error
 {
     return [[[DKMainMenuInformation alloc] initWithDataSource:dataSource error:error] autorelease];
+}
+
+-(BOOL)isEqual:(id)anObject
+{
+	DKMainMenuInformation* mainMenuInformatonObject = (DKMainMenuInformation*)anObject;
+	
+	if([mainMenuInformatonObject specificationVersion] != specificationVersion)
+		return NO;
+	if([mainMenuInformatonObject categoryAndMask] != categoryAndMask)
+		return NO;
+	if([mainMenuInformatonObject numberOfVolumes] != numberOfVolumes)
+		return NO;
+	if([mainMenuInformatonObject volumeNumber] != volumeNumber)
+		return NO;
+	if([mainMenuInformatonObject side] != side)
+		return NO;
+	if([mainMenuInformatonObject numberOfTitleSets] != numberOfTitleSets)
+		return NO;
+	if([mainMenuInformatonObject pointOfSaleCode] != pointOfSaleCode)
+		return NO;
+	if([[mainMenuInformatonObject providerId] isEqual:providerId] != YES)
+		return NO;
+	if([[mainMenuInformatonObject menuVideoAttributes] isEqual:menuVideoAttributes] != YES)
+		return NO;
+	if([[mainMenuInformatonObject menuAudioAttributes] isEqual:menuAudioAttributes] != YES)
+		return NO;
+	if([[mainMenuInformatonObject menuSubpictureAttributes] isEqual:menuSubpictureAttributes] != YES)
+		return NO;
+	
+		
+	return YES;
+	
 }
 
 - (id) initWithDataSource:(id<DKDataSource>)dataSource error:(NSError**)error

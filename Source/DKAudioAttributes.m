@@ -19,6 +19,7 @@
     return [[[DKAudioAttributes alloc] initWithData:data] autorelease];
 }
 
+
 - (id) initWithData:(NSData*)data
 {
     NSAssert(data && [data length] == sizeof(audio_attr_t), @"wtf?");
@@ -39,6 +40,37 @@
         app_info_value = audio_attr->app_info.value;
     }
     return self;
+}
+
+- (BOOL) isEqual:(id)anObject
+{
+	
+	DKAudioAttributes* audioAttributesObject = (DKAudioAttributes*)anObject;
+	
+	if([audioAttributesObject audio_format] != audio_format)
+		return NO;
+	if([audioAttributesObject has_multichannel_extension] != has_multichannel_extension)
+		return NO;
+	if([audioAttributesObject application_mode] != application_mode)
+		return NO;
+	if([audioAttributesObject quantization] != quantization)
+	   return NO;
+	if([audioAttributesObject sample_frequency] != sample_frequency)
+		return NO;
+	if([audioAttributesObject channels] != channels)
+		return NO;
+	if([audioAttributesObject lang_code] != lang_code)
+		return NO;
+	if([audioAttributesObject lang_extension] != lang_extension)
+		return NO;
+	if([audioAttributesObject code_extension] != code_extension)
+		return NO;
+	if([audioAttributesObject app_info_value] != app_info_value)
+		return NO;
+	
+	
+	return YES;
+	
 }
 
 - (NSData*) saveAsData:(NSError**)_error

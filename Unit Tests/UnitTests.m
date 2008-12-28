@@ -732,7 +732,9 @@
     
     NSError* error = nil;
     DKMainMenuInformation* mainMenuInformation = [DKMainMenuInformation mainMenuInformationWithDataSource:dataSource error:&error];
-    STAssertTrue(!error, @"VIDEO_TS.IFO.01 should decode without errors.");
+    DKMainMenuInformation* mainMenuInformation2ndLoad = [DKMainMenuInformation mainMenuInformationWithDataSource:dataSource error:&error];
+    
+	STAssertTrue(!error, @"VIDEO_TS.IFO.01 should decode without errors.");
     STAssertTrue(mainMenuInformation != nil, @"mainMenuInformation should not be nil.");
 
 	// Specification version number should be 0.0
@@ -1481,10 +1483,14 @@
 		
 		
 		
+		
+		
 	}
 	
 	
 	
+	//isEqual testing
+	STAssertTrue([mainMenuInformation isEqual:mainMenuInformation2ndLoad] == YES, @"isEqual should return true.");
 	
 	
 	

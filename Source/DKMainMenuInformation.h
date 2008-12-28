@@ -61,6 +61,7 @@
 @property (assign) uint8_t side;
 @property (assign) uint16_t numberOfTitleSets;
 @property (assign) uint64_t pointOfSaleCode;
+@property (assign) NSString* providerId;
 @property (assign) DKVideoAttributes* menuVideoAttributes;
 @property (assign) NSArray* menuAudioAttributes;
 @property (assign) DKSubpictureAttributes* menuSubpictureAttributes;

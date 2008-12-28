@@ -30,6 +30,24 @@
     return self;
 }
 
+- (BOOL) isEqual:(id)anObject
+{
+	
+	DKSubpictureAttributes* subPictureAttributes = (DKSubpictureAttributes*)anObject;
+	if([subPictureAttributes code_mode] != code_mode)
+		return NO;
+	if([subPictureAttributes lang_code] != lang_code)
+		return NO;
+	if([subPictureAttributes lang_extension] != lang_extension)
+		return NO;
+	if([subPictureAttributes code_extension] != code_extension)
+		return NO;
+	
+	return YES;
+	
+	
+}
+
 - (NSData*) saveAsData:(NSError**)_error
 {
     NSMutableData* data = [NSMutableData dataWithLength:sizeof(subp_attr_t)];

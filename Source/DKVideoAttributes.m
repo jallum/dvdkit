@@ -36,6 +36,35 @@ static DKPictureSize PICTURE_SIZE_TABLE[4][4] = {
     return [[[DKVideoAttributes alloc] initWithData:data] autorelease];
 }
 
+- (BOOL) isEqual:(id)anObject
+{
+
+	DKVideoAttributes* videoAttributesObject = (DKVideoAttributes*)anObject;
+	if([videoAttributesObject mpeg_version] != mpeg_version)
+		return NO;
+	if([videoAttributesObject video_format] != video_format)
+		return NO;
+	if([videoAttributesObject display_aspect_ratio] != display_aspect_ratio)
+		return NO;
+	if([videoAttributesObject film_mode] != film_mode)
+		return NO;
+	if([videoAttributesObject letterboxed] != letterboxed)
+		return NO;
+	if([videoAttributesObject picture_size] != picture_size)
+		return NO;
+	if([videoAttributesObject constantBitRate] != constantBitRate)
+		return NO;
+	if([videoAttributesObject line21_cc_1] != line21_cc_1)
+		return NO;
+	if([videoAttributesObject line21_cc_2] != line21_cc_2)
+		return NO;
+	
+	
+	   return YES;
+	   
+	
+}
+
 - (id) initWithData:(NSData*)data
 {
     NSAssert(data && [data length] == sizeof(video_attr_t), @"wtf?");
