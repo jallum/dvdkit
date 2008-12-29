@@ -428,8 +428,8 @@ enum {
     [titleInformation release];
     titleInformation = [[[[self mainMenuInformation] titleTrackSearchPointerTable] objectAtIndex:(tt - 1)] retain];
     SPRM[4] = [titleInformation index];
-    uint16_t vts = [titleInformation titleSetNumber];
-    uint16_t ttn = [titleInformation trackNumber];
+    uint16_t vts = [titleInformation title_set_nr];
+    uint16_t ttn = [titleInformation vts_ttn];
     if (!titleSet || [titleSet index] != vts) {
         [titleSet release];
         titleSet = [[dataSource titleSetInformationAtIndex:vts] retain];
@@ -556,7 +556,7 @@ enum {
 - (void) _saveResumeInfoWithCell:(int)_cell
 {
     resume.domain = domain;
-    resume.vts = [titleInformation titleSetNumber];
+    resume.vts = [titleInformation title_set_nr];
     resume.cell = _cell;
     for (int i = 0; i < 5; i++) {
         resume.REGS[i] = SPRM[4 + i];

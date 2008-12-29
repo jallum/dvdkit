@@ -46,7 +46,7 @@
     NSMutableDictionary* menuProgramChainInformationTablesByLanguage;
     NSMutableData* textData;
     NSMutableArray* cellAddressTable;
-    NSData* menuVobuAddressMap;
+    CFBitVectorRef menuVobuAddressMap;
     /**/
     NSArray* preferredSectionOrder;
 }

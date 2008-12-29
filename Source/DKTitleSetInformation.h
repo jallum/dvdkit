@@ -31,7 +31,7 @@
     DKSubpictureAttributes* menuSubpictureAttributes; 
     NSMutableDictionary* menuProgramChainInformationTablesByLanguage;
     NSMutableArray* menuCellAddressTable;
-    NSData* menuVobuAddressMap;
+    CFBitVectorRef menuVobuAddressMap;
     /**/
     DKVideoAttributes* videoAttributes;
     NSMutableArray* audioAttributes;
@@ -39,7 +39,7 @@
     NSMutableArray* programChainInformationTable;
     NSMutableArray* partOfTitleSearchTable;
     NSMutableArray* cellAddressTable;
-    NSData* vobuAddressMap;
+    CFBitVectorRef vobuAddressMap;
     NSData* timeMapTable;
     /**/
     NSArray* preferredSectionOrder;
@@ -56,8 +56,8 @@
 @property (retain) NSArray* menuAudioAttributes;
 @property (retain) DKSubpictureAttributes* menuSubpictureAttributes;
 @property (retain) NSDictionary* menuProgramChainInformationTablesByLanguage;
-@property (retain) NSArray* menuCellAddressTable;
-@property (retain) NSData* menuVobuAddressMap;
+@property (retain) NSArray* menuCellAddressTable;   
+@property (assign) CFBitVectorRef menuVobuAddressMap;// RETAINED
 
 @property (retain) DKVideoAttributes* videoAttributes;
 @property (retain) NSArray* audioAttributes;
@@ -65,8 +65,8 @@
 @property (retain) NSArray* programChainInformationTable;
 @property (retain) NSArray* cellAddressTable;
 
-@property (retain) NSData* vobuAddressMap;
-@property (retain) NSData* timeMapTable;
+@property (assign) CFBitVectorRef vobuAddressMap;   // RETAINED
+@property (retain) NSData* timeMapTable;            
 
 
 - (NSArray*) menuProgramChainInformationTableForLanguageCode:(uint16_t)languageCode;

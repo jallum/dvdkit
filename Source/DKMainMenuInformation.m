@@ -41,13 +41,13 @@ NSString* const kDKManagerInformationSection_VMGM_VOBU_ADMAP  = @"vmgm_vobu_adma
 + (NSMutableDictionary*) _readMenuProgramChainInformationTablesByLanguageFromDataSource:(id<DKDataSource>)dataSource offset:(uint32_t)offset errors:(NSMutableArray*)errors;
 + (NSData*) _readTextDataFromDataSource:(id<DKDataSource>)dataSource offset:(uint32_t)offset errors:(NSMutableArray*)errors;
 + (NSMutableArray*) _readCellAddressTableFromDataSource:(id<DKDataSource>)dataSource offset:(uint32_t)offset errors:(NSMutableArray*)errors;
-+ (NSData*) _readVobuAddressMapFromDataSource:(id<DKDataSource>)dataSource offset:(uint32_t)offset errors:(NSMutableArray*)errors;
++ (CFBitVectorRef) _readVobuAddressMapFromDataSource:(id<DKDataSource>)dataSource offset:(uint32_t)offset errors:(NSMutableArray*)errors;
 
 /*  Save  */
 + (NSMutableData*) _saveTitleSetAttributeTable:(NSArray*)titleTrackSearchPointerTable errors:(NSMutableArray*)errors;
 + (NSMutableData*) _saveMenuProgramChainInformationTablesByLanguage:(NSDictionary*)menuProgramChainInformationTablesByLanguage errors:(NSMutableArray*)errors;
 + (NSMutableData*) _saveCellAddressTable:(NSArray*)cellAddressTable errors:(NSMutableArray*)errors;
-+ (NSMutableData*) _saveVobuAddressMap:(NSData*)vobuAddressMap errors:(NSMutableArray*)errors;
++ (NSMutableData*) _saveVobuAddressMap:(CFBitVectorRef)vobuAddressMap errors:(NSMutableArray*)errors;
 @end
 
 @implementation DKMainMenuInformation
@@ -283,7 +283,7 @@ NSString* const kDKManagerInformationSection_VMGM_VOBU_ADMAP  = @"vmgm_vobu_adma
         uint32_t offset_of_vmgm_vobu_admap = OSReadBigInt32(&vmgi_mat->vmgm_vobu_admap, 0);
         if (offset_of_vmgm_vobu_admap && (offset_of_vmgm_vobu_admap <= vmgi_last_sector)) {
             [sectionOrdering setObject:kDKManagerInformationSection_VMGM_VOBU_ADMAP forKey:[NSNumber numberWithUnsignedInt:offset_of_vmgm_vobu_admap]];
-            menuVobuAddressMap = [[DKMainMenuInformation _readVobuAddressMapFromDataSource:dataSource offset:offset_of_vmgm_vobu_admap errors:errors] retain];
+            menuVobuAddressMap = (CFBitVectorRef)[(id)[DKMainMenuInformation _readVobuAddressMapFromDataSource:dataSource offset:offset_of_vmgm_vobu_admap errors:errors] retain];
         }
         
         
@@ -494,7 +494,7 @@ NSString* const kDKManagerInformationSection_VMGM_VOBU_ADMAP  = @"vmgm_vobu_adma
     return table;
 }
 
-+ (NSData*) _readVobuAddressMapFromDataSource:(id<DKDataSource>)dataSource offset:(uint32_t)offset errors:(NSMutableArray*)errors
++ (CFBitVectorRef) _readVobuAddressMapFromDataSource:(id<DKDataSource>)dataSource offset:(uint32_t)offset errors:(NSMutableArray*)errors
 {
     NSData* data = [dataSource requestDataOfLength:1 << 11 fromOffset:offset << 11];
     NSAssert(data && ([data length] == 1 << 11), @"wtf?"); 
@@ -507,24 +507,33 @@ NSString* const kDKManagerInformationSection_VMGM_VOBU_ADMAP  = @"vmgm_vobu_adma
         data = [data subdataWithRange:NSMakeRange(0, last_byte)];
     }
     
-    /*  
-     *  TODO: Additional Decoding  
-     */
+    /*  Parse the table  */
+    CFMutableBitVectorRef bitmap = CFBitVectorCreateMutable(NULL, 0);
+    uint32_t max_sector = CFBitVectorGetCount(bitmap);
+    const void* base = [data bytes];
+    for (int i = last_byte >> 2; i > 0; i--) {
+        uint32_t sector = OSReadBigInt32(base, i * 4);
+        if (sector >= max_sector) {
+            max_sector = sector + 1;
+            CFBitVectorSetCount(bitmap, max_sector);
+        }
+        CFBitVectorSetBitAtIndex(bitmap, sector, 1);
+    }
     
-    return [data subdataWithRange:NSMakeRange(4, last_byte - 4)];
+    return (CFBitVectorRef)[(id)bitmap autorelease];
 }
 
 - (void) dealloc
 {
-    [firstPlayProgramChain retain];
-    [titleTrackSearchPointerTable retain];
-    [parentalManagementInformationTable retain];
-    [titleSetAttributeTable retain];
-    [menuProgramChainInformationTablesByLanguage retain];
-    [textData retain];
-    [cellAddressTable retain];
-    [menuVobuAddressMap retain];
-    [preferredSectionOrder retain];
+    [firstPlayProgramChain release];
+    [titleTrackSearchPointerTable release];
+    [parentalManagementInformationTable release];
+    [titleSetAttributeTable release];
+    [menuProgramChainInformationTablesByLanguage release];
+    [textData release];
+    [cellAddressTable release];
+    [(id)menuVobuAddressMap release];
+    [preferredSectionOrder release];
     [super dealloc];
 }
 
@@ -718,7 +727,7 @@ NSString* const kDKManagerInformationSection_VMGM_VOBU_ADMAP  = @"vmgm_vobu_adma
             sectionData = [DKMainMenuInformation _saveCellAddressTable:cellAddressTable errors:errors];
             OSWriteBigInt32(&vmgi_mat, offsetof(vmgi_mat_t, vmgm_c_adt), [data length] >> 11);
         } else if ([section isEqualToString:kDKManagerInformationSection_VMGM_VOBU_ADMAP]) {
-            if (![menuVobuAddressMap length]) {
+            if (!menuVobuAddressMap) {
                 continue;
             }
             sectionData = [DKMainMenuInformation _saveVobuAddressMap:menuVobuAddressMap errors:errors];
@@ -897,14 +906,22 @@ NSString* const kDKManagerInformationSection_VMGM_VOBU_ADMAP  = @"vmgm_vobu_adma
     return data;
 }
 
-+ (NSMutableData*) _saveVobuAddressMap:(NSData*)vobuAddressMap errors:(NSMutableArray*)errors
++ (NSMutableData*) _saveVobuAddressMap:(CFBitVectorRef)vobuAddressMap errors:(NSMutableArray*)errors
 {
-    uint32_t last_byte = sizeof(uint32_t) + [vobuAddressMap length];
+    CFRange range = CFRangeMake(0, CFBitVectorGetCount(vobuAddressMap));
+    uint32_t last_byte = sizeof(uint32_t) + (4 * CFBitVectorGetCountOfBit(vobuAddressMap, range, 1));
     NSMutableData* data = [NSMutableData dataWithLength:last_byte];
-    uint8_t* base = [data mutableBytes];
+    void* base = [data mutableBytes];
     OSWriteBigInt32(base, 0, last_byte - 1);
     
-    memcpy(base + 4, [vobuAddressMap bytes], [vobuAddressMap length]);
+    int i = 4;
+    uint32_t sector = 0;
+    while (kCFNotFound != CFBitVectorGetFirstIndexOfBit(vobuAddressMap, range, 1)) {
+        OSWriteBigInt32(base, i, sector); 
+        range.length -= (sector - range.location) + 1;
+        range.location = sector + 1;
+        i += 4;
+    }
 
     return data;
 }
