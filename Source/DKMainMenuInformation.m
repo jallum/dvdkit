@@ -531,7 +531,7 @@ NSString* const kDKManagerInformationSection_VMGM_VOBU_ADMAP  = @"vmgm_vobu_adma
 - (DKTitleTrackSearchPointer*) titleTrackSearchPointerForTitleSet:(uint16_t)vts track:(uint8_t)ttn;
 {
     for (DKTitleTrackSearchPointer* ti in titleTrackSearchPointerTable) {
-        if (vts == [ti titleSetNumber] && ttn == [ti trackNumber]) {
+        if (vts == [ti title_set_nr] && ttn == [ti vts_ttn]) {
             return [[ti retain] autorelease];
         }
     }

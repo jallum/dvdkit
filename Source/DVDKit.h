@@ -187,6 +187,10 @@ typedef enum {
 } DKAudioFormat;
 
 typedef enum {
+    kDKAudioSamplingRate48KHz = 0,
+} DKAudioSamplingRate;
+
+typedef enum {
     kDKAudioApplocationModeUnspecified = 0,
     kDKAudioApplocationModeKaraoke = 1,
     kDKAudioApplocationModeSurroundSound = 2,

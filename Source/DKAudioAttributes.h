@@ -5,7 +5,7 @@
     BOOL has_multichannel_extension;
     DKAudioApplicationMode application_mode;
     int quantization;
-    int sample_frequency;
+    DKAudioSamplingRate sample_frequency;
     int channels;
     uint16_t lang_code;
     uint8_t lang_extension;
@@ -17,7 +17,7 @@
 @property (assign) BOOL has_multichannel_extension;
 @property (assign) DKAudioApplicationMode application_mode;
 @property (assign) int quantization;
-@property (assign) int sample_frequency;
+@property (assign) DKAudioSamplingRate sample_frequency;
 @property (assign) int channels;
 @property (assign) uint16_t lang_code;
 @property (assign) uint8_t lang_extension;

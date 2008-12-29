@@ -808,7 +808,7 @@
 	// Sampling frequency should be 48kbps
 	// The sample frequency value is zero, so this assert is failing
 	
-	STAssertTrue([menuAudioAttributes sample_frequency] ==  48, @"Sampling rate should be 48kbps.");
+	STAssertTrue([menuAudioAttributes sample_frequency] == kDKAudioSamplingRate48KHz, @"Sampling rate should be 48kbps.");
 
 	// Channels should be two
 	STAssertTrue([menuAudioAttributes channels] ==  2, @"Number of channels should be 2.");
