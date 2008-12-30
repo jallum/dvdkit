@@ -68,6 +68,7 @@ NSString* const kDKManagerInformationSection_VMGM_VOBU_ADMAP  = @"vmgm_vobu_adma
 @synthesize menuProgramChainInformationTablesByLanguage;
 
 @synthesize cellAddressTable;
+@synthesize menuVobuAddressMap;
 
 + (NSArray*) availableSections
 {
@@ -235,7 +236,7 @@ NSString* const kDKManagerInformationSection_VMGM_VOBU_ADMAP  = @"vmgm_vobu_adma
         }
         NSError* firstPlayProgramChainError = nil;
         NSData* firstPlayProgramChainData = (vmgi_last_byte < [header length]) ? [header subdataWithRange:NSMakeRange(first_play_pgc, vmgi_last_byte - first_play_pgc)] : [dataSource requestDataOfLength:vmgi_last_byte - first_play_pgc fromOffset:first_play_pgc];
-        firstPlayProgramChain = [DKProgramChain programChainWithData:firstPlayProgramChainData error:errors ? &firstPlayProgramChainError : NULL];
+        firstPlayProgramChain = [[DKProgramChain programChainWithData:firstPlayProgramChainData error:errors ? &firstPlayProgramChainError : NULL] retain];
         if (firstPlayProgramChainError) {
             if (firstPlayProgramChainError.code == kDKMultipleErrorsError) {
                 [errors addObjectsFromArray:[firstPlayProgramChainError.userInfo objectForKey:NSDetailedErrorsKey]];
@@ -291,7 +292,7 @@ NSString* const kDKManagerInformationSection_VMGM_VOBU_ADMAP  = @"vmgm_vobu_adma
          *  that the sections should be written in, should we choose to do so
          *  at a later point.
          */
-        preferredSectionOrder = [sectionOrdering objectsForKeys:[[sectionOrdering allKeys] sortedArrayUsingSelector:@selector(compare:)] notFoundMarker:[NSNull null]];
+        preferredSectionOrder = [[sectionOrdering objectsForKeys:[[sectionOrdering allKeys] sortedArrayUsingSelector:@selector(compare:)] notFoundMarker:[NSNull null]] retain];
         
         if (errors) {
             int errorCount = [errors count];

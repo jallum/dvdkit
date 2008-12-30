@@ -229,7 +229,7 @@ NSString* const kDKTitleSetInformationSection_VTS_TMAPT         = @"vts_tmapt";
          *  that the sections should be written in, should we choose to do so
          *  at a later point.
          */
-        preferredSectionOrder = [sectionOrdering objectsForKeys:[[sectionOrdering allKeys] sortedArrayUsingSelector:@selector(compare:)] notFoundMarker:[NSNull null]];
+        preferredSectionOrder = [[sectionOrdering objectsForKeys:[[sectionOrdering allKeys] sortedArrayUsingSelector:@selector(compare:)] notFoundMarker:[NSNull null]] retain];
         
         if (errors) {
             int errorCount = [errors count];
