@@ -3,6 +3,10 @@
 #define OSReadBigInt8(x, y)     (((uint8_t*)x)[y])
 #define OSWriteBigInt8(x, y, z) (void)(((uint8_t*)x)[y] = z)
 
+#define kDKMaxSectorsPerVOBFile ((1024L * 1024L * 1024L) / 2048L)
+#define kDKMaxSectorsPerVOBSet  (9 * kDKMaxSectorsPerVOBFile)
+
+
 typedef struct video_attr_t video_attr_t;
 struct video_attr_t {
     uint16_t 
@@ -492,17 +496,15 @@ typedef enum {
     kDKTitleSetProgramChainInformationMapError,
     kDKPartOfTitleSearchPointerTableError,
     kDKSectionNameError,
+    kDKVobuAddressTableError,
 } DKErrorCode;
 
 #define DKErrorWithCode(code, ...)   __DKErrorWithCode(code, self, NSAffectedObjectsErrorKey, [NSString stringWithUTF8String:__PRETTY_FUNCTION__], @"function", [NSNumber numberWithInt:__LINE__], @"line", __VA_ARGS__)
 extern NSError* __DKErrorWithCode(DKErrorCode code, ...);
 
+@interface NSObject (DVDKit_Private)
++ (CFBitVectorRef) _readVobuAddressMapFromDataSource:(id<DKDataSource>)dataSource offset:(uint32_t)offset errors:(NSMutableArray*)errors;
++ (NSMutableData*) _saveVobuAddressMap:(CFBitVectorRef)vobuAddressMap errors:(NSMutableArray*)errors;
 
 
-
-
-
-
-
-
-
+@end

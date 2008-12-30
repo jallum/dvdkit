@@ -41,13 +41,11 @@ NSString* const kDKManagerInformationSection_VMGM_VOBU_ADMAP  = @"vmgm_vobu_adma
 + (NSMutableDictionary*) _readMenuProgramChainInformationTablesByLanguageFromDataSource:(id<DKDataSource>)dataSource offset:(uint32_t)offset errors:(NSMutableArray*)errors;
 + (NSData*) _readTextDataFromDataSource:(id<DKDataSource>)dataSource offset:(uint32_t)offset errors:(NSMutableArray*)errors;
 + (NSMutableArray*) _readCellAddressTableFromDataSource:(id<DKDataSource>)dataSource offset:(uint32_t)offset errors:(NSMutableArray*)errors;
-+ (CFBitVectorRef) _readVobuAddressMapFromDataSource:(id<DKDataSource>)dataSource offset:(uint32_t)offset errors:(NSMutableArray*)errors;
 
 /*  Save  */
 + (NSMutableData*) _saveTitleSetAttributeTable:(NSArray*)titleTrackSearchPointerTable errors:(NSMutableArray*)errors;
 + (NSMutableData*) _saveMenuProgramChainInformationTablesByLanguage:(NSDictionary*)menuProgramChainInformationTablesByLanguage errors:(NSMutableArray*)errors;
 + (NSMutableData*) _saveCellAddressTable:(NSArray*)cellAddressTable errors:(NSMutableArray*)errors;
-+ (NSMutableData*) _saveVobuAddressMap:(CFBitVectorRef)vobuAddressMap errors:(NSMutableArray*)errors;
 @end
 
 @implementation DKMainMenuInformation
@@ -93,36 +91,23 @@ NSString* const kDKManagerInformationSection_VMGM_VOBU_ADMAP  = @"vmgm_vobu_adma
     return [[[DKMainMenuInformation alloc] initWithDataSource:dataSource error:error] autorelease];
 }
 
--(BOOL)isEqual:(id)anObject
+- (BOOL) isEqual:(DKMainMenuInformation*)anObject
 {
-	DKMainMenuInformation* mainMenuInformatonObject = (DKMainMenuInformation*)anObject;
-	
-	if([mainMenuInformatonObject specificationVersion] != specificationVersion)
-		return NO;
-	if([mainMenuInformatonObject categoryAndMask] != categoryAndMask)
-		return NO;
-	if([mainMenuInformatonObject numberOfVolumes] != numberOfVolumes)
-		return NO;
-	if([mainMenuInformatonObject volumeNumber] != volumeNumber)
-		return NO;
-	if([mainMenuInformatonObject side] != side)
-		return NO;
-	if([mainMenuInformatonObject numberOfTitleSets] != numberOfTitleSets)
-		return NO;
-	if([mainMenuInformatonObject pointOfSaleCode] != pointOfSaleCode)
-		return NO;
-	if([[mainMenuInformatonObject providerId] isEqual:providerId] != YES)
-		return NO;
-	if([[mainMenuInformatonObject menuVideoAttributes] isEqual:menuVideoAttributes] != YES)
-		return NO;
-	if([[mainMenuInformatonObject menuAudioAttributes] isEqual:menuAudioAttributes] != YES)
-		return NO;
-	if([[mainMenuInformatonObject menuSubpictureAttributes] isEqual:menuSubpictureAttributes] != YES)
-		return NO;
-	
-		
-	return YES;
-	
+    if (self == anObject) {
+        return YES;
+    } else return (
+        [self class] == [anObject class]
+     && (anObject->specificationVersion == specificationVersion)
+     && (anObject->categoryAndMask == categoryAndMask)
+     && (anObject->numberOfVolumes == numberOfVolumes)
+     && (anObject->side == side)
+     && (anObject->numberOfTitleSets == numberOfTitleSets)
+     && (anObject->pointOfSaleCode == pointOfSaleCode)
+     && [anObject->providerId isEqualToString:providerId]
+     && [anObject->menuVideoAttributes isEqual:menuVideoAttributes]
+     && [anObject->menuAudioAttributes isEqual:menuAudioAttributes]
+     && [anObject->menuSubpictureAttributes isEqual:menuSubpictureAttributes]
+    );
 }
 
 - (id) initWithDataSource:(id<DKDataSource>)dataSource error:(NSError**)error
@@ -495,35 +480,6 @@ NSString* const kDKManagerInformationSection_VMGM_VOBU_ADMAP  = @"vmgm_vobu_adma
     return table;
 }
 
-+ (CFBitVectorRef) _readVobuAddressMapFromDataSource:(id<DKDataSource>)dataSource offset:(uint32_t)offset errors:(NSMutableArray*)errors
-{
-    NSData* data = [dataSource requestDataOfLength:1 << 11 fromOffset:offset << 11];
-    NSAssert(data && ([data length] == 1 << 11), @"wtf?"); 
-    uint32_t last_byte = 1 + OSReadBigInt32([data bytes], 0);
-    
-    /*  Have we already read all that we need?  */
-    if (last_byte > [data length]) {
-        data = [dataSource requestDataOfLength:last_byte fromOffset:(offset << 11)];
-    } else {
-        data = [data subdataWithRange:NSMakeRange(0, last_byte)];
-    }
-    
-    /*  Parse the table  */
-    CFMutableBitVectorRef bitmap = CFBitVectorCreateMutable(NULL, 0);
-    uint32_t max_sector = CFBitVectorGetCount(bitmap);
-    const void* base = [data bytes];
-    for (int i = last_byte >> 2; i > 0; i--) {
-        uint32_t sector = OSReadBigInt32(base, i * 4);
-        if (sector >= max_sector) {
-            max_sector = sector + 1;
-            CFBitVectorSetCount(bitmap, max_sector);
-        }
-        CFBitVectorSetBitAtIndex(bitmap, sector, 1);
-    }
-    
-    return (CFBitVectorRef)[(id)bitmap autorelease];
-}
-
 - (void) dealloc
 {
     [firstPlayProgramChain release];
@@ -696,19 +652,19 @@ NSString* const kDKManagerInformationSection_VMGM_VOBU_ADMAP  = @"vmgm_vobu_adma
                 continue;
             }
             sectionData = [DKMainMenuInformation _saveTitleSetAttributeTable:titleTrackSearchPointerTable errors:errors];
-            OSWriteBigInt32(&vmgi_mat, offsetof(vmgi_mat_t, tt_srpt), [data length] >> 11);
+            OSWriteBigInt32(&vmgi_mat.tt_srpt, 0, [data length] >> 11);
         } else if ([section isEqualToString:kDKManagerInformationSection_PTL_MAIT]) {
             if (![parentalManagementInformationTable length]) {
                 continue;
             }
             sectionData = parentalManagementInformationTable;
-            OSWriteBigInt32(&vmgi_mat, offsetof(vmgi_mat_t, ptl_mait), [data length] >> 11);
+            OSWriteBigInt32(&vmgi_mat.ptl_mait, 0, [data length] >> 11);
         } else if ([section isEqualToString:kDKManagerInformationSection_VMG_VTS_ATRT]) { 
             if (![titleSetAttributeTable length]) {
                 continue;
             }
             sectionData = titleSetAttributeTable;
-            OSWriteBigInt32(&vmgi_mat, offsetof(vmgi_mat_t, vmg_vts_atrt), [data length] >> 11);
+            OSWriteBigInt32(&vmgi_mat.vmg_vts_atrt, 0, [data length] >> 11);
         } else if ([section isEqualToString:kDKManagerInformationSection_VMGM_PGCI_UT]) {
             if (![menuProgramChainInformationTablesByLanguage count]) {
                 continue;
@@ -720,19 +676,19 @@ NSString* const kDKManagerInformationSection_VMGM_VOBU_ADMAP  = @"vmgm_vobu_adma
                 continue;
             }
             sectionData = textData;
-            OSWriteBigInt32(&vmgi_mat, offsetof(vmgi_mat_t, txtdt_mgi), [data length] >> 11);
+            OSWriteBigInt32(&vmgi_mat.txtdt_mgi, 0, [data length] >> 11);
         } else if ([section isEqualToString:kDKManagerInformationSection_VMGM_C_ADT]) {
             if (![cellAddressTable count]) {
                 continue;
             }
             sectionData = [DKMainMenuInformation _saveCellAddressTable:cellAddressTable errors:errors];
-            OSWriteBigInt32(&vmgi_mat, offsetof(vmgi_mat_t, vmgm_c_adt), [data length] >> 11);
+            OSWriteBigInt32(&vmgi_mat.vmgm_c_adt, 0, [data length] >> 11);
         } else if ([section isEqualToString:kDKManagerInformationSection_VMGM_VOBU_ADMAP]) {
             if (!menuVobuAddressMap) {
                 continue;
             }
             sectionData = [DKMainMenuInformation _saveVobuAddressMap:menuVobuAddressMap errors:errors];
-            OSWriteBigInt32(&vmgi_mat, offsetof(vmgi_mat_t, vmgm_vobu_admap), [data length] >> 11);
+            OSWriteBigInt32(&vmgi_mat.vmgm_vobu_admap, 0, [data length] >> 11);
         } else if (errors) {
             NSLog(@"%@", section);
             [errors addObject:DKErrorWithCode(kDKSectionNameError, nil)];
@@ -904,26 +860,6 @@ NSString* const kDKManagerInformationSection_VMGM_VOBU_ADMAP  = @"vmgm_vobu_adma
     OSWriteBigInt16(&c_adt->nr_of_vob_ids, 0, nr_of_vob_ids);
     OSWriteBigInt32(&c_adt->last_byte, 0, last_byte - 1);
     
-    return data;
-}
-
-+ (NSMutableData*) _saveVobuAddressMap:(CFBitVectorRef)vobuAddressMap errors:(NSMutableArray*)errors
-{
-    CFRange range = CFRangeMake(0, CFBitVectorGetCount(vobuAddressMap));
-    uint32_t last_byte = sizeof(uint32_t) + (4 * CFBitVectorGetCountOfBit(vobuAddressMap, range, 1));
-    NSMutableData* data = [NSMutableData dataWithLength:last_byte];
-    void* base = [data mutableBytes];
-    OSWriteBigInt32(base, 0, last_byte - 1);
-    
-    int i = 4;
-    uint32_t sector = 0;
-    while (kCFNotFound != CFBitVectorGetFirstIndexOfBit(vobuAddressMap, range, 1)) {
-        OSWriteBigInt32(base, i, sector); 
-        range.length -= (sector - range.location) + 1;
-        range.location = sector + 1;
-        i += 4;
-    }
-
     return data;
 }
 
