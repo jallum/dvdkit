@@ -72,6 +72,7 @@
 @property (readonly) uint16_t regionMask;
 @property (retain) NSArray* cellAddressTable;
 @property (assign) CFBitVectorRef menuVobuAddressMap;
+@property (retain) NSData* titleSetAttributeTable;
 
 - (DKTitleTrackSearchPointer*) titleTrackSearchPointerForTitleSet:(uint16_t)vts track:(uint8_t)ttn;
 - (NSArray*) menuProgramChainInformationTableForLanguageCode:(uint16_t)languageCode;

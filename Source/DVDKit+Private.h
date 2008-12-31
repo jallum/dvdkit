@@ -497,6 +497,7 @@ typedef enum {
     kDKPartOfTitleSearchPointerTableError,
     kDKSectionNameError,
     kDKVobuAddressTableError,
+    kDKTitleSetAttributeTableError,
 } DKErrorCode;
 
 #define DKErrorWithCode(code, ...)   __DKErrorWithCode(code, self, NSAffectedObjectsErrorKey, [NSString stringWithUTF8String:__PRETTY_FUNCTION__], @"function", [NSNumber numberWithInt:__LINE__], @"line", __VA_ARGS__)

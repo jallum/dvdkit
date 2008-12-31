@@ -37,10 +37,11 @@
     NSMutableArray* audioAttributes;
     NSMutableArray* subpictureAttributes; 
     NSMutableArray* programChainInformationTable;
-    NSMutableArray* partOfTitleSearchTable;
     NSMutableArray* cellAddressTable;
     CFBitVectorRef vobuAddressMap;
+    /**/
     NSData* timeMapTable;
+    NSMutableArray* partOfTitleSearchTable;
     /**/
     NSArray* preferredSectionOrder;
 }
@@ -50,6 +51,7 @@
 - (id) initWithDataSource:(id<DKDataSource>)dataSource index:(uint16_t)index error:(NSError**)error;
 
 @property (readonly) NSInteger index;
+@property (assign) uint32_t categoryAndMask;
 @property (readonly) NSArray* partOfTitleSearchTable;
 
 @property (retain) DKVideoAttributes* menuVideoAttributes;

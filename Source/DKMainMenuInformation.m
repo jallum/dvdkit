@@ -67,6 +67,7 @@ NSString* const kDKManagerInformationSection_VMGM_VOBU_ADMAP  = @"vmgm_vobu_adma
 
 @synthesize cellAddressTable;
 @synthesize menuVobuAddressMap;
+@synthesize titleSetAttributeTable;
 
 + (NSArray*) availableSections
 {
@@ -358,10 +359,15 @@ NSString* const kDKManagerInformationSection_VMGM_VOBU_ADMAP  = @"vmgm_vobu_adma
     NSData* data = [dataSource requestDataOfLength:1 << 11 fromOffset:offset << 11];
     NSAssert(data && ([data length] == 1 << 11), @"wtf?");
     const vmg_vts_atrt_t* vmg_vts_atrt = [data bytes];
-    uint32_t last_byte = 1 + OSReadBigInt32(&vmg_vts_atrt->last_byte, 0);
+    uint32_t last_byte = 1 + OSReadBigInt32(&vmg_vts_atrt->last_byte, 4);
     
     /*  Have we already read all that we need?  */
-    if (last_byte > [data length]) {
+    if (last_byte <= sizeof(vmg_vts_atrt_t)) {
+        if (errors) {
+            [errors addObject:DKErrorWithCode(kDKTitleSetAttributeTableError, [NSString stringWithFormat:DKLocalizedString(@"last_byte (%d) is less than the size of the header, returning nil.", nil), last_byte], NSLocalizedDescriptionKey, nil)];
+        }
+        return nil;
+    } else if (last_byte > [data length]) {
         data = [dataSource requestDataOfLength:last_byte fromOffset:(offset << 11)];
     } else {
         data = [data subdataWithRange:NSMakeRange(0, last_byte)];

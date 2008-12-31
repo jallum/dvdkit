@@ -51,6 +51,7 @@ NSString* const kDKTitleSetInformationSection_VTS_TMAPT         = @"vts_tmapt";
 
 @implementation DKTitleSetInformation
 @synthesize index;
+@synthesize categoryAndMask;
 @synthesize partOfTitleSearchTable;
 
 @synthesize menuVideoAttributes;
@@ -694,21 +695,23 @@ NSString* const kDKTitleSetInformationSection_VTS_TMAPT         = @"vts_tmapt";
 
     
     NSAssert(([data length] & 0x07FF) == 0, @"Sections not sector-aligned?");
-    uint32_t vtsi_last_sector = [data length] >> 11;
+    uint32_t vtsiSectors = [data length] >> 11;
+    uint32_t vtsi_last_sector = vtsiSectors;
     uint32_t vtsm_vobs = 0;
     uint32_t vtstt_vobs = 0;
-    uint32_t vts_last_sector = vtsi_last_sector * 2;
+    uint32_t vts_last_sector = vtsiSectors;
     if (lengthOfMenuVOB > 0) {
-        vtsm_vobs = vtsi_last_sector;
+        vtsm_vobs = vts_last_sector;
         vts_last_sector += lengthOfMenuVOB;
         if (lengthOfVideoVOB) {
-            vtstt_vobs = vtsm_vobs + lengthOfMenuVOB;
+            vtstt_vobs = vts_last_sector;
             vts_last_sector += lengthOfVideoVOB;
         }
     } else if (lengthOfVideoVOB) {
-        vtstt_vobs = vtsi_last_sector;
+        vtstt_vobs = vts_last_sector;
         vts_last_sector += lengthOfVideoVOB;
     }
+    vts_last_sector += vtsiSectors;
     OSWriteBigInt32(&vts_mat.vtsi_last_sector, 0, vtsi_last_sector - 1);
     OSWriteBigInt32(&vts_mat.vtsm_vobs, 0, vtsm_vobs);
     OSWriteBigInt32(&vts_mat.vtstt_vobs, 0, vtstt_vobs);
