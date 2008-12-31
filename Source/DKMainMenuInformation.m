@@ -644,7 +644,7 @@ NSString* const kDKManagerInformationSection_VMGM_VOBU_ADMAP  = @"vmgm_vobu_adma
     
     /*  Determine the proper order, and then write out the various sections.
      */
-    NSMutableArray* sectionOrder = [[preferredSectionOrder mutableCopy] autorelease];
+    NSMutableArray* sectionOrder = [NSMutableArray arrayWithArray:preferredSectionOrder];
     for (NSString* section in [DKMainMenuInformation availableSections]) {
         if (![sectionOrder containsObject:section]) {
             [sectionOrder addObject:section];
@@ -714,13 +714,15 @@ NSString* const kDKManagerInformationSection_VMGM_VOBU_ADMAP  = @"vmgm_vobu_adma
 
     
     NSAssert(([data length] & 0x07FF) == 0, @"Sections not sector-aligned?");
-    uint32_t vmgi_last_sector = [data length] >> 11;
+    uint32_t vmgiSectors = [data length] >> 11;
+    uint32_t vmgi_last_sector = vmgiSectors;
     uint32_t vmgm_vobs = 0;
-    uint32_t vmg_last_sector = vmgi_last_sector * 2;
+    uint32_t vmg_last_sector = vmgi_last_sector;
     if (lengthOfMenuVOB) {
         vmgm_vobs = vmgi_last_sector;
         vmg_last_sector += lengthOfMenuVOB;
     }
+    vmg_last_sector += vmgiSectors;
     OSWriteBigInt32(&vmgi_mat.vmgi_last_sector, 0, vmgi_last_sector - 1);
     OSWriteBigInt32(&vmgi_mat.vmgm_vobs, 0, vmgm_vobs);
     OSWriteBigInt32(&vmgi_mat.vmg_last_sector, 0, vmg_last_sector - 1);

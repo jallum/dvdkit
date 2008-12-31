@@ -618,7 +618,7 @@ NSString* const kDKTitleSetInformationSection_VTS_TMAPT         = @"vts_tmapt";
     
     /*  Determine the proper order, and then write out the various sections.
      */
-    NSMutableArray* sectionOrder = [[preferredSectionOrder mutableCopy] autorelease];
+    NSMutableArray* sectionOrder = [NSMutableArray arrayWithArray:preferredSectionOrder];
     for (NSString* section in [DKTitleSetInformation availableSections]) {
         if (![sectionOrder containsObject:section]) {
             [sectionOrder addObject:section];
@@ -629,19 +629,19 @@ NSString* const kDKTitleSetInformationSection_VTS_TMAPT         = @"vts_tmapt";
         NSAssert(([data length] & 0x07FF) == 0, @"Sections not sector-aligned?");
 
         if ([section isEqualToString:kDKTitleSetInformationSection_VTS_PTT_SRPT]) {
-            if (![partOfTitleSearchTable count]) {
+            if (!partOfTitleSearchTable) {
                 continue;
             }
             sectionData = [DKTitleSetInformation _savePartOfTitleSearchTable:partOfTitleSearchTable errors:errors];
             OSWriteBigInt32(&vts_mat.vts_ptt_srpt, 0, [data length] >> 11);
         } else if ([section isEqualToString:kDKTitleSetInformationSection_VTSM_C_ADT]) {
-            if (![menuCellAddressTable count]) {
+            if (!menuCellAddressTable) {
                 continue;
             }
             sectionData = [DKTitleSetInformation _saveCellAddressTable:menuCellAddressTable errors:errors];
             OSWriteBigInt32(&vts_mat.vtsm_c_adt, 0, [data length] >> 11);
         } else if ([section isEqualToString:kDKTitleSetInformationSection_VTS_C_ADT]) {
-            if (![cellAddressTable count]) {
+            if (!cellAddressTable) {
                 continue;
             }
             sectionData = [DKTitleSetInformation _saveCellAddressTable:cellAddressTable errors:errors];
@@ -659,19 +659,19 @@ NSString* const kDKTitleSetInformationSection_VTS_TMAPT         = @"vts_tmapt";
             sectionData = [DKTitleSetInformation _saveVobuAddressMap:vobuAddressMap errors:errors];
             OSWriteBigInt32(&vts_mat.vts_vobu_admap, 0, [data length] >> 11);
         } else if ([section isEqualToString:kDKTitleSetInformationSection_VTSM_PGCI_UT]) {
-            if (![menuProgramChainInformationTablesByLanguage count]) {
+            if (!menuProgramChainInformationTablesByLanguage) {
                 continue;
             }
             sectionData = [DKTitleSetInformation _saveMenuProgramChainInformationTablesByLanguage:menuProgramChainInformationTablesByLanguage errors:errors];
             OSWriteBigInt32(&vts_mat.vtsm_pgci_ut, 0, [data length] >> 11);
         } else if ([section isEqualToString:kDKTitleSetInformationSection_VTS_PGCIT]) {
-            if (![programChainInformationTable count]) {
+            if (!programChainInformationTable) {
                 continue;
             }
             sectionData = [DKTitleSetInformation _saveProgramChainInformationTable:programChainInformationTable errors:errors];
             OSWriteBigInt32(&vts_mat.vts_pgcit, 0, [data length] >> 11);
         } else if ([section isEqualToString:kDKTitleSetInformationSection_VTS_TMAPT]) {
-            if (![timeMapTable length]) {
+            if (!timeMapTable) {
                 continue;
             }
             sectionData = [DKTitleSetInformation _saveTimeMapTable:timeMapTable errors:errors];

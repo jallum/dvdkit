@@ -52,7 +52,7 @@
 
 @property (readonly) NSInteger index;
 @property (assign) uint32_t categoryAndMask;
-@property (readonly) NSArray* partOfTitleSearchTable;
+@property (retain) NSArray* partOfTitleSearchTable;
 
 @property (retain) DKVideoAttributes* menuVideoAttributes;
 @property (retain) NSArray* menuAudioAttributes;
