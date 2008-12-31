@@ -62,7 +62,7 @@ NSError* __DKErrorWithCode(DKErrorCode code, ...)
     
     int i = 4;
     uint32_t sector = 0;
-    while (kCFNotFound != CFBitVectorGetFirstIndexOfBit(vobuAddressMap, range, 1)) {
+    while (kCFNotFound != (sector = CFBitVectorGetFirstIndexOfBit(vobuAddressMap, range, 1))) {
         OSWriteBigInt32(base, i, sector); 
         range.length -= (sector - range.location) + 1;
         range.location = sector + 1;
