@@ -30,6 +30,10 @@
 }
 
 @property (readonly) uint64_t bits;
+@property (readonly) uint64_t mask;
+@property (readonly) int row;
+
+
 
 + (id) commandWith64Bits:(uint64_t)bits;
 + (id) commandWith64Bits:(uint64_t)bits row:(int)row;
