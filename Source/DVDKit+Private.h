@@ -467,7 +467,6 @@ struct vts_tmapti_t {
 @end
 
 @interface DKCommand (Private)
-- (uint32_t) bitsInRange:(NSRange)range;
 - (int) executeComparison:(uint8_t)comparison value1:(uint16_t)value1 value2:(uint16_t)value2;
 - (uint16_t) computeOp:(uint8_t)op value1:(uint16_t)value1 value2:(uint16_t)value2;
 @end

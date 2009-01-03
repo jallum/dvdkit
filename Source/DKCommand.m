@@ -493,11 +493,7 @@ static void appendMnemonic(DKCommand* command, NSMutableString* string);
     return description;
 }
 
-@end
-
-@implementation DKCommand (Private)
-
-- (uint32_t) bitsInRange:(NSRange)range;
+- (uint32_t) bitsInRange:(NSRange)range
 {
     uint32_t offset = range.location + 1 - range.length;
     NSAssert(range.length > 0 && range.length < 32, @"Valid range is 1-31");
@@ -507,6 +503,10 @@ static void appendMnemonic(DKCommand* command, NSMutableString* string);
     mask |= m << offset;
     return (bits >> offset) & m;
 }
+
+@end
+
+@implementation DKCommand (Private)
 
 - (int) executeComparison:(uint8_t)comparison value1:(uint16_t)value1 value2:(uint16_t)value2
 {

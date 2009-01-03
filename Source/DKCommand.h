@@ -46,6 +46,7 @@
 
 - (void) executeAgainstVirtualMachine:(DKVirtualMachine*)virtualMachine;
 
+- (uint32_t) bitsInRange:(NSRange)range;
 - (NSString*) description;
 
 @end

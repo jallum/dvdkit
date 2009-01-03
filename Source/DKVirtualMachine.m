@@ -53,6 +53,7 @@ enum {
 @synthesize domain;
 @synthesize delegate;
 @synthesize userInfo;
+@synthesize programChain;
 @synthesize prohibitedUserOperations;
 
 + (int) programNumberForCell:(int)cell usingMap:(NSArray*)map
@@ -232,6 +233,9 @@ enum {
                     programChain = [[[self mainMenuInformation] firstPlayProgramChain] retain];
                     [titleSet release];
                     titleSet = nil;
+                    if (delegateHasWillExecuteProgramChain) {
+                        [delegate virtualMachine:self willExecuteProgramChain:programChain];
+                    }
                     state = PGC_START;
                     break;
                 }
@@ -309,7 +313,11 @@ enum {
                     const int index = [cellPlayback postCommandIndex];
                     NSArray* cellCommands = [programChain cellCommands];
                     if (index && (index <= [cellCommands count])) {
-                        [self executeCommand:[cellCommands objectAtIndex:(index - 1)]];
+                        DKCommand* command = [cellCommands objectAtIndex:(index - 1)];
+                        if (delegateHasWillExecuteCommandAtIndexOfSectionForProgramChain) {
+                            [delegate virtualMachine:self willExecuteCommandAtIndex:(index - 1) ofSection:kDKProgramChainSectionCellCommand forProgramChain:programChain];
+                        }
+                        [self executeCommand:command];
                     }
                     if (state == PGC_CELL_POST) {
                         cell++;
@@ -720,6 +728,11 @@ enum {
     }
 }
 
+- (BOOL) resumeEnabled
+{
+    return resume.enabled;
+}
+
 @end
 
 @implementation DKVirtualMachine (Private)
@@ -753,8 +766,6 @@ enum {
     int section;
     if (_state == PGC_PRE_COMMANDS) {
         section = kDKProgramChainSectionPreCommand;
-    } else if (_state == PGC_CELL) {
-        section = kDKProgramChainSectionCellCommand;
     } else if (_state == PGC_POST_COMMANDS) {
         section = kDKProgramChainSectionPostCommand;
     } else {
