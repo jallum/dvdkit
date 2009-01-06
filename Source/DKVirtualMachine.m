@@ -407,7 +407,7 @@ enum {
 - (void) setMode:(BOOL)mode forGeneralPurposeRegister:(uint8_t)index
 {
     if (index >= 16) {
-        [NSException raise:DVDVirtualMachineException format:@"%s (%d)", __FILE__, __LINE__];
+        state = STOP;
     }
     /* Do I need to implement this? */
 }
@@ -453,25 +453,28 @@ enum {
 - (void) executeJumpVTS_PTT:(uint8_t)ttn pttn:(uint16_t)pttn
 {
     if (SPRM[4] != [titleInformation index]) {
-        [NSException raise:DVDVirtualMachineException format:@"%s (%d)", __FILE__, __LINE__];
+        state = STOP;
+        return;
     }
     NSArray* partOfTitleSearchTable = [titleSet partOfTitleSearchTable];
     if (!ttn || ttn > [partOfTitleSearchTable count]) {
-        [NSException raise:DVDVirtualMachineException format:@"%s (%d)", __FILE__, __LINE__];
+        state = STOP;
+        return;
     }
     NSArray* partOfTitleTable = [partOfTitleSearchTable objectAtIndex:(ttn - 1)];
     if (!pttn || pttn > [partOfTitleTable count]) {
-        [NSException raise:DVDVirtualMachineException format:@"%s (%d)", __FILE__, __LINE__];
+        state = STOP;
+    } else {
+        DKPartOfTitle* partOfTitle = [partOfTitleTable objectAtIndex:(pttn - 1)];
+        resume.enabled &= (domain == kDKDomainVideoTitleSet);
+        domain = kDKDomainVideoTitleSet;
+        /**/
+        SPRM[5] = ttn;
+        SPRM[6] = [partOfTitle programChainNumber];
+        SPRM[7] = pttn;
+        /**/
+        state = PGC_CHANGED;
     }
-    DKPartOfTitle* partOfTitle = [partOfTitleTable objectAtIndex:(pttn - 1)];
-    resume.enabled &= (domain == kDKDomainVideoTitleSet);
-    domain = kDKDomainVideoTitleSet;
-    /**/
-    SPRM[5] = ttn;
-    SPRM[6] = [partOfTitle programChainNumber];
-    SPRM[7] = pttn;
-    /**/
-    state = PGC_CHANGED;
 }
 
 - (void) executeJumpSS_FP
@@ -504,15 +507,15 @@ enum {
         }
     }
     if (!foundSearchPointer) {
-        [NSException raise:DVDVirtualMachineException format:@"%s (%d)", __FILE__, __LINE__];
+        state = STOP;
+    } else {
+        SPRM[4] = [titleInformation index];
+        SPRM[5] = ttn;
+        SPRM[6] = 1 + [pgcit indexOfObject:foundSearchPointer];
+        SPRM[7] = 0;
+        /**/
+        state = PGC_CHANGED;
     }
-    /**/
-    SPRM[4] = [titleInformation index];
-    SPRM[5] = ttn;
-    SPRM[6] = 1 + [pgcit indexOfObject:foundSearchPointer];
-    SPRM[7] = 0;
-    /**/
-    state = PGC_CHANGED;
 }
 
 - (void) executeJumpSS_VMGM_menu:(uint8_t)menu
@@ -529,19 +532,20 @@ enum {
         }
     }
     if (!foundSearchPointer) {
-        [NSException raise:DVDVirtualMachineException format:@"%s (%d)", __FILE__, __LINE__];
+        state = STOP;
+    } else {
+        [titleSet release];
+        titleSet = nil;
+        [titleInformation release];
+        titleInformation = nil;
+        /**/
+        SPRM[4] = 0;
+        SPRM[5] = 0;
+        SPRM[6] = 1 + [pgcit indexOfObject:foundSearchPointer];
+        SPRM[7] = 0;
+        /**/
+        state = PGC_CHANGED;
     }
-    [titleSet release];
-    titleSet = nil;
-    [titleInformation release];
-    titleInformation = nil;
-    /**/
-    SPRM[4] = 0;
-    SPRM[5] = 0;
-    SPRM[6] = 1 + [pgcit indexOfObject:foundSearchPointer];
-    SPRM[7] = 0;
-    /**/
-    state = PGC_CHANGED;
 }
 
 - (void) executeJumpSS_VMGM_pgcn:(uint16_t)pgcn
@@ -561,42 +565,62 @@ enum {
     state = PGC_CHANGED;
 }
 
-- (void) _saveResumeInfoWithCell:(int)_cell
+- (BOOL) _saveResumeInfoWithCell:(int)_cell
 {
-    resume.domain = domain;
-    resume.vts = [titleInformation title_set_nr];
-    resume.cell = _cell;
-    for (int i = 0; i < 5; i++) {
-        resume.REGS[i] = SPRM[4 + i];
+    int vts;
+    if (!titleInformation) {
+        return NO;
+    } else if (0 == (vts = [titleInformation title_set_nr]) || vts > 99) {
+        return NO;
+    } else {
+        resume.domain = domain;
+        resume.vts = vts;
+        resume.cell = _cell;
+        for (int i = 0; i < 5; i++) {
+            resume.REGS[i] = SPRM[4 + i];
+        }
+        return YES;
     }
 }
 
 - (void) executeCallSS_FP
 {
-    [self _saveResumeInfoWithCell:0];
-    [self executeJumpSS_FP];
-    resume.enabled = YES;
+    if ([self _saveResumeInfoWithCell:0]) {
+        [self executeJumpSS_FP];
+        resume.enabled = YES;
+    } else {
+        state = STOP;
+    }
 }
 
 - (void) executeCallSS_VMGM_menu:(uint8_t)menu resumeCell:(uint8_t)_cell
 {
-    [self _saveResumeInfoWithCell:_cell];
-    [self executeJumpSS_VMGM_menu:menu];
-    resume.enabled = YES;
+    if ([self _saveResumeInfoWithCell:_cell]) {
+        [self executeJumpSS_VMGM_menu:menu];
+        resume.enabled = YES;
+    } else {
+        state = STOP;
+    }
 }
 
 - (void) executeCallSS_VTSM_menu:(uint8_t)menu resumeCell:(uint8_t)_cell
 {
-    [self _saveResumeInfoWithCell:_cell];
-    [self executeJumpSS_VTSM_menu:menu vts:[titleSet index] ttn:1];
-    resume.enabled = YES;
+    if ([self _saveResumeInfoWithCell:_cell]) {
+        [self executeJumpSS_VTSM_menu:menu vts:[titleSet index] ttn:1];
+        resume.enabled = YES;
+    } else {
+        state = STOP;
+    }
 }
 
 - (void) executeCallSS_VMGM_pgcn:(uint16_t)pgcn resumeCell:(uint8_t)_cell
 {
-    [self _saveResumeInfoWithCell:_cell];
-    [self executeJumpSS_VMGM_pgcn:pgcn];
-    resume.enabled = YES;
+    if ([self _saveResumeInfoWithCell:_cell]) {
+        [self executeJumpSS_VMGM_pgcn:pgcn];
+        resume.enabled = YES;
+    } else {
+        state = STOP;
+    }
 }
 
 - (void) executeLinkPGCN:(uint16_t)pgcn
@@ -608,17 +632,17 @@ enum {
 - (void) executeLinkPTTN:(uint16_t)pttn
 {
     if (domain != kDKDomainVideoTitleSet) {
-        [NSException raise:DVDVirtualMachineException format:@"%s (%d)", __FILE__, __LINE__];
+        state = STOP;
+    } else if (!titleSet) {
+        state = STOP;
+    } else {
+        DKPartOfTitle* partOfTitle = [[[titleSet partOfTitleSearchTable] objectAtIndex:(SPRM[5] - 1)] objectAtIndex:(pttn - 1)];
+        SPRM[6] = [partOfTitle programChainNumber];
+        SPRM[7] = pttn;
+        /**/
+        programNumber = [partOfTitle programNumber];
+        state = PGC_PGN_SET;
     }
-    if (!titleSet) {
-        [NSException raise:DVDVirtualMachineException format:@"%s (%d)", __FILE__, __LINE__];
-    }
-    DKPartOfTitle* partOfTitle = [[[titleSet partOfTitleSearchTable] objectAtIndex:(SPRM[5] - 1)] objectAtIndex:(pttn - 1)];
-    SPRM[6] = [partOfTitle programChainNumber];
-    SPRM[7] = pttn;
-    /**/
-    programNumber = [partOfTitle programNumber];
-    state = PGC_PGN_SET;
 }
 
 - (void) executeLinkPGN:(uint8_t)pgn
