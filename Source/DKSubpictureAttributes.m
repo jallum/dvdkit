@@ -30,22 +30,21 @@
     return self;
 }
 
-- (BOOL) isEqual:(id)anObject
+- (BOOL) isEqual:(DKSubpictureAttributes*)anObject
 {
-	
-	DKSubpictureAttributes* subPictureAttributes = (DKSubpictureAttributes*)anObject;
-	if([subPictureAttributes code_mode] != code_mode)
-		return NO;
-	if([subPictureAttributes lang_code] != lang_code)
-		return NO;
-	if([subPictureAttributes lang_extension] != lang_extension)
-		return NO;
-	if([subPictureAttributes code_extension] != code_extension)
-		return NO;
-	
-	return YES;
-	
-	
+	if(self == anObject)
+	{
+		return YES;
+		
+	}
+	else return (
+		[self class] == [anObject class]
+		&& (anObject->code_mode == code_mode)
+		&& (anObject->lang_code == lang_code)
+		&& (anObject->lang_extension == lang_extension)
+		&& (anObject->code_extension == code_extension)
+		 );
+		
 }
 
 - (NSData*) saveAsData:(NSError**)_error

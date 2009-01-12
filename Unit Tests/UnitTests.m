@@ -724,7 +724,10 @@
 
 - (void) testLoadAndDecodeOf_VIDEO_TS_IFO_01
 {
-    NSFileHandle* ifoHandle = [NSFileHandle fileHandleForReadingAtPath:[[NSBundle bundleForClass:[self class]] pathForResource:@"VIDEO_TS.IFO.01" ofType:nil]];
+    
+	//Start of MainMenuInformation testing
+	
+	NSFileHandle* ifoHandle = [NSFileHandle fileHandleForReadingAtPath:[[NSBundle bundleForClass:[self class]] pathForResource:@"VIDEO_TS.IFO.01" ofType:nil]];
     STAssertTrue(ifoHandle != nil, @"Unable to open a file handle for the resource.");
     
     id<DKDataSource> dataSource = [[[DKFileHandleDataSource alloc] initWithFileHandle:ifoHandle] autorelease];
@@ -732,7 +735,6 @@
     
     NSError* error = nil;
     DKMainMenuInformation* mainMenuInformation = [DKMainMenuInformation mainMenuInformationWithDataSource:dataSource error:&error];
-    DKMainMenuInformation* mainMenuInformation2ndLoad = [DKMainMenuInformation mainMenuInformationWithDataSource:dataSource error:&error];
     
 	STAssertTrue(!error, @"VIDEO_TS.IFO.01 should decode without errors.");
     STAssertTrue(mainMenuInformation != nil, @"mainMenuInformation should not be nil.");
@@ -1476,7 +1478,7 @@
 			}
 			default:
 				break;
-		}
+		}//switch
 		// Title 
 		STAssertTrue([[mainMenuInformation titleTrackSearchPointerTable] count] == 13, @"Title track search pointer count should be 13.");
 		
@@ -1485,13 +1487,54 @@
 		
 		
 		
+	}//for
+	
+	// Start of TitleSet Information testing
+	
+	
+	
+
+    error = nil;
+	uint16_t iNumberOfTitleSets = [mainMenuInformation numberOfTitleSets];
+	
+    for(int counter = 0;counter < iNumberOfTitleSets;counter++)
+	{
+		
+		DKTitleSetInformation* titleSetInformation = [DKTitleSetInformation titleSetInformationWithDataSource:dataSource index:counter error:&error];
+											  
+				
 	}
 	
+		
+	
+	STAssertTrue(!error, @"VIDEO_TS.IFO.01 should decode without errors.");
+    STAssertTrue(mainMenuInformation != nil, @"mainMenuInformation should not be nil.");
 	
 	
-	//isEqual testing
+	// Saving out our data
+	NSError* errorObj;
+	uint32_t iBitVectorSize = CFBitVectorGetCount([mainMenuInformation menuVobuAddressMap]);
+	
+	NSData* menuObject = [mainMenuInformation saveAsData:&errorObj lengthOfMenuVOB:iBitVectorSize];
+	// We now write the data to a temp file
+	[menuObject writeToFile:@"/var/tmp/file.ifo" options:0 error:&error];
+	
+	
+	
+	//IsEqual testing
+	NSFileHandle* ifoTempHandle = [NSFileHandle fileHandleForReadingAtPath:@"/var/tmp/file.ifo" ];
+    STAssertTrue(ifoHandle != nil, @"Unable to open a file handle for the resource.");
+    
+    id<DKDataSource> tempDataSource = [[[DKFileHandleDataSource alloc] initWithFileHandle:ifoTempHandle] autorelease];
+    STAssertTrue(tempDataSource != nil, @"Unable to create a data source.");
+    
+    error = nil;
+    DKMainMenuInformation* mainMenuInformation2ndLoad = [DKMainMenuInformation mainMenuInformationWithDataSource:tempDataSource error:&error];
+	STAssertTrue(error == nil, @"Unable to create a MainMenuInformation instance.");
+	
 	STAssertTrue([mainMenuInformation isEqual:mainMenuInformation2ndLoad] == YES, @"isEqual should return true.");
 	
+	[ifoTempHandle release];
 	
 	
 	

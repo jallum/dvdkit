@@ -42,35 +42,28 @@
     return self;
 }
 
-- (BOOL) isEqual:(id)anObject
+- (BOOL) isEqual:(DKAudioAttributes*)anObject
 {
+	if (self == anObject) {
+        return YES;
+	}
+	else return
+		(
+		 [self class] == [anObject class]
+		 && (anObject->audio_format == audio_format)
+		 && (anObject->has_multichannel_extension == has_multichannel_extension)
+		 && (anObject->application_mode == application_mode)
+		 && (anObject->quantization == quantization)
+		 && (anObject->sample_frequency == sample_frequency)
+		 && (anObject->channels == channels)
+		 && (anObject->lang_code  == lang_code)
+		 && (anObject->lang_extension == lang_extension)
+		 && (anObject->code_extension == code_extension)
+		 && (anObject->app_info_value == app_info_value)	
+		 
+		 );
 	
-	DKAudioAttributes* audioAttributesObject = (DKAudioAttributes*)anObject;
-	
-	if([audioAttributesObject audio_format] != audio_format)
-		return NO;
-	if([audioAttributesObject has_multichannel_extension] != has_multichannel_extension)
-		return NO;
-	if([audioAttributesObject application_mode] != application_mode)
-		return NO;
-	if([audioAttributesObject quantization] != quantization)
-	   return NO;
-	if([audioAttributesObject sample_frequency] != sample_frequency)
-		return NO;
-	if([audioAttributesObject channels] != channels)
-		return NO;
-	if([audioAttributesObject lang_code] != lang_code)
-		return NO;
-	if([audioAttributesObject lang_extension] != lang_extension)
-		return NO;
-	if([audioAttributesObject code_extension] != code_extension)
-		return NO;
-	if([audioAttributesObject app_info_value] != app_info_value)
-		return NO;
-	
-	
-	return YES;
-	
+		
 }
 
 - (NSData*) saveAsData:(NSError**)_error
