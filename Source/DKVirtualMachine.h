@@ -41,7 +41,6 @@
     struct {
         BOOL enabled;
         int cell;
-        int vts;
         DKDomain domain;
         uint32_t REGS[5];
     } resume;
@@ -54,7 +53,6 @@
     DKProgramChain* programChain;
     int programNumber;
     int instructionCounter;
-    DKTitleTrackSearchPointer* titleInformation;
     int cell;
     /**/
     id userInfo;

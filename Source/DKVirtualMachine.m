@@ -35,7 +35,6 @@ enum {
     PGC_START,
     PGC_PRE_COMMANDS,
     PGC_BREAK,
-    PGC_PROGRAM,
     PGC_CELL,
     PGC_PGN_SET,
     PGC_CELL_POST,
@@ -116,7 +115,6 @@ enum {
     [mainMenuInformation release];
     [titleSet release];
     [programChain release];
-    [titleInformation release];
     [userInfo release];
     [delegate release];
     [super dealloc];
@@ -130,7 +128,6 @@ enum {
         [copy->mainMenuInformation retain];
         [copy->titleSet retain];
         [copy->programChain retain];
-        [copy->titleInformation retain];
         [copy->userInfo retain];
         [copy->delegate retain];
     }
@@ -189,7 +186,7 @@ enum {
 
 - (id) state
 {
-    NSMutableData* data = [NSMutableData dataWithLength:(3 * 4) + (16 * 2) + (4 * 2) + (3 * 2) + (5 * 2)];
+    NSMutableData* data = [NSMutableData dataWithLength:(3 * 4) + (16 * 2) + (4 * 2) + (2 * 2) + (5 * 2)];
     uint8_t* bytes = [data mutableBytes];
     
     OSWriteBigInt32(bytes, 0, SPRM_mask);
@@ -209,8 +206,7 @@ enum {
 
     OSWriteBigInt16(bytes, 0, resume.enabled);
     OSWriteBigInt16(bytes, 2, resume.cell);
-    OSWriteBigInt16(bytes, 4, resume.vts);
-    bytes += 3 * 2;
+    bytes += 2 * 2;
 
     for (int i = 0; i < 5; i++, bytes += 2) {
         OSWriteBigInt16(bytes, 0, resume.REGS[i]);
@@ -258,18 +254,9 @@ enum {
                 case PGC_PRE_COMMANDS: {
                     [self executeCommands:[programChain preCommands] withState:PGC_PRE_COMMANDS];
                     if (state == PGC_PRE_COMMANDS || state == PGC_BREAK) {
-                        state = PGC_PROGRAM;
-                    }
-                    break;
-                }
-                
-                case PGC_PROGRAM: {
-                    if (domain == kDKDomainVideoTitleSet) {
-                        programNumber = [[[[titleSet partOfTitleSearchTable] objectAtIndex:(SPRM[5] - 1)] objectAtIndex:(SPRM[7] - 1)] programNumber];
-                    } else {
+                        state = PGC_PGN_SET;
                         programNumber = 1;
                     }
-                    state = PGC_PGN_SET;
                     break;
                 }
                 
@@ -300,7 +287,7 @@ enum {
                     } else {
                         programNumber = newProgramNumber;
                         if (domain == kDKDomainVideoTitleSet) {
-                            SPRM[7] = [DKVirtualMachine partOfTitleForProgramNumber:programNumber usingSearchTable:[[titleSet partOfTitleSearchTable] objectAtIndex:(SPRM[5] - 1)]];
+                            SPRM[7] = [DKVirtualMachine partOfTitleForProgramNumber:programNumber usingSearchTable:[[titleSet partOfTitleSearchTable] objectAtIndex:SPRM[4] - 1]];
                         }
                         state = PGC_CELL_POST;
                         return [[[cellPlaybackTable objectAtIndex:(cell - 1)] retain] autorelease];
@@ -433,14 +420,13 @@ enum {
 
 - (void) executeJumpTT:(uint8_t)tt
 {
-    [titleInformation release];
-    titleInformation = [[[[self mainMenuInformation] titleTrackSearchPointerTable] objectAtIndex:(tt - 1)] retain];
-    SPRM[4] = [titleInformation index];
+    DKTitleTrackSearchPointer* titleInformation = [[[self mainMenuInformation] titleTrackSearchPointerTable] objectAtIndex:(tt - 1)];
     uint16_t vts = [titleInformation title_set_nr];
     uint16_t ttn = [titleInformation vts_ttn];
     if (!titleSet || [titleSet index] != vts) {
         [titleSet release];
         titleSet = [[dataSource titleSetInformationAtIndex:vts] retain];
+        SPRM[5] = vts;
     }
     [self executeJumpVTS_TT:ttn];
 }
@@ -452,7 +438,7 @@ enum {
 
 - (void) executeJumpVTS_PTT:(uint8_t)ttn pttn:(uint16_t)pttn
 {
-    if (SPRM[4] != [titleInformation index]) {
+    if (SPRM[5] != [titleSet index]) {
         state = STOP;
         return;
     }
@@ -469,9 +455,10 @@ enum {
         resume.enabled &= (domain == kDKDomainVideoTitleSet);
         domain = kDKDomainVideoTitleSet;
         /**/
-        SPRM[5] = ttn;
+        SPRM[4] = ttn;
         SPRM[6] = [partOfTitle programChainNumber];
         SPRM[7] = pttn;
+        programNumber = partOfTitle.programNumber;
         /**/
         state = PGC_CHANGED;
     }
@@ -493,8 +480,6 @@ enum {
     } else {
         vts = [titleSet index];
     }
-    [titleInformation release];
-    titleInformation = [[[self mainMenuInformation] titleTrackSearchPointerForTitleSet:vts track:ttn] retain];
     resume.enabled &= (domain == kDKDomainVideoTitleSetMenu);
     domain = kDKDomainVideoTitleSetMenu;
     DKProgramChainSearchPointer* foundSearchPointer = nil;
@@ -509,8 +494,8 @@ enum {
     if (!foundSearchPointer) {
         state = STOP;
     } else {
-        SPRM[4] = [titleInformation index];
-        SPRM[5] = ttn;
+        SPRM[4] = ttn;
+        SPRM[5] = vts;
         SPRM[6] = 1 + [pgcit indexOfObject:foundSearchPointer];
         SPRM[7] = 0;
         /**/
@@ -536,8 +521,6 @@ enum {
     } else {
         [titleSet release];
         titleSet = nil;
-        [titleInformation release];
-        titleInformation = nil;
         /**/
         SPRM[4] = 0;
         SPRM[5] = 0;
@@ -554,8 +537,6 @@ enum {
     domain = kDKDomainVideoManagerMenu;
     [titleSet release];
     titleSet = nil;
-    [titleInformation release];
-    titleInformation = nil;
     /**/
     SPRM[4] = 0;
     SPRM[5] = 0;
@@ -567,14 +548,10 @@ enum {
 
 - (BOOL) _saveResumeInfoWithCell:(int)_cell
 {
-    int vts;
-    if (!titleInformation) {
-        return NO;
-    } else if (0 == (vts = [titleInformation title_set_nr]) || vts > 99) {
+    if (domain != kDKDomainVideoTitleSet && domain != kDKDomainVideoTitleSetMenu) {
         return NO;
     } else {
         resume.domain = domain;
-        resume.vts = vts;
         resume.cell = _cell;
         for (int i = 0; i < 5; i++) {
             resume.REGS[i] = SPRM[4 + i];
@@ -729,10 +706,10 @@ enum {
             SPRM[4 + i] = resume.REGS[i];
         }
         domain = resume.domain;
-        if (resume.vts != [titleSet index]) {
+        if (SPRM[5] != [titleSet index]) {
             [titleSet release];
             if (domain == kDKDomainVideoTitleSet) {
-                titleSet = [[dataSource titleSetInformationAtIndex:resume.vts] retain];
+                titleSet = [[dataSource titleSetInformationAtIndex:SPRM[5]] retain];
             } else {
                 titleSet = nil;
             }
