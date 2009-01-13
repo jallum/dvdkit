@@ -613,7 +613,7 @@ enum {
     } else if (!titleSet) {
         state = STOP;
     } else {
-        DKPartOfTitle* partOfTitle = [[[titleSet partOfTitleSearchTable] objectAtIndex:(SPRM[5] - 1)] objectAtIndex:(pttn - 1)];
+        DKPartOfTitle* partOfTitle = [[[titleSet partOfTitleSearchTable] objectAtIndex:(SPRM[4] - 1)] objectAtIndex:(pttn - 1)];
         SPRM[6] = [partOfTitle programChainNumber];
         SPRM[7] = pttn;
         /**/
