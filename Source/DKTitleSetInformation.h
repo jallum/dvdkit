@@ -51,6 +51,7 @@
 - (id) initWithDataSource:(id<DKDataSource>)dataSource index:(uint16_t)index error:(NSError**)error;
 
 @property (readonly) NSInteger index;
+@property (assign) uint16_t specificationVersion;
 @property (assign) uint32_t categoryAndMask;
 @property (retain) NSArray* partOfTitleSearchTable;
 

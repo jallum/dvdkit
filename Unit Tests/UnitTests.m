@@ -1489,27 +1489,7 @@
 		
 	}//for
 	
-	// Start of TitleSet Information testing
-	
-	
-	
-
-    error = nil;
-	uint16_t iNumberOfTitleSets = [mainMenuInformation numberOfTitleSets];
-	
-    for(int counter = 0;counter < iNumberOfTitleSets;counter++)
-	{
 		
-		DKTitleSetInformation* titleSetInformation = [DKTitleSetInformation titleSetInformationWithDataSource:dataSource index:counter error:&error];
-											  
-				
-	}
-	
-		
-	
-	STAssertTrue(!error, @"VIDEO_TS.IFO.01 should decode without errors.");
-    STAssertTrue(mainMenuInformation != nil, @"mainMenuInformation should not be nil.");
-	
 	
 	// Saving out our data
 	NSError* errorObj;
@@ -1519,9 +1499,6 @@
 	// We now write the data to a temp file
 	[menuObject writeToFile:@"/var/tmp/file.ifo" options:0 error:&error];
 	
-	
-	
-	//IsEqual testing
 	NSFileHandle* ifoTempHandle = [NSFileHandle fileHandleForReadingAtPath:@"/var/tmp/file.ifo" ];
     STAssertTrue(ifoHandle != nil, @"Unable to open a file handle for the resource.");
     
@@ -1535,8 +1512,243 @@
 	STAssertTrue([mainMenuInformation isEqual:mainMenuInformation2ndLoad] == YES, @"isEqual should return true.");
 	
 	[ifoTempHandle release];
+	NSFileManager* defaultManager = [NSFileManager defaultManager];
+	[defaultManager removeItemAtPath:@"/var/tmp/file.ifo" error:&error];
+	
+									 
+	
+	// Start of TitleSet Information testing
 	
 	
+	ifoHandle = [NSFileHandle fileHandleForReadingAtPath:[[NSBundle bundleForClass:[self class]] pathForResource:@"VTS_01_0.IFO" ofType:nil]];
+    STAssertTrue(ifoHandle != nil, @"Unable to open a file handle for the resource.");
+    
+    dataSource = [[[DKFileHandleDataSource alloc] initWithFileHandle:ifoHandle] autorelease];
+    STAssertTrue(dataSource != nil, @"Unable to create a data source.");
+    
+    error = nil;
+	
+	
+	
+	
+	/*
+	 Title set array processing
+	 */
+	
+    for(int count = 0;count < [mainMenuInformation numberOfTitleSets]; count++)
+	{
+		 DKTitleSetInformation* titleSetInformation = [DKTitleSetInformation titleSetInformationWithDataSource:dataSource index:count+1 error:&error];
+		
+		// Specification version number should be 0.0
+		STAssertTrue([titleSetInformation specificationVersion] == 16, @"Specification version number should be 1.0.");
+		
+		// Category and Mask
+	//	STAssertTrue([mainMenuInformation categoryAndMask] == 0x00000000, @"Category/Mask should be 0x00000000.");
+		/*
+		Video attributes for Menu
+		*/
+		
+		// Video compression should be mpeg-2
+		STAssertTrue([[titleSetInformation menuVideoAttributes] mpeg_version] == kDKMPEGVersion2, @"Video compression should be MPEG-2.");
+		
+		// Video format should be NTSC
+		STAssertTrue([[titleSetInformation menuVideoAttributes] video_format] == kDKVideoFormatNTSC, @"Video format should be NTSC.");
+		
+		// Display aspect ratio should be 16:9
+		STAssertTrue([[titleSetInformation menuVideoAttributes] display_aspect_ratio] ==  kDKAspectRatio16By9, @"Aspect ratio should be 16:9.");
+		//Todo:  check on film mode
+		
+		// Letterboxed should be true
+		// Todo:  This looks to be true when dumped out using ifo_dump, but we are returning false.  Need to research this.
+		//STAssertTrue([[mainMenuInformation menuVideoAttributes] letterboxed] ==  YES, @"Letterboxed should be true.");
+		
+		// Picture size should be 720x480
+		STAssertTrue([[titleSetInformation menuVideoAttributes] picture_size] ==  kDKPictureSize720x480, @"Picture size should be 720x480.");
+		
+		// Bit rate should be variable
+		STAssertTrue([[titleSetInformation menuVideoAttributes] constantBitRate] ==  NO, @"Bit rate should be variable.");
+		
+		
+		/*
+			Audio attributes for menu
+		 
+		 */
+		
+		STAssertTrue([[titleSetInformation menuAudioAttributes] count] == 1, @"Audio stream count should be 1.");
+		
+		DKAudioAttributes* titleAudioAttributes = [[titleSetInformation menuAudioAttributes] objectAtIndex:0];  
+		// Audio format should be AC3
+		STAssertTrue([titleAudioAttributes audio_format] == kDKAudioFormatAC3, @"Audio stream format should be AC3.");
+		
+		// Multichannel extension should be false
+		STAssertTrue([titleAudioAttributes has_multichannel_extension] == NO, @"Multichannel extension should be false.");
+		
+		
+		// Application mode should be unspecified
+		STAssertTrue([titleAudioAttributes application_mode] ==  kDKAudioApplocationModeUnspecified, @"Application extension should be unspecified.");
+		
+		// Quantization should be three
+		//Note:  I wasn't able to get the quantization value from ifo_dump, so I'm not sure if this is correct or not
+		STAssertTrue([titleAudioAttributes quantization] ==  3, @"Quantization should be 3.");
+		
+		// Sampling frequency should be 48kbps
+		// The sample frequency value is zero, so this assert is failing
+		
+		STAssertTrue([titleAudioAttributes sample_frequency] == kDKAudioSamplingRate48KHz, @"Sampling rate should be 48kbps.");
+		
+		// Channels should be two
+		STAssertTrue([titleAudioAttributes channels] ==  2, @"Number of channels should be 2.");
+		
+		// Language code should be zero
+		STAssertTrue([titleAudioAttributes lang_code] ==  0, @"Language code should be 0.");
+		
+		// Language extension should be zero
+		STAssertTrue([titleAudioAttributes lang_extension] ==  0, @"Language extension should be 0.");
+		
+		// Code extension should be zero
+		STAssertTrue([titleAudioAttributes code_extension] ==  0, @"Code extension should be 0.");
+		
+		// Application information should be zero
+		STAssertTrue([titleAudioAttributes app_info_value] ==  0, @"Application information should be 0.");
+		
+		/*
+		 Subpicture 
+		 */
+		
+		// Number of subpicture streams should be 1
+		STAssertTrue([[titleSetInformation menuSubpictureAttributes] code_mode] ==  0, @"Subpicture stream count should be 1.");
+		
+		/* Video attributes for VTSM
+		 */
+		DKVideoAttributes* vtsmVideoAttributes = [titleSetInformation videoAttributes];
+		
+		// Video compression should be mpeg-2
+		STAssertTrue([vtsmVideoAttributes mpeg_version] == kDKMPEGVersion2, @"Video compression should be MPEG-2.");
+		
+		// Video format should be NTSC
+		STAssertTrue([vtsmVideoAttributes video_format] == kDKVideoFormatNTSC, @"Video format should be NTSC.");
+		
+		// Display aspect ratio should be 16:9
+		STAssertTrue([vtsmVideoAttributes display_aspect_ratio] ==  kDKAspectRatio16By9, @"Aspect ratio should be 16:9.");
+		//Todo:  check on film mode
+		
+		// Letterboxed should be true
+		// Todo:  This looks to be true when dumped out using ifo_dump, but we are returning false.  Need to research this.
+		//STAssertTrue([[mainMenuInformation menuVideoAttributes] letterboxed] ==  YES, @"Letterboxed should be true.");
+		
+		// Picture size should be 720x480
+		STAssertTrue([vtsmVideoAttributes picture_size] ==  kDKPictureSize720x480, @"Picture size should be 720x480.");
+		
+		// Bit rate should be variable
+		STAssertTrue([vtsmVideoAttributes constantBitRate] ==  NO, @"Bit rate should be variable.");
+		
+		
+		/*
+		 Audio attributes array processing
+		 
+		 */
+		
+		for(int count = 0;count < [[titleSetInformation audioAttributes] count];count++)
+		{
+			
+			DKAudioAttributes* vtsmAudioAttributes = [[titleSetInformation audioAttributes] objectAtIndex:count];
+			
+			// Audio format should be AC3
+			STAssertTrue([vtsmAudioAttributes audio_format] == kDKAudioFormatAC3, @"Audio stream format should be AC3.");
+			
+			// Multichannel extension should be false
+			STAssertTrue([vtsmAudioAttributes has_multichannel_extension] == NO, @"Multichannel extension should be false.");
+			
+			
+			// Application mode should be unspecified
+			STAssertTrue([vtsmAudioAttributes application_mode] ==  kDKAudioApplocationModeUnspecified, @"Application extension should be unspecified.");
+			
+			// Quantization should be three
+			//Note:  I wasn't able to get the quantization value from ifo_dump, so I'm not sure if this is correct or not
+			STAssertTrue([vtsmAudioAttributes quantization] ==  3, @"Quantization should be 3.");
+			
+			// Sampling frequency should be 48kbps
+			// The sample frequency value is zero, so this assert is failing
+			
+			STAssertTrue([vtsmAudioAttributes sample_frequency] == kDKAudioSamplingRate48KHz, @"Sampling rate should be 48kbps.");
+			
+			// Channels should be 6 on first entry, 2 on all others
+			if(count == 0)
+			STAssertTrue([vtsmAudioAttributes channels] ==  6, @"Number of channels should be 6.");
+			else
+				STAssertTrue([vtsmAudioAttributes channels] ==  2, @"Number of channels should be 2.");
+			
+			// Language code should be en, except for the third entry
+			if(count == 2)
+				STAssertTrue([vtsmAudioAttributes lang_code] ==  25971, @"Language code should be 25971.");
+			else
+				STAssertTrue([vtsmAudioAttributes lang_code] ==  25966, @"Language code should be 25966.");
+			
+			
+			
+			// Language extension should be zero
+			STAssertTrue([vtsmAudioAttributes lang_extension] ==  0, @"Language extension should be 0.");
+			
+			// Code extension should be zero
+			STAssertTrue([vtsmAudioAttributes code_extension] ==  1, @"Code extension should be 1.");
+			
+			// Application information should be zero
+			STAssertTrue([vtsmAudioAttributes app_info_value] ==  0, @"Application information should be 0.");
+			
+						
+		}
+		
+		
+		/*
+		 Subpicture attributes array processing
+		 
+		 */
+		
+		for(int count = 0;count < [[titleSetInformation subpictureAttributes] count];count++)
+		{
+			
+			DKSubpictureAttributes* vtsmSubPictureAttributes = [[titleSetInformation subpictureAttributes] objectAtIndex:count];
+			STAssertTrue([vtsmSubPictureAttributes code_mode ] ==  0, @"Code mode should be 0.");
+			if(count == 2)
+				STAssertTrue([vtsmSubPictureAttributes lang_code ] ==  25971, @"Lang code should be 25971.");
+			else
+				STAssertTrue([vtsmSubPictureAttributes lang_code ] ==  25966, @"Lang code should be 0.");
+			
+			
+		}
+		
+		// For each title, we test saving out to disk, and initializing another instance with the saved data.  We then compare the two instances, asserting on equality
+		// Saving out our title set data
+		NSError* errorObj;
+		iBitVectorSize = CFBitVectorGetCount([titleSetInformation vobuAddressMap]);
+		uint32_t iBitVectorSizeMenuVOB = CFBitVectorGetCount([titleSetInformation menuVobuAddressMap]);
+		
+		NSData* titleObject = [titleSetInformation saveAsData:&error lengthOfMenuVOB:iBitVectorSizeMenuVOB lengthOfVideoVOB:iBitVectorSize];
+		// We now write the data to a temp file
+		[titleObject writeToFile:@"/var/tmp/vts_file.ifo" options:0 error:&error];
+		
+		ifoTempHandle = [NSFileHandle fileHandleForReadingAtPath:@"/var/tmp/vts_file.ifo" ];
+		STAssertTrue(ifoHandle != nil, @"Unable to open a file handle for the resource.");
+		
+		tempDataSource = [[[DKFileHandleDataSource alloc] initWithFileHandle:ifoTempHandle] autorelease];
+		STAssertTrue(tempDataSource != nil, @"Unable to create a data source.");
+		
+		error = nil;
+		DKTitleSetInformation* titleSetInformation2ndLoad = [DKTitleSetInformation titleSetInformationWithDataSource:tempDataSource index:count+1 error:&error] ;
+		
+		STAssertTrue(error == nil, @"Unable to create a MainMenuInformation instance.");
+		
+		STAssertTrue([titleSetInformation isEqual:titleSetInformation2ndLoad] == YES, @"isEqual should return true.");
+		
+		[ifoTempHandle release];
+		[titleSetInformation release];
+		[titleSetInformation2ndLoad release];
+		
+		[defaultManager removeItemAtPath:@"/var/tmp/vts_file.ifo" error:&error];
+		
+		
+   	}
+   
 	
 	
 	
