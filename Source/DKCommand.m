@@ -29,9 +29,6 @@ NSString* const DKCommandException = @"DKCommand";
 @synthesize mask;
 @synthesize row;
 
-
-
-
 + (id) commandWith64Bits:(uint64_t)bits
 {
     return [DKCommand commandWith64Bits:bits row:-1];
@@ -80,24 +77,15 @@ NSString* const DKCommandException = @"DKCommand";
     [super dealloc];
 }
 
-- (BOOL) isEqual:(id)anObject
+- (BOOL) isEqual:(DKCommand*)anObject
 {
-	DKCommand* commandObject = (DKCommand*)anObject;
-	if([commandObject bits] != bits)
-		return NO;
-	
-	if([commandObject mask] != mask)
-		return NO;
-	
-	if([commandObject row] != row)
-		return NO;
-	
-	if([[commandObject description] isEqual:description] == NO)
-		return NO;
-	
-	return YES;
-	
-	
+    if (self == anObject) {
+        return YES;
+    } else return (
+        [self class] == [anObject class]
+        && anObject->bits == bits
+        && anObject->row == row
+    );
 }
 
 - (void) executeAgainstVirtualMachine:(DKVirtualMachine*)virtualMachine

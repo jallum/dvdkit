@@ -57,4 +57,15 @@
     return data;
 }
 
+- (BOOL) isEqual:(DKPartOfTitle*)anObject
+{
+    if (self == anObject) {
+        return YES;
+    } else return (
+        [self class] == [anObject class]
+        && anObject->programNumber == programNumber
+        && anObject->programChainNumber == programChainNumber
+    );
+}
+
 @end

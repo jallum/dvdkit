@@ -47,4 +47,16 @@
     [super dealloc];
 }
 
+- (BOOL) isEqual:(DKProgramChainSearchPointer*)anObject
+{
+    if (self == anObject) {
+        return YES;
+    } else return (
+        [self class] == [anObject class]
+        && anObject->entryId == entryId
+        && anObject->ptl_id_mask == ptl_id_mask
+        && [anObject->programChain isEqual:programChain]
+    );
+}
+
 @end

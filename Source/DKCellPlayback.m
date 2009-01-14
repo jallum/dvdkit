@@ -89,7 +89,7 @@ NSString* const DVDCellPlaybackException = @"DVDCellPlayback";
     NSMutableData* data = [NSMutableData dataWithLength:sizeof(cell_playback_t)];
     cell_playback_t* cell_playback = [data mutableBytes];
 
-    cell_playback->flags.seamless_play = seamless_angle;
+    cell_playback->flags.seamless_angle = seamless_angle;
     cell_playback->flags.stc_discontinuity = stc_discontinuity;
     cell_playback->flags.interleaved = interleaved;
     cell_playback->flags.seamless_play = seamless_play;
@@ -112,6 +112,30 @@ NSString* const DVDCellPlaybackException = @"DVDCellPlayback";
     OSWriteBigInt32(&cell_playback->last_sector, 0, lastSector);
     
     return data;
+}
+
+- (BOOL) isEqual:(DKCellPlayback*)anObject
+{
+    if (self == anObject) {
+        return YES;
+    } else return (
+        [self class] == [anObject class]
+        && anObject->seamless_angle == seamless_angle
+        && anObject->stc_discontinuity == stc_discontinuity
+        && anObject->interleaved == interleaved
+        && anObject->seamless_play == seamless_play
+        && anObject->blockType == blockType
+        && anObject->blockMode == blockMode
+        && anObject->restricted == restricted
+        && anObject->playback_mode == playback_mode
+        && 0 == memcmp(&anObject->playbackTime, &playbackTime, sizeof(playbackTime))
+        && anObject->stillTime == stillTime
+        && anObject->postCommandIndex == postCommandIndex
+        && anObject->firstSector == firstSector
+        && anObject->firstInterleavingUnitSector == firstInterleavingUnitSector
+        && anObject->lastVideoObjectUnitStartSector == lastVideoObjectUnitStartSector
+        && anObject->lastSector == lastSector
+    );
 }
 
 @end

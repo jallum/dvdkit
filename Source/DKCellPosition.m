@@ -68,4 +68,15 @@
     return data;
 }
 
+- (BOOL) isEqual:(DKCellPosition*)anObject
+{
+    if (self == anObject) {
+        return YES;
+    } else return (
+        [self class] == [anObject class]
+        && anObject->number == number
+        && anObject->vobId == vobId
+    );
+}
+
 @end

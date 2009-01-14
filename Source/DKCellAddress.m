@@ -61,4 +61,17 @@
     return data;
 }
 
+- (BOOL) isEqual:(DKCellAddress*)anObject
+{
+    if (self == anObject) {
+        return YES;
+    } else return (
+        [self class] == [anObject class]
+        && anObject->vob_id == vob_id
+        && anObject->cell_id == cell_id
+        && anObject->start_sector == start_sector
+        && anObject->last_sector == last_sector
+    );
+}
+
 @end

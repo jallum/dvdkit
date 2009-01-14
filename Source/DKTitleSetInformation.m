@@ -73,33 +73,28 @@ NSString* const kDKTitleSetInformationSection_VTS_TMAPT         = @"vts_tmapt";
 
 - (BOOL) isEqual:(DKTitleSetInformation*)anObject
 {
-	
-       if (self == anObject) {
+    if (self == anObject) {
         return YES;
     } else return (
-				   [self class] == [anObject class]
-				   && (anObject->index == index)
-				   && (anObject->categoryAndMask == categoryAndMask)
-				   && [anObject->menuVideoAttributes isEqual:menuVideoAttributes]
-				   && [anObject->menuAudioAttributes isEqualToArray:menuAudioAttributes]
-				   && [anObject->menuSubpictureAttributes isEqual:menuSubpictureAttributes]
-				   && [anObject->menuProgramChainInformationTablesByLanguage isEqualToDictionary:menuProgramChainInformationTablesByLanguage]
-				   && [anObject->menuCellAddressTable isEqualToArray:menuCellAddressTable]
-				  // && (anObject->menuVobuAddressMap == menuVobuAddressMap) // Not sure on how to compare CFBitVectorRef objects
-				   && [anObject->videoAttributes isEqual:videoAttributes]
-				   && [anObject->audioAttributes isEqualToArray:audioAttributes]
-				   && [anObject->subpictureAttributes isEqualToArray:subpictureAttributes]
-				   && [anObject->programChainInformationTable isEqualToArray:programChainInformationTable]
-				   && [anObject->cellAddressTable isEqualToArray:cellAddressTable]
-				//   && (anObject->vobuAddressMap == vobuAddressMap)
-				   && [anObject->timeMapTable isEqual:timeMapTable]
-				   && [anObject->partOfTitleSearchTable isEqualToArray:partOfTitleSearchTable]
-				   && [anObject->preferredSectionOrder isEqualToArray:preferredSectionOrder]
-				   
-		
-		);
+        [self class] == [anObject class]
+        && (anObject->index == index)
+        && (anObject->categoryAndMask == categoryAndMask)
+        && [anObject->menuVideoAttributes isEqual:menuVideoAttributes]
+        && [anObject->menuAudioAttributes isEqualToArray:menuAudioAttributes]
+        && [anObject->menuSubpictureAttributes isEqual:menuSubpictureAttributes]
+        && [anObject->menuProgramChainInformationTablesByLanguage isEqualToDictionary:menuProgramChainInformationTablesByLanguage]
+        && [anObject->menuCellAddressTable isEqualToArray:menuCellAddressTable]
+        && CFEqual(anObject->menuVobuAddressMap, menuVobuAddressMap)
+        && [anObject->videoAttributes isEqual:videoAttributes]
+        && [anObject->audioAttributes isEqualToArray:audioAttributes]
+        && [anObject->subpictureAttributes isEqualToArray:subpictureAttributes]
+        && [anObject->programChainInformationTable isEqualToArray:programChainInformationTable]
+        && [anObject->cellAddressTable isEqualToArray:cellAddressTable]
+        && CFEqual(anObject->vobuAddressMap, vobuAddressMap)
+        && [anObject->timeMapTable isEqual:timeMapTable]
+        && [anObject->partOfTitleSearchTable isEqualToArray:partOfTitleSearchTable]
+    );
 }
-
 
 + (NSArray*) availableSections
 {

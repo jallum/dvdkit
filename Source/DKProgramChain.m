@@ -203,106 +203,52 @@ static NSArray* NO_ELEMENTS;
     [super dealloc];
 }
 
-- (BOOL) isEqual:(id)anObject
+- (BOOL) isEqual:(DKProgramChain*)anObject
 {
-	
-	DKProgramChain* programChainObject = (DKProgramChain*)anObject;
-	
-	if([programChainObject playback_time].frame_u != playback_time.frame_u)
-		return NO;
-	if([programChainObject playback_time].hour != playback_time.hour)
-		return NO;
-	
-	if([programChainObject playback_time].minute != playback_time.minute)
-		return NO;
-	
-	if([programChainObject playback_time].second != playback_time.second)
-		return NO;
-	
-	
-	if([programChainObject prohibitedUserOperations].__zero_1 != prohibitedUserOperations.__zero_1)
-		return NO;
-	if([programChainObject prohibitedUserOperations].angle_change != prohibitedUserOperations.angle_change)
-		return NO;
-	if([programChainObject prohibitedUserOperations].angle_menu_call != prohibitedUserOperations.angle_menu_call)
-		return NO;
-	if([programChainObject prohibitedUserOperations].audio_menu_call != prohibitedUserOperations.audio_menu_call)
-		return NO;
-	if([programChainObject prohibitedUserOperations].audio_stream_change != prohibitedUserOperations.audio_stream_change)
-		return NO;
-	if([programChainObject prohibitedUserOperations].backward_scan != prohibitedUserOperations.backward_scan)
-		return NO;
-	if([programChainObject prohibitedUserOperations].button_select_or_activate != prohibitedUserOperations.button_select_or_activate)
-		return NO;
-	if([programChainObject prohibitedUserOperations].chapter_menu_call != prohibitedUserOperations.chapter_menu_call)
-		return NO;
-	if([programChainObject prohibitedUserOperations].chapter_search_or_play != prohibitedUserOperations.chapter_search_or_play)
-		return NO;
-	if([programChainObject prohibitedUserOperations].forward_scan != prohibitedUserOperations.forward_scan)
-		return NO;
-	if([programChainObject prohibitedUserOperations].go_up != prohibitedUserOperations.go_up)
-		return NO;
-	if([programChainObject prohibitedUserOperations].karaoke_audio_pres_mode_change != prohibitedUserOperations.karaoke_audio_pres_mode_change)
-		return NO;
-	if([programChainObject prohibitedUserOperations].next_pg_search != prohibitedUserOperations.next_pg_search)
-		return NO;
-	if([programChainObject prohibitedUserOperations].pause_on != prohibitedUserOperations.pause_on)
-		return NO;
-	if([programChainObject prohibitedUserOperations].prev_or_top_pg_search != prohibitedUserOperations.prev_or_top_pg_search)
-		return NO;
-	if([programChainObject prohibitedUserOperations].resume != prohibitedUserOperations.resume)
-		return NO;
-	if([programChainObject prohibitedUserOperations].root_menu_call != prohibitedUserOperations.root_menu_call)
-		return NO;
-	if([programChainObject prohibitedUserOperations].still_off != prohibitedUserOperations.still_off)
-		return NO;
-	if([programChainObject prohibitedUserOperations].stop != prohibitedUserOperations.stop)
-		return NO;
-	if([programChainObject prohibitedUserOperations].subpic_menu_call != prohibitedUserOperations.subpic_menu_call)
-		return NO;
-	if([programChainObject prohibitedUserOperations].subpic_stream_change != prohibitedUserOperations.subpic_stream_change)
-		return NO;
-	if([programChainObject prohibitedUserOperations].time_or_chapter_search != prohibitedUserOperations.time_or_chapter_search)
-		return NO;
-	if([programChainObject prohibitedUserOperations].title_menu_call != prohibitedUserOperations.title_menu_call)
-		return NO;
-	if([programChainObject prohibitedUserOperations].title_or_time_play != prohibitedUserOperations.title_or_time_play)
-		return NO;
-	if([programChainObject prohibitedUserOperations].title_play != prohibitedUserOperations.title_play)
-		return NO;
-	if([programChainObject prohibitedUserOperations].video_pres_mode_change != prohibitedUserOperations.video_pres_mode_change)
-		return NO;
-	
-	
-	if([programChainObject nextProgramChainNumber] != nextProgramChainNumber)
-		return NO;
-	if([programChainObject previousProgramChainNumber] != previousProgramChainNumber)
-		return NO;
-	if([programChainObject goUpProgramChainNumber] != goUpProgramChainNumber)
-		return NO;
-	if([programChainObject still_time] != still_time)
-		return NO;
-	if([programChainObject pg_playback_mode] != pg_playback_mode)
-		return NO;
-	if([[programChainObject preCommands] isEqualToArray:preCommands] == NO)
-		return NO;
-	if([[programChainObject postCommands] isEqualToArray:postCommands] == NO)
-		return NO;
-	if([[programChainObject cellCommands] isEqualToArray:cellCommands] == NO)
-		return NO;
-	if([[programChainObject programMap] isEqualToArray:programMap] == NO)
-		return NO;
-	if([[programChainObject cellPlaybackTable] isEqualToArray:cellPlaybackTable] == NO)
-		return NO;
-	if([[programChainObject cellPositionTable] isEqualToArray:cellPositionTable] == NO)
-		return NO;
-	if([programChainObject userInfo] != userInfo)
-		return NO;
-	
-	
-	
-	return YES;
-	
+	if (self == anObject) {
+        return YES;
+    } else return (
+        [self class] == [anObject class]
+        && anObject->playback_time.frame_u == playback_time.frame_u
+        && anObject->playback_time.hour == playback_time.hour
+        && anObject->playback_time.minute == playback_time.minute
+        && anObject->playback_time.second == playback_time.second
+        && anObject->prohibitedUserOperations.angle_change == prohibitedUserOperations.angle_change
+        && anObject->prohibitedUserOperations.angle_menu_call == prohibitedUserOperations.angle_menu_call
+        && anObject->prohibitedUserOperations.audio_menu_call == prohibitedUserOperations.audio_menu_call
+        && anObject->prohibitedUserOperations.audio_stream_change == prohibitedUserOperations.audio_stream_change
+        && anObject->prohibitedUserOperations.backward_scan == prohibitedUserOperations.backward_scan
+        && anObject->prohibitedUserOperations.button_select_or_activate == prohibitedUserOperations.button_select_or_activate
+        && anObject->prohibitedUserOperations.chapter_menu_call == prohibitedUserOperations.chapter_menu_call
+        && anObject->prohibitedUserOperations.forward_scan == prohibitedUserOperations.forward_scan
+        && anObject->prohibitedUserOperations.go_up == prohibitedUserOperations.go_up
+        && anObject->prohibitedUserOperations.karaoke_audio_pres_mode_change == prohibitedUserOperations.karaoke_audio_pres_mode_change
+        && anObject->prohibitedUserOperations.next_pg_search == prohibitedUserOperations.next_pg_search
+        && anObject->prohibitedUserOperations.pause_on == prohibitedUserOperations.pause_on
+        && anObject->prohibitedUserOperations.prev_or_top_pg_search == prohibitedUserOperations.prev_or_top_pg_search
+        && anObject->prohibitedUserOperations.resume == prohibitedUserOperations.resume
+        && anObject->prohibitedUserOperations.root_menu_call == prohibitedUserOperations.root_menu_call
+        && anObject->prohibitedUserOperations.still_off == prohibitedUserOperations.still_off
+        && anObject->prohibitedUserOperations.stop == prohibitedUserOperations.stop
+        && anObject->prohibitedUserOperations.subpic_menu_call == prohibitedUserOperations.subpic_menu_call
+        && anObject->prohibitedUserOperations.subpic_stream_change == prohibitedUserOperations.subpic_stream_change
+        && anObject->prohibitedUserOperations.time_or_chapter_search == prohibitedUserOperations.time_or_chapter_search
+        && anObject->prohibitedUserOperations.title_menu_call == prohibitedUserOperations.title_menu_call
+        && anObject->prohibitedUserOperations.title_or_time_play == prohibitedUserOperations.title_or_time_play
+        && anObject->prohibitedUserOperations.title_play == prohibitedUserOperations.title_play
+        && anObject->prohibitedUserOperations.video_pres_mode_change == prohibitedUserOperations.video_pres_mode_change
+        && anObject->nextProgramChainNumber == nextProgramChainNumber
+        && anObject->previousProgramChainNumber == previousProgramChainNumber
+        && anObject->goUpProgramChainNumber == goUpProgramChainNumber
+        && anObject->still_time == still_time
+        && anObject->pg_playback_mode == pg_playback_mode
+        && (anObject->preCommands == preCommands || [anObject->preCommands isEqualToArray:preCommands])
+        && (anObject->cellCommands == cellCommands || [anObject->cellCommands isEqualToArray:cellCommands])
+        && (anObject->postCommands == postCommands || [anObject->postCommands isEqualToArray:postCommands])
+        && (anObject->programMap == programMap || [anObject->programMap isEqualToArray:programMap])
+        && (anObject->cellPlaybackTable == cellPlaybackTable || [anObject->cellPlaybackTable isEqualToArray:cellPlaybackTable])
+        && (anObject->cellPositionTable == cellPositionTable || [anObject->cellPositionTable isEqualToArray:cellPositionTable])
+    );
 }
 
 - (NSData*) saveAsData:(NSError**)error
