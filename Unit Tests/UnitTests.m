@@ -2,6 +2,7 @@
 #import <DVDKit/DVDKit.h>
 #import "DKFileHandleDataSource.h"
 #import <DVDKit/DKTitleTrackSearchPointer.h>
+#import "DKDataDataSource.h"
 
 @implementation UnitTests
 
@@ -1493,23 +1494,16 @@
 	
 	// Saving out our data
 	NSData* menuObject = [mainMenuInformation saveAsData:&error lengthOfMenuVOB:CFBitVectorGetCount([mainMenuInformation menuVobuAddressMap])];
-	// We now write the data to a temp file
-	[menuObject writeToFile:@"/var/tmp/file.ifo" options:0 error:&error];
-	
-	NSFileHandle* ifoTempHandle = [NSFileHandle fileHandleForReadingAtPath:@"/var/tmp/file.ifo" ];
-    STAssertTrue(ifoTempHandle != nil, @"Unable to open a file handle for the resource.");
-
-    id<DKDataSource> tempDataSource = [[[DKFileHandleDataSource alloc] initWithFileHandle:ifoTempHandle] autorelease];
+		
+	id<DKDataSource> tempDataSource = [[[DKDataDataSource alloc] initWithNSData:menuObject] autorelease];
     STAssertTrue(tempDataSource != nil, @"Unable to create a data source.");
-	
-    error = nil;
+	error = nil;
 
     DKMainMenuInformation* mainMenuInformation2ndLoad = [DKMainMenuInformation mainMenuInformationWithDataSource:tempDataSource error:&error];
 	STAssertTrue(error == nil, @"Unable to create a MainMenuInformation instance.");
 	STAssertTrue([mainMenuInformation isEqual:mainMenuInformation2ndLoad] == YES, @"isEqual should return true.");
 	
-	NSFileManager* defaultManager = [NSFileManager defaultManager];
-	[defaultManager removeItemAtPath:@"/var/tmp/file.ifo" error:&error];
+	
 }
 
 - (void) testLoadAndDecodeOf_VIDEO_01_0_IFO
@@ -1702,27 +1696,18 @@
         
     }
     
-    // For each title, we test saving out to disk, and initializing another instance with the saved data.  We then compare the two instances, asserting on equality
     // Saving out our title set data
-    
     NSData* titleObject = [titleSetInformation saveAsData:&error lengthOfMenuVOB:CFBitVectorGetCount([titleSetInformation menuVobuAddressMap]) lengthOfVideoVOB:CFBitVectorGetCount([titleSetInformation vobuAddressMap])];
-    // We now write the data to a temp file
-    [titleObject writeToFile:@"/var/tmp/vts_file.ifo" options:0 error:&error];
+      
     
-    NSFileHandle* ifoTempHandle = [NSFileHandle fileHandleForReadingAtPath:@"/var/tmp/vts_file.ifo" ];
-    STAssertTrue(ifoTempHandle != nil, @"Unable to open a file handle for the resource.");
-    
-    id<DKDataSource> tempDataSource = [[[DKFileHandleDataSource alloc] initWithFileHandle:ifoTempHandle] autorelease];
+    id<DKDataSource> tempDataSource = [[[DKDataDataSource alloc] initWithNSData:titleObject] autorelease];
     STAssertTrue(tempDataSource != nil, @"Unable to create a data source.");
-
     error = nil;
 
     DKTitleSetInformation* titleSetInformation2ndLoad = [DKTitleSetInformation titleSetInformationWithDataSource:tempDataSource index:1 error:&error];
     STAssertTrue(error == nil, @"Unable to create a MainMenuInformation instance.");
     STAssertTrue([titleSetInformation isEqual:titleSetInformation2ndLoad] == YES, @"isEqual should return true.");
     
-	NSFileManager* defaultManager = [NSFileManager defaultManager];
-    [defaultManager removeItemAtPath:@"/var/tmp/vts_file.ifo" error:&error];
 }
 
 

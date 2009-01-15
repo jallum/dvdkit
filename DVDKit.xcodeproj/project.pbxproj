@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		3C5DB13D0F1ED2D900F0E8B3 /* DKDataDataSource.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C5DB13C0F1ED2D900F0E8B3 /* DKDataDataSource.m */; };
 		3CD1BB100F1BACF10077E8F5 /* VTS_01_0.IFO in Resources */ = {isa = PBXBuildFile; fileRef = 3CD1BB0F0F1BACF10077E8F5 /* VTS_01_0.IFO */; };
 		8DC2EF530486A6940098B216 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C1666FE841158C02AAC07 /* InfoPlist.strings */; };
 		8DC2EF570486A6940098B216 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7B1FEA5585E11CA2CBB /* Cocoa.framework */; };
@@ -64,6 +65,8 @@
 		0867D6A5FE840307C02AAC07 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = /System/Library/Frameworks/AppKit.framework; sourceTree = "<absolute>"; };
 		089C1667FE841158C02AAC07 /* English */ = {isa = PBXFileReference; fileEncoding = 10; lastKnownFileType = text.plist.strings; name = English; path = English.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		1058C7B1FEA5585E11CA2CBB /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = /System/Library/Frameworks/Cocoa.framework; sourceTree = "<absolute>"; };
+		3C5DB13B0F1ED2D900F0E8B3 /* DKDataDataSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DKDataDataSource.h; sourceTree = "<group>"; };
+		3C5DB13C0F1ED2D900F0E8B3 /* DKDataDataSource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DKDataDataSource.m; sourceTree = "<group>"; };
 		3CD1BB0F0F1BACF10077E8F5 /* VTS_01_0.IFO */ = {isa = PBXFileReference; lastKnownFileType = file; path = VTS_01_0.IFO; sourceTree = "<group>"; };
 		8DC2EF5A0486A6940098B216 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		8DC2EF5B0486A6940098B216 /* DVDKit.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = DVDKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -232,6 +235,8 @@
 				F9694AF10EF94C40006A8F4D /* UnitTests.m */,
 				F9694B1F0EF96060006A8F4D /* DKFileHandleDataSource.h */,
 				F9694B200EF96060006A8F4D /* DKFileHandleDataSource.m */,
+				3C5DB13B0F1ED2D900F0E8B3 /* DKDataDataSource.h */,
+				3C5DB13C0F1ED2D900F0E8B3 /* DKDataDataSource.m */,
 			);
 			path = "Unit Tests";
 			sourceTree = "<group>";
@@ -397,6 +402,7 @@
 			files = (
 				F9694AF20EF94C40006A8F4D /* UnitTests.m in Sources */,
 				F9694B210EF96060006A8F4D /* DKFileHandleDataSource.m in Sources */,
+				3C5DB13D0F1ED2D900F0E8B3 /* DKDataDataSource.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
