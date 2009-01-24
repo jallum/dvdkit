@@ -61,14 +61,14 @@
 	if (self == anObject) {
         return YES;
     } else return (
-				   [self class] == [anObject class]
-				   && (anObject->nr_of_ptts == nr_of_ptts)
-				   && (anObject->parental_id == parental_id)
-				   && (anObject->title_set_sector == title_set_nr)
-				   && (anObject->vts_ttn == vts_ttn)
-				   && (anObject->nr_of_angles == nr_of_angles)
-				   && (anObject->index == index)
-				   );
+        [self class] == [anObject class]
+        && (anObject->nr_of_ptts == nr_of_ptts)
+        && (anObject->parental_id == parental_id)
+        && (anObject->title_set_sector == title_set_nr)
+        && (anObject->vts_ttn == vts_ttn)
+        && (anObject->nr_of_angles == nr_of_angles)
+        && (anObject->index == index)
+    );
 }
 
 - (NSData*) saveAsData:(NSError**)error

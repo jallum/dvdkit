@@ -137,7 +137,7 @@ NSString* const kDKManagerInformationSection_VMGM_VOBU_ADMAP  = @"vmgm_vobu_adma
         pointOfSaleCode = OSReadBigInt64(&vmgi_mat->vmg_pos_code, 0);
         providerId = [NSString stringWithCString:(const char*)&vmgi_mat->provider_identifier length:sizeof(vmgi_mat->provider_identifier)];
         
-        uint32_t vmgm_vobs = OSReadBigInt32(&vmgi_mat->vmgm_vobs, 0);
+//        uint32_t vmgm_vobs = OSReadBigInt32(&vmgi_mat->vmgm_vobs, 0);
         
         
         /*  Sanity checks / Data Repair
@@ -715,17 +715,10 @@ NSString* const kDKManagerInformationSection_VMGM_VOBU_ADMAP  = @"vmgm_vobu_adma
     
     NSAssert(([data length] & 0x07FF) == 0, @"Sections not sector-aligned?");
     uint32_t vmgiSectors = [data length] >> 11;
-    uint32_t vmgi_last_sector = vmgiSectors;
-    uint32_t vmgm_vobs = 0;
-    uint32_t vmg_last_sector = vmgi_last_sector;
-    if (lengthOfMenuVOB) {
-        vmgm_vobs = vmgi_last_sector;
-        vmg_last_sector += lengthOfMenuVOB;
-    }
-    vmg_last_sector += vmgiSectors;
-    OSWriteBigInt32(&vmgi_mat.vmgi_last_sector, 0, vmgi_last_sector - 1);
-    OSWriteBigInt32(&vmgi_mat.vmgm_vobs, 0, vmgm_vobs);
-    OSWriteBigInt32(&vmgi_mat.vmg_last_sector, 0, vmg_last_sector - 1);
+    OSWriteBigInt32(&vmgi_mat.vmgi_last_sector, 0, vmgiSectors - 1);
+    OSWriteBigInt32(&vmgi_mat.vmgm_vobs, 0, lengthOfMenuVOB ? vmgiSectors : 0);
+    OSWriteBigInt32(&vmgi_mat.vmg_last_sector, 0, vmgiSectors + lengthOfMenuVOB + vmgiSectors - 1);
+    
     
     if (errors) {
         int errorCount = [errors count];

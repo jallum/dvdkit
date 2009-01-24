@@ -721,27 +721,12 @@ NSString* const kDKTitleSetInformationSection_VTS_TMAPT         = @"vts_tmapt";
     
     NSAssert(([data length] & 0x07FF) == 0, @"Sections not sector-aligned?");
     uint32_t vtsiSectors = [data length] >> 11;
-    uint32_t vtsi_last_sector = vtsiSectors;
-    uint32_t vtsm_vobs = 0;
-    uint32_t vtstt_vobs = 0;
-    uint32_t vts_last_sector = vtsiSectors;
-    if (lengthOfMenuVOB > 0) {
-        vtsm_vobs = vts_last_sector;
-        vts_last_sector += lengthOfMenuVOB;
-        if (lengthOfVideoVOB) {
-            vtstt_vobs = vts_last_sector;
-            vts_last_sector += lengthOfVideoVOB;
-        }
-    } else if (lengthOfVideoVOB) {
-        vtstt_vobs = vts_last_sector;
-        vts_last_sector += lengthOfVideoVOB;
-    }
-    vts_last_sector += vtsiSectors;
-    OSWriteBigInt32(&vts_mat.vtsi_last_sector, 0, vtsi_last_sector - 1);
-    OSWriteBigInt32(&vts_mat.vtsm_vobs, 0, vtsm_vobs);
-    OSWriteBigInt32(&vts_mat.vtstt_vobs, 0, vtstt_vobs);
-    OSWriteBigInt32(&vts_mat.vts_last_sector, 0, vts_last_sector - 1);
+    OSWriteBigInt32(&vts_mat.vtsi_last_sector, 0, vtsiSectors - 1);
+    OSWriteBigInt32(&vts_mat.vtsm_vobs, 0, lengthOfMenuVOB ? vtsiSectors : 0);
+    OSWriteBigInt32(&vts_mat.vtstt_vobs, 0, lengthOfVideoVOB ? (vtsiSectors + lengthOfMenuVOB) : 0);
+    OSWriteBigInt32(&vts_mat.vts_last_sector, 0, vtsiSectors + lengthOfMenuVOB + lengthOfVideoVOB + vtsiSectors - 1);
     
+
     if (errors) {
         int errorCount = [errors count];
         if (0 == errorCount) {
@@ -752,6 +737,7 @@ NSString* const kDKTitleSetInformationSection_VTS_TMAPT         = @"vts_tmapt";
             *error = DKErrorWithCode(kDKMultipleErrorsError, errors, NSDetailedErrorsKey, nil);
         }
     }
+    
     
     memcpy([data mutableBytes], &vts_mat, sizeof(vts_mat_t));
     return data;
