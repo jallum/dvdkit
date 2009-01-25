@@ -45,7 +45,7 @@
     NSMutableData* titleSetAttributeTable;
     NSMutableDictionary* menuProgramChainInformationTablesByLanguage;
     NSMutableData* textData;
-    NSMutableArray* cellAddressTable;
+    NSMutableArray* menuCellAddressTable;
     CFBitVectorRef menuVobuAddressMap;
     /**/
     NSArray* preferredSectionOrder;
@@ -70,7 +70,7 @@
 @property (retain) NSArray* titleTrackSearchPointerTable;
 @property (retain) NSDictionary* menuProgramChainInformationTablesByLanguage;
 @property (readonly) uint16_t regionMask;
-@property (retain) NSArray* cellAddressTable;
+@property (retain) NSArray* menuCellAddressTable;
 @property (assign) CFBitVectorRef menuVobuAddressMap;
 @property (retain) NSData* titleSetAttributeTable;
 

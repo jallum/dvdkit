@@ -96,6 +96,32 @@ NSString* const kDKTitleSetInformationSection_VTS_TMAPT         = @"vts_tmapt";
     );
 }
 
+- (void) setMenuVobuAddressMap:(CFBitVectorRef)_menuVobuAddressMap
+{
+    if (menuVobuAddressMap != _menuVobuAddressMap) {
+        if (menuVobuAddressMap) {
+            CFRelease(menuVobuAddressMap);
+        }
+        if (_menuVobuAddressMap) {
+            CFRetain(_menuVobuAddressMap);
+        }
+        menuVobuAddressMap = _menuVobuAddressMap;
+    }
+}
+
+- (void) setVobuAddressMap:(CFBitVectorRef)_vobuAddressMap
+{
+    if (vobuAddressMap != _vobuAddressMap) {
+        if (vobuAddressMap) {
+            CFRelease(vobuAddressMap);
+        }
+        if (_vobuAddressMap) {
+            CFRetain(_vobuAddressMap);
+        }
+        vobuAddressMap = _vobuAddressMap;
+    }
+}
+
 + (NSArray*) availableSections
 {
     static NSArray* array;

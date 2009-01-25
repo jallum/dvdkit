@@ -65,7 +65,7 @@ NSString* const kDKManagerInformationSection_VMGM_VOBU_ADMAP  = @"vmgm_vobu_adma
 @synthesize titleTrackSearchPointerTable;
 @synthesize menuProgramChainInformationTablesByLanguage;
 
-@synthesize cellAddressTable;
+@synthesize menuCellAddressTable;
 @synthesize menuVobuAddressMap;
 @synthesize titleSetAttributeTable;
 
@@ -265,7 +265,7 @@ NSString* const kDKManagerInformationSection_VMGM_VOBU_ADMAP  = @"vmgm_vobu_adma
         uint32_t offset_of_vmgm_c_adt = OSReadBigInt32(&vmgi_mat->vmgm_c_adt, 0);
         if (offset_of_vmgm_c_adt && (offset_of_vmgm_c_adt <= vmgi_last_sector)) {
             [sectionOrdering setObject:kDKManagerInformationSection_VMGM_C_ADT forKey:[NSNumber numberWithUnsignedInt:offset_of_vmgm_c_adt]];
-            cellAddressTable = [[DKMainMenuInformation _readCellAddressTableFromDataSource:dataSource offset:offset_of_vmgm_c_adt errors:errors] retain];
+            menuCellAddressTable = [[DKMainMenuInformation _readCellAddressTableFromDataSource:dataSource offset:offset_of_vmgm_c_adt errors:errors] retain];
         }
         uint32_t offset_of_vmgm_vobu_admap = OSReadBigInt32(&vmgi_mat->vmgm_vobu_admap, 0);
         if (offset_of_vmgm_vobu_admap && (offset_of_vmgm_vobu_admap <= vmgi_last_sector)) {
@@ -494,7 +494,7 @@ NSString* const kDKManagerInformationSection_VMGM_VOBU_ADMAP  = @"vmgm_vobu_adma
     [titleSetAttributeTable release];
     [menuProgramChainInformationTablesByLanguage release];
     [textData release];
-    [cellAddressTable release];
+    [menuCellAddressTable release];
     [(id)menuVobuAddressMap release];
     [preferredSectionOrder release];
     [super dealloc];
@@ -518,6 +518,19 @@ NSString* const kDKManagerInformationSection_VMGM_VOBU_ADMAP  = @"vmgm_vobu_adma
         table = [[menuProgramChainInformationTablesByLanguage allValues] objectAtIndex:0];
     }
     return table;
+}
+
+- (void) setMenuVobuAddressMap:(CFBitVectorRef)_menuVobuAddressMap
+{
+    if (menuVobuAddressMap != _menuVobuAddressMap) {
+        if (menuVobuAddressMap) {
+            CFRelease(menuVobuAddressMap);
+        }
+        if (_menuVobuAddressMap) {
+            CFRetain(_menuVobuAddressMap);
+        }
+        menuVobuAddressMap = _menuVobuAddressMap;
+    }
 }
 
 - (uint16_t) regionMask
@@ -684,10 +697,10 @@ NSString* const kDKManagerInformationSection_VMGM_VOBU_ADMAP  = @"vmgm_vobu_adma
             sectionData = textData;
             OSWriteBigInt32(&vmgi_mat.txtdt_mgi, 0, [data length] >> 11);
         } else if ([section isEqualToString:kDKManagerInformationSection_VMGM_C_ADT]) {
-            if (![cellAddressTable count]) {
+            if (![menuCellAddressTable count]) {
                 continue;
             }
-            sectionData = [DKMainMenuInformation _saveCellAddressTable:cellAddressTable errors:errors];
+            sectionData = [DKMainMenuInformation _saveCellAddressTable:menuCellAddressTable errors:errors];
             OSWriteBigInt32(&vmgi_mat.vmgm_c_adt, 0, [data length] >> 11);
         } else if ([section isEqualToString:kDKManagerInformationSection_VMGM_VOBU_ADMAP]) {
             if (!menuVobuAddressMap) {
