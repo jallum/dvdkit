@@ -159,7 +159,7 @@ NSString* const kDKTitleSetInformationSection_VTS_TMAPT         = @"vts_tmapt";
         NSAssert(header && ([header length] == 1 << 11), @"wtf?");
         const vts_mat_t* vts_mat = [header bytes];
         if (0 != memcmp("DVDVIDEO-VTS", &vts_mat->vts_identifier, sizeof(vts_mat->vts_identifier))) {
-            [NSException raise:kDKManagerInformationException format:DKLocalizedString(@"Invalid signature in the Video Title Set Information (.IFO) data.", nil)];
+            [NSException raise:kDKMainMenuInformationException format:DKLocalizedString(@"Invalid signature in the Video Title Set Information (.IFO) data.", nil)];
         }
 
 
