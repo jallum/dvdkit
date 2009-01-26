@@ -46,7 +46,7 @@ NSString* const DVDCellPlaybackException = @"DVDCellPlayback";
 
         /*  The bit-flags are defined in an endian-neutral manner.
          */
-        seamless_angle = cell_playback->flags.seamless_play;
+        seamless_angle = cell_playback->flags.seamless_angle;
         stc_discontinuity = cell_playback->flags.stc_discontinuity;
         interleaved = cell_playback->flags.interleaved;
         seamless_play = cell_playback->flags.seamless_play;

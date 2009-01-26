@@ -1,6 +1,7 @@
 #import <Cocoa/Cocoa.h>
 
 @interface DKSubpictureAttributes : NSObject {
+    int lang_type;
     int code_mode;
     uint16_t lang_code;
     uint8_t lang_extension;

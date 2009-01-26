@@ -96,6 +96,32 @@ NSString* const kDKTitleSetInformationSection_VTS_TMAPT         = @"vts_tmapt";
     );
 }
 
+- (void) setMenuVobuAddressMap:(CFBitVectorRef)_menuVobuAddressMap
+{
+    if (menuVobuAddressMap != _menuVobuAddressMap) {
+        if (menuVobuAddressMap) {
+            CFRelease(menuVobuAddressMap);
+        }
+        if (_menuVobuAddressMap) {
+            CFRetain(_menuVobuAddressMap);
+        }
+        menuVobuAddressMap = _menuVobuAddressMap;
+    }
+}
+
+- (void) setVobuAddressMap:(CFBitVectorRef)_vobuAddressMap
+{
+    if (vobuAddressMap != _vobuAddressMap) {
+        if (vobuAddressMap) {
+            CFRelease(vobuAddressMap);
+        }
+        if (_vobuAddressMap) {
+            CFRetain(_vobuAddressMap);
+        }
+        vobuAddressMap = _vobuAddressMap;
+    }
+}
+
 + (NSArray*) availableSections
 {
     static NSArray* array;
@@ -133,7 +159,7 @@ NSString* const kDKTitleSetInformationSection_VTS_TMAPT         = @"vts_tmapt";
         NSAssert(header && ([header length] == 1 << 11), @"wtf?");
         const vts_mat_t* vts_mat = [header bytes];
         if (0 != memcmp("DVDVIDEO-VTS", &vts_mat->vts_identifier, sizeof(vts_mat->vts_identifier))) {
-            [NSException raise:kDKManagerInformationException format:DKLocalizedString(@"Invalid signature in the Video Title Set Information (.IFO) data.", nil)];
+            [NSException raise:kDKMainMenuInformationException format:DKLocalizedString(@"Invalid signature in the Video Title Set Information (.IFO) data.", nil)];
         }
 
 
@@ -721,27 +747,12 @@ NSString* const kDKTitleSetInformationSection_VTS_TMAPT         = @"vts_tmapt";
     
     NSAssert(([data length] & 0x07FF) == 0, @"Sections not sector-aligned?");
     uint32_t vtsiSectors = [data length] >> 11;
-    uint32_t vtsi_last_sector = vtsiSectors;
-    uint32_t vtsm_vobs = 0;
-    uint32_t vtstt_vobs = 0;
-    uint32_t vts_last_sector = vtsiSectors;
-    if (lengthOfMenuVOB > 0) {
-        vtsm_vobs = vts_last_sector;
-        vts_last_sector += lengthOfMenuVOB;
-        if (lengthOfVideoVOB) {
-            vtstt_vobs = vts_last_sector;
-            vts_last_sector += lengthOfVideoVOB;
-        }
-    } else if (lengthOfVideoVOB) {
-        vtstt_vobs = vts_last_sector;
-        vts_last_sector += lengthOfVideoVOB;
-    }
-    vts_last_sector += vtsiSectors;
-    OSWriteBigInt32(&vts_mat.vtsi_last_sector, 0, vtsi_last_sector - 1);
-    OSWriteBigInt32(&vts_mat.vtsm_vobs, 0, vtsm_vobs);
-    OSWriteBigInt32(&vts_mat.vtstt_vobs, 0, vtstt_vobs);
-    OSWriteBigInt32(&vts_mat.vts_last_sector, 0, vts_last_sector - 1);
+    OSWriteBigInt32(&vts_mat.vtsi_last_sector, 0, vtsiSectors - 1);
+    OSWriteBigInt32(&vts_mat.vtsm_vobs, 0, lengthOfMenuVOB ? vtsiSectors : 0);
+    OSWriteBigInt32(&vts_mat.vtstt_vobs, 0, lengthOfVideoVOB ? (vtsiSectors + lengthOfMenuVOB) : 0);
+    OSWriteBigInt32(&vts_mat.vts_last_sector, 0, vtsiSectors + lengthOfMenuVOB + lengthOfVideoVOB + vtsiSectors - 1);
     
+
     if (errors) {
         int errorCount = [errors count];
         if (0 == errorCount) {
@@ -752,6 +763,7 @@ NSString* const kDKTitleSetInformationSection_VTS_TMAPT         = @"vts_tmapt";
             *error = DKErrorWithCode(kDKMultipleErrorsError, errors, NSDetailedErrorsKey, nil);
         }
     }
+    
     
     memcpy([data mutableBytes], &vts_mat, sizeof(vts_mat_t));
     return data;

@@ -45,15 +45,12 @@
     NSMutableData* titleSetAttributeTable;
     NSMutableDictionary* menuProgramChainInformationTablesByLanguage;
     NSMutableData* textData;
-    NSMutableArray* cellAddressTable;
+    NSMutableArray* menuCellAddressTable;
     CFBitVectorRef menuVobuAddressMap;
     /**/
     NSArray* preferredSectionOrder;
 }
 
-+ (id) mainMenuInformationWithDataSource:(id<DKDataSource>)dataSource error:(NSError**)error;
-
-- (id) initWithDataSource:(id<DKDataSource>)dataSource error:(NSError**)error;
 @property (assign) uint16_t specificationVersion;
 @property (assign) uint32_t categoryAndMask;
 @property (assign) uint16_t numberOfVolumes;
@@ -61,18 +58,20 @@
 @property (assign) uint8_t side;
 @property (assign) uint16_t numberOfTitleSets;
 @property (assign) uint64_t pointOfSaleCode;
-@property (assign) NSString* providerId;
-@property (assign) DKVideoAttributes* menuVideoAttributes;
-@property (assign) NSArray* menuAudioAttributes;
-@property (assign) DKSubpictureAttributes* menuSubpictureAttributes;
-
+@property (retain) NSString* providerId;
+@property (retain) DKVideoAttributes* menuVideoAttributes;
+@property (retain) NSArray* menuAudioAttributes;
+@property (retain) DKSubpictureAttributes* menuSubpictureAttributes;
 @property (retain) DKProgramChain* firstPlayProgramChain;
 @property (retain) NSArray* titleTrackSearchPointerTable;
 @property (retain) NSDictionary* menuProgramChainInformationTablesByLanguage;
 @property (readonly) uint16_t regionMask;
-@property (retain) NSArray* cellAddressTable;
+@property (retain) NSArray* menuCellAddressTable;
 @property (assign) CFBitVectorRef menuVobuAddressMap;
 @property (retain) NSData* titleSetAttributeTable;
+
++ (id) mainMenuInformationWithDataSource:(id<DKDataSource>)dataSource error:(NSError**)error;
+- (id) initWithDataSource:(id<DKDataSource>)dataSource error:(NSError**)error;
 
 - (DKTitleTrackSearchPointer*) titleTrackSearchPointerForTitleSet:(uint16_t)vts track:(uint8_t)ttn;
 - (NSArray*) menuProgramChainInformationTableForLanguageCode:(uint16_t)languageCode;
@@ -81,6 +80,6 @@
 
 @end
 
-extern NSString* const kDKManagerInformationException;
+extern NSString* const kDKMainMenuInformationException;
 
 
