@@ -29,6 +29,18 @@ NSString* const DKCommandException = @"DKCommand";
 @synthesize mask;
 @synthesize row;
 
+static inline  uint32_t test(NSRange range, uint64_t mask, uint64_t bits)
+{
+    uint32_t offset = range.location + 1 - range.length;
+    //NSAssert(range.length > 0 && range.length < 32, @"Valid range is 1-31");
+    //NSAssert(range.location < 64, @"Valid range is 0-63");
+    //NSAssert(offset < 64, @"Valid range is 0-63"); // If we overflow, we'll be *greater* than 63.
+    uint64_t m = (1L << range.length) - 1;
+    mask |= m << offset;
+    return (bits >> offset) & m;
+}
+
+
 + (id) commandWith64Bits:(uint64_t)bits
 {
     return [DKCommand commandWith64Bits:bits row:-1];

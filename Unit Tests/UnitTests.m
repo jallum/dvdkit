@@ -1696,6 +1696,165 @@
         
     }
     
+	// part of title testing
+	STAssertTrue([[titleSetInformation partOfTitleSearchTable] count] ==  8, @"Srpt count should be 8.");
+	
+	for(int count = 0;count < [[titleSetInformation partOfTitleSearchTable] count];count++)
+	{
+		
+		NSMutableArray* srptObject = [[ titleSetInformation partOfTitleSearchTable] objectAtIndex:count];
+		int iNumberOfParts = [srptObject count];
+		switch (count) {
+			case 0:
+			{
+				STAssertTrue(iNumberOfParts == 51, @"Part count should be 51.");
+				break;
+			}
+				
+			case 1:
+			{
+				STAssertTrue(iNumberOfParts == 3, @"Part count should be 3.");
+				break;
+			}
+				
+			case 2:
+			{
+				STAssertTrue(iNumberOfParts == 1, @"Part count should be 1.");
+				break;
+			}
+				
+			case 3:
+			{
+				STAssertTrue(iNumberOfParts == 1, @"Part count should be 1.");
+				break;
+			}
+			case 4:
+			{
+				STAssertTrue(iNumberOfParts == 1, @"Part count should be 1.");
+				break;
+			}
+			case 5:
+			{
+				STAssertTrue(iNumberOfParts == 1, @"Part count should be 1.");
+				break;
+			}
+			case 6:
+			{
+				STAssertTrue(iNumberOfParts == 1, @"Part count should be 1.");
+				break;
+			}
+			case 7:
+			{
+				STAssertTrue(iNumberOfParts == 1, @"Part count should be 1.");
+				break;
+			}
+				
+				break;
+			default:
+				break;
+		}
+		
+		
+		
+	}
+	
+	// Program chain testing
+	
+	
+	
+	for(int val = 0;val < [[titleSetInformation programChainInformationTable] count];val++)
+	{
+		
+		DKProgramChainSearchPointer* programChainSearchPointerObj = [[titleSetInformation programChainInformationTable] objectAtIndex:val];
+		switch (val) {
+			case 0:
+			{
+				DKProgramChain* tempProgramChain = [programChainSearchPointerObj programChain];
+				
+				STAssertTrue([[tempProgramChain programMap] count] ==  51, @"Number of programs should be 51.");
+				STAssertTrue([[tempProgramChain cellPlaybackTable] count] ==  80, @"Number of cells should be 80.");
+				STAssertTrue([[tempProgramChain postCommands] count] ==  4, @"Number of post commands be 4.");
+				break;
+				
+			}
+			case 1:
+			{
+				DKProgramChain* tempProgramChain = [programChainSearchPointerObj programChain];
+				
+				STAssertTrue([[tempProgramChain programMap] count] ==  3, @"Number of programs should be 3.");
+				STAssertTrue([[tempProgramChain cellPlaybackTable] count] ==  3, @"Number of cells should be 3.");
+				STAssertTrue([[tempProgramChain postCommands] count] == 2, @"Number of post commands be 2.");
+				break;
+				
+			}
+			case 2:
+			{
+				DKProgramChain* tempProgramChain = [programChainSearchPointerObj programChain];
+				
+				STAssertTrue([[tempProgramChain programMap] count] ==  1, @"Number of programs should be 1.");
+				STAssertTrue([[tempProgramChain cellPlaybackTable] count] ==  1, @"Number of cells should be 1.");
+				STAssertTrue([[tempProgramChain postCommands] count] ==  3, @"Number of post commands be 3.");
+				break;
+				
+			}
+			case 3:
+			{
+				DKProgramChain* tempProgramChain = [programChainSearchPointerObj programChain];
+				
+				STAssertTrue([[tempProgramChain programMap] count] ==  1, @"Number of programs should be 1.");
+				STAssertTrue([[tempProgramChain cellPlaybackTable] count] ==  1, @"Number of cells should be 1.");
+				STAssertTrue([[tempProgramChain postCommands] count] ==  3, @"Number of post commands be 3.");
+				break;
+				
+			}
+			case 4:
+			{
+				DKProgramChain* tempProgramChain = [programChainSearchPointerObj programChain];
+				
+				STAssertTrue([[tempProgramChain programMap] count] ==  1, @"Number of programs should be 1.");
+				STAssertTrue([[tempProgramChain cellPlaybackTable] count] ==  1, @"Number of cells should be 1.");
+				STAssertTrue([[tempProgramChain postCommands] count] ==  3, @"Number of post commands be 3.");
+				break;
+				
+			}
+			case 5:
+			{
+				DKProgramChain* tempProgramChain = [programChainSearchPointerObj programChain];
+				
+				STAssertTrue([[tempProgramChain programMap] count] ==  0, @"Number of programs should be 0.");
+				STAssertTrue([[tempProgramChain cellPlaybackTable] count] ==  0, @"Number of cells should be 0.");
+				STAssertTrue([[tempProgramChain postCommands] count] ==  0, @"Number of post commands be 0.");
+				break;
+				
+			}
+			case 6:
+			{
+				DKProgramChain* tempProgramChain = [programChainSearchPointerObj programChain];
+				
+				STAssertTrue([[tempProgramChain programMap] count] ==  0, @"Number of programs should be 0.");
+				STAssertTrue([[tempProgramChain cellPlaybackTable] count] ==  0, @"Number of cells should be 0.");
+				STAssertTrue([[tempProgramChain postCommands] count] ==  0, @"Number of post commands be 0.");
+				break;
+				
+			}
+			case 7:
+			{
+				DKProgramChain* tempProgramChain = [programChainSearchPointerObj programChain];
+				
+				STAssertTrue([[tempProgramChain programMap] count] ==  0, @"Number of programs should be 0.");
+				STAssertTrue([[tempProgramChain cellPlaybackTable] count] ==  0, @"Number of cells should be 0.");
+				STAssertTrue([[tempProgramChain postCommands] count] ==  0, @"Number of post commands be 0.");
+				break;
+				
+			}	
+			default:
+				break;
+		}	
+		
+		
+	}
+	
+	
     // Saving out our title set data
     NSData* titleObject = [titleSetInformation saveAsData:&error lengthOfMenuVOB:CFBitVectorGetCount([titleSetInformation menuVobuAddressMap]) lengthOfVideoVOB:CFBitVectorGetCount([titleSetInformation vobuAddressMap])];
       
