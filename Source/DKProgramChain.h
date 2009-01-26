@@ -50,13 +50,13 @@
 @property (assign) uint16_t goUpProgramChainNumber;
 @property (assign) uint8_t still_time;
 @property (assign) uint8_t pg_playback_mode;
-@property (assign) NSMutableArray* preCommands;
-@property (assign) NSMutableArray* postCommands;
-@property (assign) NSMutableArray* cellCommands;
-@property (assign) NSMutableArray* programMap;
-@property (assign) NSMutableArray* cellPlaybackTable;
-@property (assign) NSMutableArray* cellPositionTable;
-@property (assign) id userInfo;
+@property (retain) NSMutableArray* preCommands;
+@property (retain) NSMutableArray* postCommands;
+@property (retain) NSMutableArray* cellCommands;
+@property (retain) NSMutableArray* programMap;
+@property (retain) NSMutableArray* cellPlaybackTable;
+@property (retain) NSMutableArray* cellPositionTable;
+@property (retain) id userInfo;
 
 
 

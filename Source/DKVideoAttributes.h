@@ -26,16 +26,6 @@
 @property (assign) BOOL line21_cc_2;
 @property (assign) BOOL line21_cc_1;
 
-
-
-
-
-
-
-
-
-
-
 + (id) videoAttributesWithData:(NSData*)data;
 
 - (id) initWithData:(NSData*)data;
