@@ -24,13 +24,11 @@
 
 @interface DKCommand : NSObject {
     uint64_t bits;
-    uint64_t mask;
     int row;
     NSMutableString* description;
 }
 
 @property (readonly) uint64_t bits;
-@property (readonly) uint64_t mask;
 @property (readonly) int row;
 
 

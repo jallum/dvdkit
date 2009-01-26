@@ -24,22 +24,18 @@
 
 NSString* const DKCommandException = @"DKCommand";
 
-@implementation DKCommand
-@synthesize bits;
-@synthesize mask;
-@synthesize row;
-
-static inline  uint32_t test(NSRange range, uint64_t mask, uint64_t bits)
+static inline uint64_t extractBits(uint64_t bits, int location, int length)
 {
-    uint32_t offset = range.location + 1 - range.length;
-    //NSAssert(range.length > 0 && range.length < 32, @"Valid range is 1-31");
-    //NSAssert(range.location < 64, @"Valid range is 0-63");
-    //NSAssert(offset < 64, @"Valid range is 0-63"); // If we overflow, we'll be *greater* than 63.
-    uint64_t m = (1L << range.length) - 1;
-    mask |= m << offset;
-    return (bits >> offset) & m;
+    uint32_t offset = location + 1 - length;
+    assert(length > 0 && length < 32);
+    assert(location < 64);
+    assert(offset < 64); // If we overflow, we'll be *greater* than 63.
+    return (bits >> offset) & ((1L << length) - 1);
 }
 
+@implementation DKCommand
+@synthesize bits;
+@synthesize row;
 
 + (id) commandWith64Bits:(uint64_t)bits
 {
@@ -65,7 +61,6 @@ static inline  uint32_t test(NSRange range, uint64_t mask, uint64_t bits)
 {
     if (self = [super init]) {
         bits = _bits;
-        mask = 0;
         row = _row;
     }
     return self;
@@ -77,7 +72,6 @@ static inline  uint32_t test(NSRange range, uint64_t mask, uint64_t bits)
     NSAssert([data length] == 8, @"Must be 8 bytes");
     if (self = [super init]) {
         bits = OSReadBigInt64([data bytes], 0x00);
-        mask = 0;
         row = _row;
     }
     return self;
@@ -105,16 +99,16 @@ static inline  uint32_t test(NSRange range, uint64_t mask, uint64_t bits)
 #ifdef DEBUG
 //    NSLog(@"%@", self);
 #endif
-    uint8_t type = [self bitsInRange:NSMakeRange(63, 3)];
+    uint8_t type = extractBits(bits, 63, 3);
     if (type > 6) {
         [NSException raise:DKCommandException format:@"%s(%d)", __FILE__, __LINE__];
     } else switch (type) {
         case 0: {
-            uint8_t command = [self bitsInRange:NSMakeRange(51, 4)];
-            uint8_t comparison = [self bitsInRange:NSMakeRange(54, 3)];
-            if (command && (!comparison || [self executeComparison:comparison value1:[virtualMachine registerForCode:[self bitsInRange:NSMakeRange(39, 8)]] value2:[self bitsInRange:NSMakeRange(55, 1)] ? [self bitsInRange:NSMakeRange(31, 16)] : [virtualMachine registerForCode:[self bitsInRange:NSMakeRange(23, 8)]]])) switch (command) {
+            uint8_t command = extractBits(bits, 51, 4);
+            uint8_t comparison = extractBits(bits, 54, 3);
+            if (command && (!comparison || [self executeComparison:comparison value1:[virtualMachine registerForCode:extractBits(bits, 39, 8)] value2:extractBits(bits, 55, 1) ? extractBits(bits, 31, 16) : [virtualMachine registerForCode:extractBits(bits, 23, 8)]])) switch (command) {
                 case 1: {
-                    [virtualMachine executeGoto:[self bitsInRange:NSMakeRange(7, 8)]];
+                    [virtualMachine executeGoto:extractBits(bits, 7, 8)];
                     break;
                 }
                 
@@ -124,7 +118,7 @@ static inline  uint32_t test(NSRange range, uint64_t mask, uint64_t bits)
                 }
 
                 case 3: {
-                    [virtualMachine setTmpPML:[self bitsInRange:NSMakeRange(11, 4)] line:[self bitsInRange:NSMakeRange(7, 8)]];
+                    [virtualMachine setTmpPML:extractBits(bits, 11, 4) line:extractBits(bits, 7, 8)];
                     break;
                 }
                     
@@ -136,49 +130,49 @@ static inline  uint32_t test(NSRange range, uint64_t mask, uint64_t bits)
         }
         
         case 1: {
-            uint8_t command = [self bitsInRange:NSMakeRange(51, 4)];
-            uint8_t comparison = [self bitsInRange:NSMakeRange(54, 3)];
-            if ([self bitsInRange:NSMakeRange(60, 1)]) {
-                if (command && (!comparison || [self executeComparison:comparison value1:[virtualMachine registerForCode:[self bitsInRange:NSMakeRange(15, 8)]] value2:[virtualMachine registerForCode:[self bitsInRange:NSMakeRange(7, 8)]]])) switch (command) {
+            uint8_t command = extractBits(bits, 51, 4);
+            uint8_t comparison = extractBits(bits, 54, 3);
+            if (extractBits(bits, 60, 1)) {
+                if (command && (!comparison || [self executeComparison:comparison value1:[virtualMachine registerForCode:extractBits(bits, 15, 8)] value2:[virtualMachine registerForCode:extractBits(bits, 7, 8)]])) switch (command) {
                     case 1: {        
                         [virtualMachine stop];
                         break;
                     }
                         
                     case 2: {
-                        [virtualMachine executeJumpTT:[self bitsInRange:NSMakeRange(23, 8)]];
+                        [virtualMachine executeJumpTT:extractBits(bits, 23, 8)];
                         break;
                     }
                         
                     case 3: {
-                        [virtualMachine executeJumpVTS_TT:[self bitsInRange:NSMakeRange(23, 8)]];
+                        [virtualMachine executeJumpVTS_TT:extractBits(bits, 23, 8)];
                         break;
                     }
                         
                     case 5: {
-                        [virtualMachine executeJumpVTS_PTT:[self bitsInRange:NSMakeRange(23, 8)] pttn:[self bitsInRange:NSMakeRange(43, 12)]];
+                        [virtualMachine executeJumpVTS_PTT:extractBits(bits, 23, 8) pttn:extractBits(bits, 43, 12)];
                         break;
                     }
                         
                     case 6: {
-                        switch ([self bitsInRange:NSMakeRange(23, 2)]) {
+                        switch (extractBits(bits, 23, 2)) {
                             case 0: {
                                 [virtualMachine executeJumpSS_FP];
                                 break;
                             }
                         
                             case 1: {
-                                [virtualMachine executeJumpSS_VMGM_menu:[self bitsInRange:NSMakeRange(20, 5)]];
+                                [virtualMachine executeJumpSS_VMGM_menu:extractBits(bits, 20, 5)];
                                 break;
                             }
                             
                             case 2: {
-                                [virtualMachine executeJumpSS_VTSM_menu:[self bitsInRange:NSMakeRange(20, 5)] vts:[self bitsInRange:NSMakeRange(31, 8)] ttn:[self bitsInRange:NSMakeRange(39, 8)]];
+                                [virtualMachine executeJumpSS_VTSM_menu:extractBits(bits, 20, 5) vts:extractBits(bits, 31, 8) ttn:extractBits(bits, 39, 8)];
                                 break;
                             }
                             
                             case 3: {
-                                [virtualMachine executeJumpSS_VMGM_pgcn:[self bitsInRange:NSMakeRange(47, 16)]];
+                                [virtualMachine executeJumpSS_VMGM_pgcn:extractBits(bits, 47, 16)];
                                 break;
                             }
                         }
@@ -186,24 +180,24 @@ static inline  uint32_t test(NSRange range, uint64_t mask, uint64_t bits)
                     }
                         
                     case 8: {
-                        switch ([self bitsInRange:NSMakeRange(23, 2)]) {
+                        switch (extractBits(bits, 23, 2)) {
                             case 0: {
                                 [virtualMachine executeCallSS_FP];
                                 break;
                             }
                             
                             case 1: {
-                                [virtualMachine executeCallSS_VMGM_menu:[self bitsInRange:NSMakeRange(20, 5)] resumeCell:[self bitsInRange:NSMakeRange(31, 8)]];
+                                [virtualMachine executeCallSS_VMGM_menu:extractBits(bits, 20, 5) resumeCell:extractBits(bits, 31, 8)];
                                 break;
                             }
                             
                             case 2: {
-                                [virtualMachine executeCallSS_VTSM_menu:[self bitsInRange:NSMakeRange(20, 5)] resumeCell:[self bitsInRange:NSMakeRange(31, 8)]];
+                                [virtualMachine executeCallSS_VTSM_menu:extractBits(bits, 20, 5) resumeCell:extractBits(bits, 31, 8)];
                                 break;
                             }
                             
                             case 3: {
-                                [virtualMachine executeCallSS_VMGM_pgcn:[self bitsInRange:NSMakeRange(47, 16)] resumeCell:[self bitsInRange:NSMakeRange(31, 8)]];
+                                [virtualMachine executeCallSS_VMGM_pgcn:extractBits(bits, 47, 16) resumeCell:extractBits(bits, 31, 8)];
                                 break;
                             }
                         }
@@ -215,33 +209,33 @@ static inline  uint32_t test(NSRange range, uint64_t mask, uint64_t bits)
                     }
                 }
             } else {
-                if (command && (!comparison || [self executeComparison:comparison value1:[virtualMachine registerForCode:[self bitsInRange:NSMakeRange(39,8)]] value2:[self bitsInRange:NSMakeRange(55, 1)] ? [self bitsInRange:NSMakeRange(31, 16)] : [virtualMachine registerForCode:[self bitsInRange:NSMakeRange(23, 8)]]])) switch (command) {
+                if (command && (!comparison || [self executeComparison:comparison value1:[virtualMachine registerForCode:extractBits(bits, 39, 8)] value2:extractBits(bits, 55, 1) ? extractBits(bits, 31, 16) : [virtualMachine registerForCode:extractBits(bits, 23, 8)]])) switch (command) {
                     case 1: {
-                        [virtualMachine executeLinkSubset:[self bitsInRange:NSMakeRange(4, 5)]];
-                        [virtualMachine conditionallySetHighlightedButton:[self bitsInRange:NSMakeRange(15, 6)]];
+                        [virtualMachine executeLinkSubset:extractBits(bits, 4, 5)];
+                        [virtualMachine conditionallySetHighlightedButton:extractBits(bits, 15, 6)];
                         break;
                     }
                         
                     case 4: {
-                        [virtualMachine executeLinkPGCN:[self bitsInRange:NSMakeRange(15, 16)]];
+                        [virtualMachine executeLinkPGCN:extractBits(bits, 15, 16)];
                         break;
                     }
                         
                     case 5: {
-                        [virtualMachine executeLinkPTTN:[self bitsInRange:NSMakeRange(9, 10)]];
-                        [virtualMachine conditionallySetHighlightedButton:[self bitsInRange:NSMakeRange(15, 6)]];
+                        [virtualMachine executeLinkPTTN:extractBits(bits, 9, 10)];
+                        [virtualMachine conditionallySetHighlightedButton:extractBits(bits, 15, 6)];
                         break;
                     }
                         
                     case 6: {
-                        [virtualMachine executeLinkPGN:[self bitsInRange:NSMakeRange(7, 8)]];
-                        [virtualMachine conditionallySetHighlightedButton:[self bitsInRange:NSMakeRange(15, 6)]];
+                        [virtualMachine executeLinkPGN:extractBits(bits, 7, 8)];
+                        [virtualMachine conditionallySetHighlightedButton:extractBits(bits, 15, 6)];
                         break;
                     }
                         
                     case 7: {
-                        [virtualMachine executeLinkCell:[self bitsInRange:NSMakeRange(7, 8)]];
-                        [virtualMachine conditionallySetHighlightedButton:[self bitsInRange:NSMakeRange(15, 6)]];
+                        [virtualMachine executeLinkCell:extractBits(bits, 7, 8)];
+                        [virtualMachine conditionallySetHighlightedButton:extractBits(bits, 15, 6)];
                         break;
                     }
                         
@@ -254,41 +248,41 @@ static inline  uint32_t test(NSRange range, uint64_t mask, uint64_t bits)
         }
 
         case 2: {
-            uint8_t direct = [self bitsInRange:NSMakeRange(60, 1)];
-            uint8_t set = [self bitsInRange:NSMakeRange(59, 4)];
-            uint8_t comparison = [self bitsInRange:NSMakeRange(54, 3)];
-            if (set && (!comparison || [self executeComparison:comparison value1:[virtualMachine registerForCode:[self bitsInRange:NSMakeRange(15, 8)]] value2:[virtualMachine registerForCode:[self bitsInRange:NSMakeRange(7, 8)]]])) {
+            uint8_t direct = extractBits(bits, 60, 1);
+            uint8_t set = extractBits(bits, 59, 4);
+            uint8_t comparison = extractBits(bits, 54, 3);
+            if (set && (!comparison || [self executeComparison:comparison value1:[virtualMachine registerForCode:extractBits(bits, 15, 8)] value2:[virtualMachine registerForCode:extractBits(bits, 7, 8)]])) {
                 switch (set) {
                     case 1: {
-                        if ([self bitsInRange:NSMakeRange(39, 1)]) {
-                            [virtualMachine setValue:(direct) ? [self bitsInRange:NSMakeRange(38, 7)] : [virtualMachine generalPurposeRegister:[self bitsInRange:NSMakeRange(35, 4)]] forSystemParameterRegister:1];
+                        if (extractBits(bits, 39, 1)) {
+                            [virtualMachine setValue:(direct) ? extractBits(bits, 38, 7) : [virtualMachine generalPurposeRegister:extractBits(bits, 35, 4)] forSystemParameterRegister:1];
                         }
                         
-                        if ([self bitsInRange:NSMakeRange(31, 1)]) {
-                            [virtualMachine setValue:(direct) ? [self bitsInRange:NSMakeRange(30, 7)] : [virtualMachine generalPurposeRegister:[self bitsInRange:NSMakeRange(27, 4)]] forSystemParameterRegister:2];
+                        if (extractBits(bits, 31, 1)) {
+                            [virtualMachine setValue:(direct) ? extractBits(bits, 30, 7) : [virtualMachine generalPurposeRegister:extractBits(bits, 27, 4)] forSystemParameterRegister:2];
                         }
                         
-                        if ([self bitsInRange:NSMakeRange(23, 1)]) {
-                            [virtualMachine setValue:(direct) ? [self bitsInRange:NSMakeRange(22, 7)] : [virtualMachine generalPurposeRegister:[self bitsInRange:NSMakeRange(19, 4)]] forSystemParameterRegister:3];
+                        if (extractBits(bits, 23, 1)) {
+                            [virtualMachine setValue:(direct) ? extractBits(bits, 22, 7) : [virtualMachine generalPurposeRegister:extractBits(bits, 19, 4)] forSystemParameterRegister:3];
                         }
                         break;
                     }
                         
                     case 2: {
-                        [virtualMachine setValue:(direct) ? [self bitsInRange:NSMakeRange(47, 16)] : [virtualMachine registerForCode:[self bitsInRange:NSMakeRange(39, 8)]] forSystemParameterRegister:9];
-                        [virtualMachine setValue:[self bitsInRange:NSMakeRange(31, 16)] forSystemParameterRegister:10];
+                        [virtualMachine setValue:(direct) ? extractBits(bits, 47, 16) : [virtualMachine registerForCode:extractBits(bits, 39, 8)] forSystemParameterRegister:9];
+                        [virtualMachine setValue:extractBits(bits, 31, 16) forSystemParameterRegister:10];
                         break;
                     }
                         
                     case 3: {
-                        uint8_t index = [self bitsInRange:NSMakeRange(19, 4)];
-                        [virtualMachine setMode:[self bitsInRange:NSMakeRange(23, 1)] forGeneralPurposeRegister:index];
-                        [virtualMachine setValue:(direct) ? [self bitsInRange:NSMakeRange(47, 16)] : [virtualMachine registerForCode:[self bitsInRange:NSMakeRange(39, 8)]] forGeneralPurposeRegister:index];
+                        uint8_t index = extractBits(bits, 19, 4);
+                        [virtualMachine setMode:extractBits(bits, 23, 1) forGeneralPurposeRegister:index];
+                        [virtualMachine setValue:(direct) ? extractBits(bits, 47, 16) : [virtualMachine registerForCode:extractBits(bits, 39, 8)] forGeneralPurposeRegister:index];
                         break;
                     }
                         
                     case 6: {
-                        [virtualMachine setValue:(direct) ? [self bitsInRange:NSMakeRange(31, 16)] : [virtualMachine generalPurposeRegister:[self bitsInRange:NSMakeRange(19, 4)]] forSystemParameterRegister:8];
+                        [virtualMachine setValue:(direct) ? extractBits(bits, 31, 16) : [virtualMachine generalPurposeRegister:extractBits(bits, 19, 4)] forSystemParameterRegister:8];
                         break;
                     }
                         
@@ -296,38 +290,38 @@ static inline  uint32_t test(NSRange range, uint64_t mask, uint64_t bits)
                         [NSException raise:DKCommandException format:@"%s(%d)", __FILE__, __LINE__];
                     }
                 }
-                if (!comparison) switch ([self bitsInRange:NSMakeRange(51, 4)]) {
+                if (!comparison) switch (extractBits(bits, 51, 4)) {
                     case 0: {
                         /* NOP */
                         break;
                     }
 
                     case 1: {
-                        [virtualMachine executeLinkSubset:[self bitsInRange:NSMakeRange(4, 5)]];
-                        [virtualMachine conditionallySetHighlightedButton:[self bitsInRange:NSMakeRange(15, 6)]];
+                        [virtualMachine executeLinkSubset:extractBits(bits, 4, 5)];
+                        [virtualMachine conditionallySetHighlightedButton:extractBits(bits, 15, 6)];
                         break;
                     }
                         
                     case 4: {
-                        [virtualMachine executeLinkPGCN:[self bitsInRange:NSMakeRange(15, 16)]];
+                        [virtualMachine executeLinkPGCN:extractBits(bits, 15, 16)];
                         break;
                     }
                         
                     case 5: {
-                        [virtualMachine executeLinkPTTN:[self bitsInRange:NSMakeRange(9, 10)]];
-                        [virtualMachine conditionallySetHighlightedButton:[self bitsInRange:NSMakeRange(15, 6)]];
+                        [virtualMachine executeLinkPTTN:extractBits(bits, 9, 10)];
+                        [virtualMachine conditionallySetHighlightedButton:extractBits(bits, 15, 6)];
                         break;
                     }
                         
                     case 6: {
-                        [virtualMachine executeLinkPGN:[self bitsInRange:NSMakeRange(7, 8)]];
-                        [virtualMachine conditionallySetHighlightedButton:[self bitsInRange:NSMakeRange(15, 6)]];
+                        [virtualMachine executeLinkPGN:extractBits(bits, 7, 8)];
+                        [virtualMachine conditionallySetHighlightedButton:extractBits(bits, 15, 6)];
                         break;
                     }
                         
                     case 7: {
-                        [virtualMachine executeLinkCell:[self bitsInRange:NSMakeRange(7, 8)]];
-                        [virtualMachine conditionallySetHighlightedButton:[self bitsInRange:NSMakeRange(15, 6)]];
+                        [virtualMachine executeLinkCell:extractBits(bits, 7, 8)];
+                        [virtualMachine conditionallySetHighlightedButton:extractBits(bits, 15, 6)];
                         break;
                     }
                         
@@ -340,52 +334,52 @@ static inline  uint32_t test(NSRange range, uint64_t mask, uint64_t bits)
         }
         
         case 3: {
-            uint8_t direct = [self bitsInRange:NSMakeRange(60, 1)];
-            uint8_t setop = [self bitsInRange:NSMakeRange(59, 4)];
-            uint8_t comparison = [self bitsInRange:NSMakeRange(54, 3)];
-            if (setop && (!comparison || [self executeComparison:comparison value1:[virtualMachine registerForCode:[self bitsInRange:NSMakeRange(47, 8)]] value2:[self bitsInRange:NSMakeRange(55, 1)] ? [self bitsInRange:NSMakeRange(15, 16)] : [virtualMachine registerForCode:[self bitsInRange:NSMakeRange(7, 8)]]])) {
-                uint8_t srd = [self bitsInRange:NSMakeRange(35, 4)];
+            uint8_t direct = extractBits(bits, 60, 1);
+            uint8_t setop = extractBits(bits, 59, 4);
+            uint8_t comparison = extractBits(bits, 54, 3);
+            if (setop && (!comparison || [self executeComparison:comparison value1:[virtualMachine registerForCode:extractBits(bits, 47, 8)] value2:extractBits(bits, 55, 1) ? extractBits(bits, 15, 16) : [virtualMachine registerForCode:extractBits(bits, 7, 8)]])) {
+                uint8_t srd = extractBits(bits, 35, 4);
                 if (2 == setop && !direct) /* swap */ {
-                    uint8_t srs = [self bitsInRange:NSMakeRange(23, 8)];
+                    uint8_t srs = extractBits(bits, 23, 8);
                     uint16_t x = [virtualMachine registerForCode:srs];
                     [virtualMachine setValue:[virtualMachine generalPurposeRegister:srd] forRegisterForCode:srs];
                     [virtualMachine setValue:x forGeneralPurposeRegister:srd];
                 } else {
-                    [virtualMachine setValue:[self computeOp:setop value1:[virtualMachine generalPurposeRegister:srd] value2:(direct) ? [self bitsInRange:NSMakeRange(31, 16)] : [virtualMachine registerForCode:[self bitsInRange:NSMakeRange(23, 8)]]] forGeneralPurposeRegister:srd];
+                    [virtualMachine setValue:[self computeOp:setop value1:[virtualMachine generalPurposeRegister:srd] value2:(direct) ? extractBits(bits, 31, 16) : [virtualMachine registerForCode:extractBits(bits, 23, 8)]] forGeneralPurposeRegister:srd];
                 }
                 if (!comparison) {
-                    switch ([self bitsInRange:NSMakeRange(51, 4)]) {
+                    switch (extractBits(bits, 51, 4)) {
                         case 0: {
                             /* NOP */
                             break;
                         }
                             
                         case 1: {
-                            [virtualMachine executeLinkSubset:[self bitsInRange:NSMakeRange(4, 5)]];
-                            [virtualMachine conditionallySetHighlightedButton:[self bitsInRange:NSMakeRange(15, 6)]];
+                            [virtualMachine executeLinkSubset:extractBits(bits, 4, 5)];
+                            [virtualMachine conditionallySetHighlightedButton:extractBits(bits, 15, 6)];
                             break;
                         }
                             
                         case 4: {
-                            [virtualMachine executeLinkPGCN:[self bitsInRange:NSMakeRange(15, 16)]];
+                            [virtualMachine executeLinkPGCN:extractBits(bits, 15, 16)];
                             break;
                         }
                             
                         case 5: {
-                            [virtualMachine executeLinkPTTN:[self bitsInRange:NSMakeRange(9, 10)]];
-                            [virtualMachine conditionallySetHighlightedButton:[self bitsInRange:NSMakeRange(15, 6)]];
+                            [virtualMachine executeLinkPTTN:extractBits(bits, 9, 10)];
+                            [virtualMachine conditionallySetHighlightedButton:extractBits(bits, 15, 6)];
                             break;
                         }
                             
                         case 6: {
-                            [virtualMachine executeLinkPGN:[self bitsInRange:NSMakeRange(7, 8)]];
-                            [virtualMachine conditionallySetHighlightedButton:[self bitsInRange:NSMakeRange(15, 6)]];
+                            [virtualMachine executeLinkPGN:extractBits(bits, 7, 8)];
+                            [virtualMachine conditionallySetHighlightedButton:extractBits(bits, 15, 6)];
                             break;
                         }
                             
                         case 7: {
-                            [virtualMachine executeLinkCell:[self bitsInRange:NSMakeRange(7, 8)]];
-                            [virtualMachine conditionallySetHighlightedButton:[self bitsInRange:NSMakeRange(15, 6)]];
+                            [virtualMachine executeLinkCell:extractBits(bits, 7, 8)];
+                            [virtualMachine conditionallySetHighlightedButton:extractBits(bits, 15, 6)];
                             break;
                         }
                             
@@ -399,68 +393,68 @@ static inline  uint32_t test(NSRange range, uint64_t mask, uint64_t bits)
         }
         
         case 4: {
-            uint8_t direct = [self bitsInRange:NSMakeRange(60, 1)];
-            uint8_t setop = [self bitsInRange:NSMakeRange(59, 4)];
-            uint8_t scr = [self bitsInRange:NSMakeRange(51, 4)];
+            uint8_t direct = extractBits(bits, 60, 1);
+            uint8_t setop = extractBits(bits, 59, 4);
+            uint8_t scr = extractBits(bits, 51, 4);
             if (setop) {
                 if (2 == setop && !direct) /* swap */ {
-                    uint8_t srs = [self bitsInRange:NSMakeRange(39, 8)];
+                    uint8_t srs = extractBits(bits, 39, 8);
                     uint16_t x = [virtualMachine registerForCode:srs];
                     [virtualMachine setValue:[virtualMachine generalPurposeRegister:scr] forRegisterForCode:srs];
                     [virtualMachine setValue:x forGeneralPurposeRegister:scr];
                 } else {
-                    [virtualMachine setValue:[self computeOp:setop value1:[virtualMachine generalPurposeRegister:scr] value2:(direct) ? [self bitsInRange:NSMakeRange(47, 16)] : [virtualMachine registerForCode:[self bitsInRange:NSMakeRange(39, 8)]]] forGeneralPurposeRegister:scr];
+                    [virtualMachine setValue:[self computeOp:setop value1:[virtualMachine generalPurposeRegister:scr] value2:(direct) ? extractBits(bits, 47, 16) : [virtualMachine registerForCode:extractBits(bits, 39, 8)]] forGeneralPurposeRegister:scr];
                 }
             }
-            uint8_t comparison = [self bitsInRange:NSMakeRange(54, 3)];
-            if (!comparison || [self executeComparison:comparison value1:[virtualMachine generalPurposeRegister:scr] value2:[self bitsInRange:NSMakeRange(55, 1)] ? [self bitsInRange:NSMakeRange(31, 16)] : [virtualMachine registerForCode:[self bitsInRange:NSMakeRange(23, 8)]]]) {
-                [virtualMachine executeLinkSubset:[self bitsInRange:NSMakeRange(4, 5)]];
-                [virtualMachine conditionallySetHighlightedButton:[self bitsInRange:NSMakeRange(15, 6)]];
+            uint8_t comparison = extractBits(bits, 54, 3);
+            if (!comparison || [self executeComparison:comparison value1:[virtualMachine generalPurposeRegister:scr] value2:extractBits(bits, 55, 1) ? extractBits(bits, 31, 16) : [virtualMachine registerForCode:extractBits(bits, 23, 8)]]) {
+                [virtualMachine executeLinkSubset:extractBits(bits, 4, 5)];
+                [virtualMachine conditionallySetHighlightedButton:extractBits(bits, 15, 6)];
             }
             break;
         }
         
         case 5: {
-            uint8_t direct = [self bitsInRange:NSMakeRange(60, 1)];
-            uint8_t setop = [self bitsInRange:NSMakeRange(59, 4)];
-            uint8_t scr = [self bitsInRange:NSMakeRange(51, 4)];
-            uint8_t comparison = [self bitsInRange:NSMakeRange(54, 3)];
-            if (!comparison || [self executeComparison:comparison value1:[virtualMachine generalPurposeRegister:scr] value2:[self bitsInRange:NSMakeRange(55, 1)] ? [self bitsInRange:NSMakeRange(31, 16)] : [virtualMachine registerForCode:[self bitsInRange:NSMakeRange(23, 8)]]]) {
+            uint8_t direct = extractBits(bits, 60, 1);
+            uint8_t setop = extractBits(bits, 59, 4);
+            uint8_t scr = extractBits(bits, 51, 4);
+            uint8_t comparison = extractBits(bits, 54, 3);
+            if (!comparison || [self executeComparison:comparison value1:[virtualMachine generalPurposeRegister:scr] value2:extractBits(bits, 55, 1) ? extractBits(bits, 31, 16) : [virtualMachine registerForCode:extractBits(bits, 23, 8)]]) {
                 if (setop) {
                     if (2 == setop && !direct) /* swap */ {
-                        uint8_t srs = [self bitsInRange:NSMakeRange(39, 8)];
+                        uint8_t srs = extractBits(bits, 39, 8);
                         uint16_t x = [virtualMachine registerForCode:srs];
                         [virtualMachine setValue:[virtualMachine generalPurposeRegister:scr] forRegisterForCode:srs];
                         [virtualMachine setValue:x forGeneralPurposeRegister:scr];
                     } else {
-                        [virtualMachine setValue:[self computeOp:setop value1:[virtualMachine generalPurposeRegister:scr] value2:(direct) ? [self bitsInRange:NSMakeRange(47, 16)] : [virtualMachine registerForCode:[self bitsInRange:NSMakeRange(39, 8)]]] forGeneralPurposeRegister:scr];
+                        [virtualMachine setValue:[self computeOp:setop value1:[virtualMachine generalPurposeRegister:scr] value2:(direct) ? extractBits(bits, 47, 16) : [virtualMachine registerForCode:extractBits(bits, 39, 8)]] forGeneralPurposeRegister:scr];
                     }
                 }
-                [virtualMachine executeLinkSubset:[self bitsInRange:NSMakeRange(4, 5)]];
-                [virtualMachine conditionallySetHighlightedButton:[self bitsInRange:NSMakeRange(15, 6)]];
+                [virtualMachine executeLinkSubset:extractBits(bits, 4, 5)];
+                [virtualMachine conditionallySetHighlightedButton:extractBits(bits, 15, 6)];
             }
             break;
         }
         
         case 6: {
-            uint8_t comparison = [self bitsInRange:NSMakeRange(54, 3)];
-            uint8_t scr = [self bitsInRange:NSMakeRange(51, 4)];
-            if (!comparison || [self executeComparison:comparison value1:[virtualMachine generalPurposeRegister:scr] value2:[self bitsInRange:NSMakeRange(55, 1)] ? [self bitsInRange:NSMakeRange(31, 16)] : [virtualMachine registerForCode:[self bitsInRange:NSMakeRange(23, 8)]]]) {
-                uint8_t direct = [self bitsInRange:NSMakeRange(60, 1)];
-                uint8_t setop = [self bitsInRange:NSMakeRange(59, 4)];
+            uint8_t comparison = extractBits(bits, 54, 3);
+            uint8_t scr = extractBits(bits, 51, 4);
+            if (!comparison || [self executeComparison:comparison value1:[virtualMachine generalPurposeRegister:scr] value2:extractBits(bits, 55, 1) ? extractBits(bits, 31, 16) : [virtualMachine registerForCode:extractBits(bits, 23, 8)]]) {
+                uint8_t direct = extractBits(bits, 60, 1);
+                uint8_t setop = extractBits(bits, 59, 4);
                 if (setop) {
                     if (2 == setop && !direct) /* swap */ {
-                        uint8_t srs = [self bitsInRange:NSMakeRange(39, 8)];
+                        uint8_t srs = extractBits(bits, 39, 8);
                         uint16_t x = [virtualMachine registerForCode:srs];
                         [virtualMachine setValue:[virtualMachine generalPurposeRegister:scr] forRegisterForCode:srs];
                         [virtualMachine setValue:x forGeneralPurposeRegister:scr];
                     } else {
-                        [virtualMachine setValue:[self computeOp:setop value1:[virtualMachine generalPurposeRegister:scr] value2:(direct) ? [self bitsInRange:NSMakeRange(47, 16)] : [virtualMachine registerForCode:[self bitsInRange:NSMakeRange(39, 8)]]] forGeneralPurposeRegister:scr];
+                        [virtualMachine setValue:[self computeOp:setop value1:[virtualMachine generalPurposeRegister:scr] value2:(direct) ? extractBits(bits, 47, 16) : [virtualMachine registerForCode:extractBits(bits, 39, 8)]] forGeneralPurposeRegister:scr];
                     }
                 }
             }
-            [virtualMachine executeLinkSubset:[self bitsInRange:NSMakeRange(4, 5)]];
-            [virtualMachine conditionallySetHighlightedButton:[self bitsInRange:NSMakeRange(15, 6)]];
+            [virtualMachine executeLinkSubset:extractBits(bits, 4, 5)];
+            [virtualMachine conditionallySetHighlightedButton:extractBits(bits, 15, 6)];
             break;
         }
                 
@@ -495,13 +489,10 @@ static void appendMnemonic(DKCommand* command, NSMutableString* string);
 
 - (uint32_t) bitsInRange:(NSRange)range
 {
-    uint32_t offset = range.location + 1 - range.length;
     NSAssert(range.length > 0 && range.length < 32, @"Valid range is 1-31");
     NSAssert(range.location < 64, @"Valid range is 0-63");
-    NSAssert(offset < 64, @"Valid range is 0-63"); // If we overflow, we'll be *greater* than 63.
-    uint64_t m = (1L << range.length) - 1;
-    mask |= m << offset;
-    return (bits >> offset) & m;
+    NSAssert((range.location + 1 - range.length) < 64, @"Valid range is 0-63"); // If we overflow, we'll be *greater* than 63.
+    return extractBits(bits, range.location, range.length);
 }
 
 @end
