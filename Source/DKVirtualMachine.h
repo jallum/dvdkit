@@ -51,6 +51,7 @@
     DKDomain domain;
     DKTitleSetInformation* titleSet;
     DKProgramChain* programChain;
+    DKPlaybackFlags playbackFlags;
     int programNumber;
     int instructionCounter;
     int cell;

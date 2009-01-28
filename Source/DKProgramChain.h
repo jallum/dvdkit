@@ -58,28 +58,11 @@
 @property (retain) NSMutableArray* cellPositionTable;
 @property (retain) id userInfo;
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 + (id) programChainWithData:(NSData*)data error:(NSError**)error;
 
 - (id) initWithData:(NSData*)data error:(NSError**)error;
 
 - (NSData*) saveAsData:(NSError**)error;
-
-
 
 @end
 

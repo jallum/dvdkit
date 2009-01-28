@@ -23,7 +23,7 @@
 #import "DVDKit+Private.h"
 
 @implementation DKTitleTrackSearchPointer
-@synthesize pb_ty;
+@synthesize playbackFlags;
 @synthesize nr_of_ptts;
 @synthesize parental_id;
 @synthesize title_set_sector;
@@ -45,7 +45,7 @@
         index = _index;
         const title_info_t* title_info = [data bytes]; 
         
-        memcpy(&pb_ty, &title_info->pb_ty, sizeof(DKPlaybackFlags));
+        memcpy(&playbackFlags, &title_info->pb_ty, sizeof(DKPlaybackFlags));
         nr_of_ptts = OSReadBigInt16(&title_info->nr_of_ptts, 0);
         parental_id = OSReadBigInt16(&title_info->parental_id, 0);
         title_set_sector = OSReadBigInt32(&title_info->title_set_sector, 0);
@@ -76,7 +76,7 @@
     NSMutableData* data = [NSMutableData dataWithLength:sizeof(title_info_t)];
     title_info_t* title_info = [data mutableBytes];
 
-    memcpy(&title_info->pb_ty, &pb_ty, sizeof(DKPlaybackFlags));
+    memcpy(&title_info->pb_ty, &playbackFlags, sizeof(DKPlaybackFlags));
     OSWriteBigInt16(&title_info->nr_of_ptts, 0, nr_of_ptts);
     OSWriteBigInt16(&title_info->parental_id, 0, parental_id);
     OSWriteBigInt32(&title_info->title_set_sector, 0, title_set_sector);

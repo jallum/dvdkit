@@ -74,6 +74,7 @@ enum {
         if (programNumber >= [partOfTitle programNumber]) {
             break;
         }
+        pttn++;
     }
     return pttn;
 }
@@ -286,8 +287,13 @@ enum {
                         break;
                     } else {
                         programNumber = newProgramNumber;
+                        if (SPRM[4]) {
+                            playbackFlags = [[[mainMenuInformation titleTrackSearchPointerTable] objectAtIndex:SPRM[4] - 1] playbackFlags];
+                        } else {
+                            bzero(&playbackFlags, sizeof(playbackFlags));
+                        }
                         if (domain == kDKDomainVideoTitleSet) {
-                            SPRM[7] = [DKVirtualMachine partOfTitleForProgramNumber:programNumber usingSearchTable:[[titleSet partOfTitleSearchTable] objectAtIndex:SPRM[4] - 1]];
+//                            SPRM[7] = [DKVirtualMachine partOfTitleForProgramNumber:programNumber usingSearchTable:[[titleSet partOfTitleSearchTable] objectAtIndex:SPRM[5] - 1]];
                         }
                         state = PGC_CELL_POST;
                         return [[[cellPlaybackTable objectAtIndex:(cell - 1)] retain] autorelease];
@@ -464,13 +470,22 @@ enum {
     }
 }
 
-- (void) executeJumpSS_FP
+- (void) _doJumpSS_FP
 {
     resume.enabled = NO;
     state = FIRST_PLAY;
 }
 
-- (void) executeJumpSS_VTSM_menu:(uint8_t)menu vts:(uint8_t)vts ttn:(uint8_t)ttn
+- (void) executeJumpSS_FP
+{
+    if (domain != kDKDomainVideoTitleSetMenu && domain != kDKDomainVideoManagerMenu) {
+        state = STOP;
+    } else {
+        [self _doJumpSS_FP];
+    }
+}
+
+- (void) _doJumpSS_VTSM_menu:(uint8_t)menu vts:(uint8_t)vts ttn:(uint8_t)ttn
 {
     if (vts) {
         if (!titleSet || [titleSet index] != vts) {
@@ -503,7 +518,16 @@ enum {
     }
 }
 
-- (void) executeJumpSS_VMGM_menu:(uint8_t)menu
+- (void) executeJumpSS_VTSM_menu:(uint8_t)menu vts:(uint8_t)vts ttn:(uint8_t)ttn
+{
+    if (domain != kDKDomainVideoTitleSetMenu && domain != kDKDomainVideoManagerMenu && domain != kDKDomainFirstPlay) {
+        state = STOP;
+    } else {
+        [self _doJumpSS_VTSM_menu:menu vts:vts ttn:ttn];
+    }
+}
+
+- (void) _doJumpSS_VMGM_menu:(uint8_t)menu
 {
     resume.enabled &= (domain == kDKDomainVideoManagerMenu);
     domain = kDKDomainVideoManagerMenu;
@@ -531,7 +555,16 @@ enum {
     }
 }
 
-- (void) executeJumpSS_VMGM_pgcn:(uint16_t)pgcn
+- (void) executeJumpSS_VMGM_menu:(uint8_t)menu
+{
+    if (domain != kDKDomainVideoTitleSetMenu && domain != kDKDomainVideoManagerMenu && domain != kDKDomainFirstPlay) {
+        state = STOP;
+    } else {
+        [self _doJumpSS_VMGM_menu:menu];
+    }
+}
+
+- (void) _doJumpSS_VMGM_pgcn:(uint16_t)pgcn
 {
     resume.enabled &= (domain == kDKDomainVideoManagerMenu);
     domain = kDKDomainVideoManagerMenu;
@@ -546,57 +579,65 @@ enum {
     state = PGC_CHANGED;
 }
 
-- (BOOL) _saveResumeInfoWithCell:(int)_cell
+- (void) executeJumpSS_VMGM_pgcn:(uint16_t)pgcn
 {
-    if (domain != kDKDomainVideoTitleSet && domain != kDKDomainVideoTitleSetMenu) {
-        return NO;
+    if (domain != kDKDomainVideoTitleSetMenu && domain != kDKDomainVideoManagerMenu && domain != kDKDomainFirstPlay) {
+        state = STOP;
     } else {
-        resume.domain = domain;
-        resume.cell = _cell;
-        for (int i = 0; i < 5; i++) {
-            resume.REGS[i] = SPRM[4 + i];
-        }
-        return YES;
+        [self _doJumpSS_VMGM_pgcn:pgcn];
+    }
+}
+
+- (void) _saveResumeInfoWithCell:(int)_cell
+{
+    resume.domain = domain;
+    resume.cell = _cell;
+    for (int i = 0; i < 5; i++) {
+        resume.REGS[i] = SPRM[4 + i];
     }
 }
 
 - (void) executeCallSS_FP
 {
-    if ([self _saveResumeInfoWithCell:0]) {
-        [self executeJumpSS_FP];
-        resume.enabled = YES;
-    } else {
+    if (domain != kDKDomainVideoTitleSet) {
         state = STOP;
+    } else {
+        [self _saveResumeInfoWithCell:0];
+        [self _doJumpSS_FP];
+        resume.enabled = YES;
     }
 }
 
 - (void) executeCallSS_VMGM_menu:(uint8_t)menu resumeCell:(uint8_t)_cell
 {
-    if ([self _saveResumeInfoWithCell:_cell]) {
-        [self executeJumpSS_VMGM_menu:menu];
-        resume.enabled = YES;
-    } else {
+    if (domain != kDKDomainVideoTitleSet) {
         state = STOP;
+    } else {
+        [self _saveResumeInfoWithCell:_cell];
+        [self _doJumpSS_VMGM_menu:menu];
+        resume.enabled = YES;
     }
 }
 
 - (void) executeCallSS_VTSM_menu:(uint8_t)menu resumeCell:(uint8_t)_cell
 {
-    if ([self _saveResumeInfoWithCell:_cell]) {
-        [self executeJumpSS_VTSM_menu:menu vts:[titleSet index] ttn:1];
-        resume.enabled = YES;
-    } else {
+    if (domain != kDKDomainVideoTitleSet) {
         state = STOP;
+    } else {
+        [self _saveResumeInfoWithCell:_cell];
+        [self _doJumpSS_VTSM_menu:menu vts:[titleSet index] ttn:1];
+        resume.enabled = YES;
     }
 }
 
 - (void) executeCallSS_VMGM_pgcn:(uint16_t)pgcn resumeCell:(uint8_t)_cell
 {
-    if ([self _saveResumeInfoWithCell:_cell]) {
-        [self executeJumpSS_VMGM_pgcn:pgcn];
-        resume.enabled = YES;
-    } else {
+    if (domain != kDKDomainVideoTitleSet) {
         state = STOP;
+    } else {
+        [self _saveResumeInfoWithCell:_cell];
+        [self _doJumpSS_VMGM_pgcn:pgcn];
+        resume.enabled = YES;
     }
 }
 
@@ -636,7 +677,6 @@ enum {
 
 - (void) executeLinkTopCell
 {
-    cell = [[[programChain programMap] objectAtIndex:programNumber - 1] intValue];
     state = PGC_CELL;
 }
 

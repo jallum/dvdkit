@@ -21,7 +21,7 @@
  */
 
 @interface DKTitleTrackSearchPointer : NSObject {
-    DKPlaybackFlags pb_ty;
+    DKPlaybackFlags playbackFlags;
     uint16_t nr_of_ptts;
     uint16_t parental_id;
     uint32_t title_set_sector;
@@ -36,7 +36,7 @@
 
 - (id) initWithData:(NSData*)data index:(uint16_t)index;
 
-@property (assign) DKPlaybackFlags pb_ty;
+@property (readwrite) DKPlaybackFlags playbackFlags;
 @property (assign) uint16_t nr_of_ptts;
 @property (assign) uint16_t parental_id;
 @property (assign) uint32_t title_set_sector;

@@ -52,6 +52,8 @@
 @property (readonly) uint8_t postCommandIndex;
 @property (readonly) DKBlockType blockType;
 @property (readonly) DKBlockMode blockMode;
+@property (readonly) DKTime playbackTime;
+@property (readonly) uint8_t stillTime;
 @property (retain) id userInfo;
 
 @end

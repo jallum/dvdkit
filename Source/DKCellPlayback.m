@@ -30,6 +30,8 @@ NSString* const DVDCellPlaybackException = @"DVDCellPlayback";
 @synthesize firstSector;
 @synthesize lastSector;
 @synthesize postCommandIndex;
+@synthesize playbackTime;
+@synthesize stillTime;
 @synthesize userInfo;
 
 + (id) cellPlaybackWithData:(NSData*)data

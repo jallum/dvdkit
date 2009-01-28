@@ -941,22 +941,22 @@
 				//Title playback type checking
 				
 				//__zero_1 should be 0
-				STAssertTrue([tempPointer pb_ty ].__zero_1 == 0, @"__zero_1 should be 0.");
+				STAssertTrue([tempPointer playbackFlags].__zero_1 == 0, @"__zero_1 should be 0.");
 				//chapter_search_or_play should be 0
-				STAssertTrue([tempPointer pb_ty ].chapter_search_or_play == 0, @"chapter_search_or_play should be 0.");
+				STAssertTrue([tempPointer playbackFlags ].chapter_search_or_play == 0, @"chapter_search_or_play should be 0.");
 				//jlc_exists_in_button_cmd should be 0
-				STAssertTrue([tempPointer pb_ty ].jlc_exists_in_button_cmd == 0, @"jlc_exists_in_button_cmd should be 0.");
+				STAssertTrue([tempPointer playbackFlags ].jlc_exists_in_button_cmd == 0, @"jlc_exists_in_button_cmd should be 0.");
 				//jlc_exists_in_cell_cmd should be 0
-				STAssertTrue([tempPointer pb_ty ].jlc_exists_in_cell_cmd == 0, @"jlc_exists_in_cell_cmd should be 0.");
+				STAssertTrue([tempPointer playbackFlags ].jlc_exists_in_cell_cmd == 0, @"jlc_exists_in_cell_cmd should be 0.");
 				//jlc_exists_in_prepost_cmd should be 0
-				STAssertTrue([tempPointer pb_ty ].jlc_exists_in_prepost_cmd == 1, @"jlc_exists_in_prepost_cmd should be 0.");
+				STAssertTrue([tempPointer playbackFlags ].jlc_exists_in_prepost_cmd == 1, @"jlc_exists_in_prepost_cmd should be 0.");
 				//jlc_exists_in_tt_dom should be 0
-				STAssertTrue([tempPointer pb_ty ].jlc_exists_in_tt_dom == 1, @"jlc_exists_in_tt_dom should be 0.");
+				STAssertTrue([tempPointer playbackFlags ].jlc_exists_in_tt_dom == 1, @"jlc_exists_in_tt_dom should be 0.");
 				//multi_or_random_pgc_title should be 0
-				STAssertTrue([tempPointer pb_ty ].multi_or_random_pgc_title == 0, @"multi_or_random_pgc_title should be 0.");
+				STAssertTrue([tempPointer playbackFlags ].multi_or_random_pgc_title == 0, @"multi_or_random_pgc_title should be 0.");
 				
 				//title_or_time_play should be 0
-				STAssertTrue([tempPointer pb_ty ].title_or_time_play == 0, @"title_or_time_play should be 0.");
+				STAssertTrue([tempPointer playbackFlags ].title_or_time_play == 0, @"title_or_time_play should be 0.");
 				
 				
 				break;
@@ -986,22 +986,22 @@
 				//Title playback type checking
 				
 				//__zero_1 should be 0
-				STAssertTrue([tempPointer pb_ty ].__zero_1 == 0, @"__zero_1 should be 0.");
+				STAssertTrue([tempPointer playbackFlags ].__zero_1 == 0, @"__zero_1 should be 0.");
 				//chapter_search_or_play should be 0
-				STAssertTrue([tempPointer pb_ty ].chapter_search_or_play == 0, @"chapter_search_or_play should be 0.");
+				STAssertTrue([tempPointer playbackFlags ].chapter_search_or_play == 0, @"chapter_search_or_play should be 0.");
 				//jlc_exists_in_button_cmd should be 0
-				STAssertTrue([tempPointer pb_ty ].jlc_exists_in_button_cmd == 0, @"jlc_exists_in_button_cmd should be 0.");
+				STAssertTrue([tempPointer playbackFlags ].jlc_exists_in_button_cmd == 0, @"jlc_exists_in_button_cmd should be 0.");
 				//jlc_exists_in_cell_cmd should be 0
-				STAssertTrue([tempPointer pb_ty ].jlc_exists_in_cell_cmd == 0, @"jlc_exists_in_cell_cmd should be 0.");
+				STAssertTrue([tempPointer playbackFlags ].jlc_exists_in_cell_cmd == 0, @"jlc_exists_in_cell_cmd should be 0.");
 				//jlc_exists_in_prepost_cmd should be 0
-				STAssertTrue([tempPointer pb_ty ].jlc_exists_in_prepost_cmd == 1, @"jlc_exists_in_prepost_cmd should be 0.");
+				STAssertTrue([tempPointer playbackFlags ].jlc_exists_in_prepost_cmd == 1, @"jlc_exists_in_prepost_cmd should be 0.");
 				//jlc_exists_in_tt_dom should be 0
-				STAssertTrue([tempPointer pb_ty ].jlc_exists_in_tt_dom == 1, @"jlc_exists_in_tt_dom should be 0.");
+				STAssertTrue([tempPointer playbackFlags ].jlc_exists_in_tt_dom == 1, @"jlc_exists_in_tt_dom should be 0.");
 				//multi_or_random_pgc_title should be 0
-				STAssertTrue([tempPointer pb_ty ].multi_or_random_pgc_title == 0, @"multi_or_random_pgc_title should be 0.");
+				STAssertTrue([tempPointer playbackFlags ].multi_or_random_pgc_title == 0, @"multi_or_random_pgc_title should be 0.");
 				
 				//title_or_time_play should be 0
-				STAssertTrue([tempPointer pb_ty ].title_or_time_play == 0, @"title_or_time_play should be 0.");
+				STAssertTrue([tempPointer playbackFlags ].title_or_time_play == 0, @"title_or_time_play should be 0.");
 				break;
 			}
 			case 2:
@@ -1029,22 +1029,22 @@
 				//Title playback type checking
 				
 				//__zero_1 should be 0
-				STAssertTrue([tempPointer pb_ty ].__zero_1 == 0, @"__zero_1 should be 0.");
+				STAssertTrue([tempPointer playbackFlags ].__zero_1 == 0, @"__zero_1 should be 0.");
 				//chapter_search_or_play should be 0
-				STAssertTrue([tempPointer pb_ty ].chapter_search_or_play == 0, @"chapter_search_or_play should be 0.");
+				STAssertTrue([tempPointer playbackFlags ].chapter_search_or_play == 0, @"chapter_search_or_play should be 0.");
 				//jlc_exists_in_button_cmd should be 0
-				STAssertTrue([tempPointer pb_ty ].jlc_exists_in_button_cmd == 0, @"jlc_exists_in_button_cmd should be 0.");
+				STAssertTrue([tempPointer playbackFlags ].jlc_exists_in_button_cmd == 0, @"jlc_exists_in_button_cmd should be 0.");
 				//jlc_exists_in_cell_cmd should be 0
-				STAssertTrue([tempPointer pb_ty ].jlc_exists_in_cell_cmd == 0, @"jlc_exists_in_cell_cmd should be 0.");
+				STAssertTrue([tempPointer playbackFlags ].jlc_exists_in_cell_cmd == 0, @"jlc_exists_in_cell_cmd should be 0.");
 				//jlc_exists_in_prepost_cmd should be 0
-				STAssertTrue([tempPointer pb_ty ].jlc_exists_in_prepost_cmd == 1, @"jlc_exists_in_prepost_cmd should be 0.");
+				STAssertTrue([tempPointer playbackFlags ].jlc_exists_in_prepost_cmd == 1, @"jlc_exists_in_prepost_cmd should be 0.");
 				//jlc_exists_in_tt_dom should be 0
-				STAssertTrue([tempPointer pb_ty ].jlc_exists_in_tt_dom == 1, @"jlc_exists_in_tt_dom should be 0.");
+				STAssertTrue([tempPointer playbackFlags ].jlc_exists_in_tt_dom == 1, @"jlc_exists_in_tt_dom should be 0.");
 				//multi_or_random_pgc_title should be 0
-				STAssertTrue([tempPointer pb_ty ].multi_or_random_pgc_title == 0, @"multi_or_random_pgc_title should be 0.");
+				STAssertTrue([tempPointer playbackFlags ].multi_or_random_pgc_title == 0, @"multi_or_random_pgc_title should be 0.");
 				
 				//title_or_time_play should be 0
-				STAssertTrue([tempPointer pb_ty ].title_or_time_play == 0, @"title_or_time_play should be 0.");
+				STAssertTrue([tempPointer playbackFlags ].title_or_time_play == 0, @"title_or_time_play should be 0.");
 				break;
 			}
 			case 3:
@@ -1072,22 +1072,22 @@
 				//Title playback type checking
 				
 				//__zero_1 should be 0
-				STAssertTrue([tempPointer pb_ty ].__zero_1 == 0, @"__zero_1 should be 0.");
+				STAssertTrue([tempPointer playbackFlags ].__zero_1 == 0, @"__zero_1 should be 0.");
 				//chapter_search_or_play should be 0
-				STAssertTrue([tempPointer pb_ty ].chapter_search_or_play == 0, @"chapter_search_or_play should be 0.");
+				STAssertTrue([tempPointer playbackFlags ].chapter_search_or_play == 0, @"chapter_search_or_play should be 0.");
 				//jlc_exists_in_button_cmd should be 0
-				STAssertTrue([tempPointer pb_ty ].jlc_exists_in_button_cmd == 0, @"jlc_exists_in_button_cmd should be 0.");
+				STAssertTrue([tempPointer playbackFlags ].jlc_exists_in_button_cmd == 0, @"jlc_exists_in_button_cmd should be 0.");
 				//jlc_exists_in_cell_cmd should be 0
-				STAssertTrue([tempPointer pb_ty ].jlc_exists_in_cell_cmd == 0, @"jlc_exists_in_cell_cmd should be 0.");
+				STAssertTrue([tempPointer playbackFlags ].jlc_exists_in_cell_cmd == 0, @"jlc_exists_in_cell_cmd should be 0.");
 				//jlc_exists_in_prepost_cmd should be 0
-				STAssertTrue([tempPointer pb_ty ].jlc_exists_in_prepost_cmd == 1, @"jlc_exists_in_prepost_cmd should be 0.");
+				STAssertTrue([tempPointer playbackFlags ].jlc_exists_in_prepost_cmd == 1, @"jlc_exists_in_prepost_cmd should be 0.");
 				//jlc_exists_in_tt_dom should be 0
-				STAssertTrue([tempPointer pb_ty ].jlc_exists_in_tt_dom == 1, @"jlc_exists_in_tt_dom should be 0.");
+				STAssertTrue([tempPointer playbackFlags ].jlc_exists_in_tt_dom == 1, @"jlc_exists_in_tt_dom should be 0.");
 				//multi_or_random_pgc_title should be 0
-				STAssertTrue([tempPointer pb_ty ].multi_or_random_pgc_title == 0, @"multi_or_random_pgc_title should be 0.");
+				STAssertTrue([tempPointer playbackFlags ].multi_or_random_pgc_title == 0, @"multi_or_random_pgc_title should be 0.");
 				
 				//title_or_time_play should be 0
-				STAssertTrue([tempPointer pb_ty ].title_or_time_play == 0, @"title_or_time_play should be 0.");
+				STAssertTrue([tempPointer playbackFlags ].title_or_time_play == 0, @"title_or_time_play should be 0.");
 				break;
 			}
 			case 4:
@@ -1115,22 +1115,22 @@
 				//Title playback type checking
 				
 				//__zero_1 should be 0
-				STAssertTrue([tempPointer pb_ty ].__zero_1 == 0, @"__zero_1 should be 0.");
+				STAssertTrue([tempPointer playbackFlags ].__zero_1 == 0, @"__zero_1 should be 0.");
 				//chapter_search_or_play should be 0
-				STAssertTrue([tempPointer pb_ty ].chapter_search_or_play == 0, @"chapter_search_or_play should be 0.");
+				STAssertTrue([tempPointer playbackFlags ].chapter_search_or_play == 0, @"chapter_search_or_play should be 0.");
 				//jlc_exists_in_button_cmd should be 1
-				STAssertTrue([tempPointer pb_ty ].jlc_exists_in_button_cmd == 1, @"jlc_exists_in_button_cmd should be 1.");
+				STAssertTrue([tempPointer playbackFlags ].jlc_exists_in_button_cmd == 1, @"jlc_exists_in_button_cmd should be 1.");
 				//jlc_exists_in_cell_cmd should be 1
-				STAssertTrue([tempPointer pb_ty ].jlc_exists_in_cell_cmd == 1, @"jlc_exists_in_cell_cmd should be 1.");
+				STAssertTrue([tempPointer playbackFlags ].jlc_exists_in_cell_cmd == 1, @"jlc_exists_in_cell_cmd should be 1.");
 				//jlc_exists_in_prepost_cmd should be 0
-				STAssertTrue([tempPointer pb_ty ].jlc_exists_in_prepost_cmd == 1, @"jlc_exists_in_prepost_cmd should be 0.");
+				STAssertTrue([tempPointer playbackFlags ].jlc_exists_in_prepost_cmd == 1, @"jlc_exists_in_prepost_cmd should be 0.");
 				//jlc_exists_in_tt_dom should be 0
-				STAssertTrue([tempPointer pb_ty ].jlc_exists_in_tt_dom == 1, @"jlc_exists_in_tt_dom should be 0.");
+				STAssertTrue([tempPointer playbackFlags ].jlc_exists_in_tt_dom == 1, @"jlc_exists_in_tt_dom should be 0.");
 				//multi_or_random_pgc_title should be 0
-				STAssertTrue([tempPointer pb_ty ].multi_or_random_pgc_title == 0, @"multi_or_random_pgc_title should be 0.");
+				STAssertTrue([tempPointer playbackFlags ].multi_or_random_pgc_title == 0, @"multi_or_random_pgc_title should be 0.");
 				
 				//title_or_time_play should be 0
-				STAssertTrue([tempPointer pb_ty ].title_or_time_play == 0, @"title_or_time_play should be 0.");
+				STAssertTrue([tempPointer playbackFlags ].title_or_time_play == 0, @"title_or_time_play should be 0.");
 				break;
 			}
 			case 5:
@@ -1158,22 +1158,22 @@
 				//Title playback type checking
 				
 				//__zero_1 should be 0
-				STAssertTrue([tempPointer pb_ty ].__zero_1 == 0, @"__zero_1 should be 0.");
+				STAssertTrue([tempPointer playbackFlags ].__zero_1 == 0, @"__zero_1 should be 0.");
 				//chapter_search_or_play should be 0
-				STAssertTrue([tempPointer pb_ty ].chapter_search_or_play == 0, @"chapter_search_or_play should be 0.");
+				STAssertTrue([tempPointer playbackFlags ].chapter_search_or_play == 0, @"chapter_search_or_play should be 0.");
 				//jlc_exists_in_button_cmd should be 1
-				STAssertTrue([tempPointer pb_ty ].jlc_exists_in_button_cmd == 1, @"jlc_exists_in_button_cmd should be 1.");
+				STAssertTrue([tempPointer playbackFlags ].jlc_exists_in_button_cmd == 1, @"jlc_exists_in_button_cmd should be 1.");
 				//jlc_exists_in_cell_cmd should be 1
-				STAssertTrue([tempPointer pb_ty ].jlc_exists_in_cell_cmd == 1, @"jlc_exists_in_cell_cmd should be 1.");
+				STAssertTrue([tempPointer playbackFlags ].jlc_exists_in_cell_cmd == 1, @"jlc_exists_in_cell_cmd should be 1.");
 				//jlc_exists_in_prepost_cmd should be 0
-				STAssertTrue([tempPointer pb_ty ].jlc_exists_in_prepost_cmd == 1, @"jlc_exists_in_prepost_cmd should be 0.");
+				STAssertTrue([tempPointer playbackFlags ].jlc_exists_in_prepost_cmd == 1, @"jlc_exists_in_prepost_cmd should be 0.");
 				//jlc_exists_in_tt_dom should be 0
-				STAssertTrue([tempPointer pb_ty ].jlc_exists_in_tt_dom == 1, @"jlc_exists_in_tt_dom should be 0.");
+				STAssertTrue([tempPointer playbackFlags ].jlc_exists_in_tt_dom == 1, @"jlc_exists_in_tt_dom should be 0.");
 				//multi_or_random_pgc_title should be 0
-				STAssertTrue([tempPointer pb_ty ].multi_or_random_pgc_title == 0, @"multi_or_random_pgc_title should be 0.");
+				STAssertTrue([tempPointer playbackFlags ].multi_or_random_pgc_title == 0, @"multi_or_random_pgc_title should be 0.");
 				
 				//title_or_time_play should be 0
-				STAssertTrue([tempPointer pb_ty ].title_or_time_play == 0, @"title_or_time_play should be 0.");
+				STAssertTrue([tempPointer playbackFlags ].title_or_time_play == 0, @"title_or_time_play should be 0.");
 				break;
 			}
 			case 6:
@@ -1201,22 +1201,22 @@
 				//Title playback type checking
 				
 				//__zero_1 should be 0
-				STAssertTrue([tempPointer pb_ty ].__zero_1 == 0, @"__zero_1 should be 0.");
+				STAssertTrue([tempPointer playbackFlags ].__zero_1 == 0, @"__zero_1 should be 0.");
 				//chapter_search_or_play should be 0
-				STAssertTrue([tempPointer pb_ty ].chapter_search_or_play == 0, @"chapter_search_or_play should be 0.");
+				STAssertTrue([tempPointer playbackFlags ].chapter_search_or_play == 0, @"chapter_search_or_play should be 0.");
 				//jlc_exists_in_button_cmd should be 1
-				STAssertTrue([tempPointer pb_ty ].jlc_exists_in_button_cmd == 1, @"jlc_exists_in_button_cmd should be 1.");
+				STAssertTrue([tempPointer playbackFlags ].jlc_exists_in_button_cmd == 1, @"jlc_exists_in_button_cmd should be 1.");
 				//jlc_exists_in_cell_cmd should be 1
-				STAssertTrue([tempPointer pb_ty ].jlc_exists_in_cell_cmd == 1, @"jlc_exists_in_cell_cmd should be 1.");
+				STAssertTrue([tempPointer playbackFlags ].jlc_exists_in_cell_cmd == 1, @"jlc_exists_in_cell_cmd should be 1.");
 				//jlc_exists_in_prepost_cmd should be 0
-				STAssertTrue([tempPointer pb_ty ].jlc_exists_in_prepost_cmd == 1, @"jlc_exists_in_prepost_cmd should be 0.");
+				STAssertTrue([tempPointer playbackFlags ].jlc_exists_in_prepost_cmd == 1, @"jlc_exists_in_prepost_cmd should be 0.");
 				//jlc_exists_in_tt_dom should be 0
-				STAssertTrue([tempPointer pb_ty ].jlc_exists_in_tt_dom == 1, @"jlc_exists_in_tt_dom should be 0.");
+				STAssertTrue([tempPointer playbackFlags ].jlc_exists_in_tt_dom == 1, @"jlc_exists_in_tt_dom should be 0.");
 				//multi_or_random_pgc_title should be 0
-				STAssertTrue([tempPointer pb_ty ].multi_or_random_pgc_title == 0, @"multi_or_random_pgc_title should be 0.");
+				STAssertTrue([tempPointer playbackFlags ].multi_or_random_pgc_title == 0, @"multi_or_random_pgc_title should be 0.");
 				
 				//title_or_time_play should be 0
-				STAssertTrue([tempPointer pb_ty ].title_or_time_play == 0, @"title_or_time_play should be 0.");
+				STAssertTrue([tempPointer playbackFlags ].title_or_time_play == 0, @"title_or_time_play should be 0.");
 				break;
 			}
 			case 7:
@@ -1244,22 +1244,22 @@
 				//Title playback type checking
 				
 				//__zero_1 should be 0
-				STAssertTrue([tempPointer pb_ty ].__zero_1 == 0, @"__zero_1 should be 0.");
+				STAssertTrue([tempPointer playbackFlags ].__zero_1 == 0, @"__zero_1 should be 0.");
 				//chapter_search_or_play should be 0
-				STAssertTrue([tempPointer pb_ty ].chapter_search_or_play == 0, @"chapter_search_or_play should be 0.");
+				STAssertTrue([tempPointer playbackFlags ].chapter_search_or_play == 0, @"chapter_search_or_play should be 0.");
 				//jlc_exists_in_button_cmd should be 1
-				STAssertTrue([tempPointer pb_ty ].jlc_exists_in_button_cmd == 1, @"jlc_exists_in_button_cmd should be 1.");
+				STAssertTrue([tempPointer playbackFlags ].jlc_exists_in_button_cmd == 1, @"jlc_exists_in_button_cmd should be 1.");
 				//jlc_exists_in_cell_cmd should be 1
-				STAssertTrue([tempPointer pb_ty ].jlc_exists_in_cell_cmd == 1, @"jlc_exists_in_cell_cmd should be 1.");
+				STAssertTrue([tempPointer playbackFlags ].jlc_exists_in_cell_cmd == 1, @"jlc_exists_in_cell_cmd should be 1.");
 				//jlc_exists_in_prepost_cmd should be 0
-				STAssertTrue([tempPointer pb_ty ].jlc_exists_in_prepost_cmd == 1, @"jlc_exists_in_prepost_cmd should be 0.");
+				STAssertTrue([tempPointer playbackFlags ].jlc_exists_in_prepost_cmd == 1, @"jlc_exists_in_prepost_cmd should be 0.");
 				//jlc_exists_in_tt_dom should be 0
-				STAssertTrue([tempPointer pb_ty ].jlc_exists_in_tt_dom == 1, @"jlc_exists_in_tt_dom should be 0.");
+				STAssertTrue([tempPointer playbackFlags ].jlc_exists_in_tt_dom == 1, @"jlc_exists_in_tt_dom should be 0.");
 				//multi_or_random_pgc_title should be 1
-				STAssertTrue([tempPointer pb_ty ].multi_or_random_pgc_title == 1, @"multi_or_random_pgc_title should be 1.");
+				STAssertTrue([tempPointer playbackFlags ].multi_or_random_pgc_title == 1, @"multi_or_random_pgc_title should be 1.");
 				
 				//title_or_time_play should be 0
-				STAssertTrue([tempPointer pb_ty ].title_or_time_play == 0, @"title_or_time_play should be 0.");
+				STAssertTrue([tempPointer playbackFlags ].title_or_time_play == 0, @"title_or_time_play should be 0.");
 				break;
 			}
 			case 8:
@@ -1287,22 +1287,22 @@
 				//Title playback type checking
 				
 				//__zero_1 should be 0
-				STAssertTrue([tempPointer pb_ty ].__zero_1 == 0, @"__zero_1 should be 0.");
+				STAssertTrue([tempPointer playbackFlags ].__zero_1 == 0, @"__zero_1 should be 0.");
 				//chapter_search_or_play should be 0
-				STAssertTrue([tempPointer pb_ty ].chapter_search_or_play == 0, @"chapter_search_or_play should be 0.");
+				STAssertTrue([tempPointer playbackFlags ].chapter_search_or_play == 0, @"chapter_search_or_play should be 0.");
 				//jlc_exists_in_button_cmd should be 1
-				STAssertTrue([tempPointer pb_ty ].jlc_exists_in_button_cmd == 1, @"jlc_exists_in_button_cmd should be 1.");
+				STAssertTrue([tempPointer playbackFlags ].jlc_exists_in_button_cmd == 1, @"jlc_exists_in_button_cmd should be 1.");
 				//jlc_exists_in_cell_cmd should be 1
-				STAssertTrue([tempPointer pb_ty ].jlc_exists_in_cell_cmd == 1, @"jlc_exists_in_cell_cmd should be 1.");
+				STAssertTrue([tempPointer playbackFlags ].jlc_exists_in_cell_cmd == 1, @"jlc_exists_in_cell_cmd should be 1.");
 				//jlc_exists_in_prepost_cmd should be 0
-				STAssertTrue([tempPointer pb_ty ].jlc_exists_in_prepost_cmd == 1, @"jlc_exists_in_prepost_cmd should be 0.");
+				STAssertTrue([tempPointer playbackFlags ].jlc_exists_in_prepost_cmd == 1, @"jlc_exists_in_prepost_cmd should be 0.");
 				//jlc_exists_in_tt_dom should be 0
-				STAssertTrue([tempPointer pb_ty ].jlc_exists_in_tt_dom == 1, @"jlc_exists_in_tt_dom should be 0.");
+				STAssertTrue([tempPointer playbackFlags ].jlc_exists_in_tt_dom == 1, @"jlc_exists_in_tt_dom should be 0.");
 				//multi_or_random_pgc_title should be 0
-				STAssertTrue([tempPointer pb_ty ].multi_or_random_pgc_title == 0, @"multi_or_random_pgc_title should be 0.");
+				STAssertTrue([tempPointer playbackFlags ].multi_or_random_pgc_title == 0, @"multi_or_random_pgc_title should be 0.");
 				
 				//title_or_time_play should be 0
-				STAssertTrue([tempPointer pb_ty ].title_or_time_play == 0, @"title_or_time_play should be 0.");
+				STAssertTrue([tempPointer playbackFlags ].title_or_time_play == 0, @"title_or_time_play should be 0.");
 				break;
 			}
 			case 9:
@@ -1330,22 +1330,22 @@
 				//Title playback type checking
 				
 				//__zero_1 should be 0
-				STAssertTrue([tempPointer pb_ty ].__zero_1 == 0, @"__zero_1 should be 0.");
+				STAssertTrue([tempPointer playbackFlags ].__zero_1 == 0, @"__zero_1 should be 0.");
 				//chapter_search_or_play should be 0
-				STAssertTrue([tempPointer pb_ty ].chapter_search_or_play == 0, @"chapter_search_or_play should be 0.");
+				STAssertTrue([tempPointer playbackFlags ].chapter_search_or_play == 0, @"chapter_search_or_play should be 0.");
 				//jlc_exists_in_button_cmd should be 1
-				STAssertTrue([tempPointer pb_ty ].jlc_exists_in_button_cmd == 1, @"jlc_exists_in_button_cmd should be 1.");
+				STAssertTrue([tempPointer playbackFlags ].jlc_exists_in_button_cmd == 1, @"jlc_exists_in_button_cmd should be 1.");
 				//jlc_exists_in_cell_cmd should be 1
-				STAssertTrue([tempPointer pb_ty ].jlc_exists_in_cell_cmd == 1, @"jlc_exists_in_cell_cmd should be 1.");
+				STAssertTrue([tempPointer playbackFlags ].jlc_exists_in_cell_cmd == 1, @"jlc_exists_in_cell_cmd should be 1.");
 				//jlc_exists_in_prepost_cmd should be 0
-				STAssertTrue([tempPointer pb_ty ].jlc_exists_in_prepost_cmd == 1, @"jlc_exists_in_prepost_cmd should be 0.");
+				STAssertTrue([tempPointer playbackFlags ].jlc_exists_in_prepost_cmd == 1, @"jlc_exists_in_prepost_cmd should be 0.");
 				//jlc_exists_in_tt_dom should be 0
-				STAssertTrue([tempPointer pb_ty ].jlc_exists_in_tt_dom == 1, @"jlc_exists_in_tt_dom should be 0.");
+				STAssertTrue([tempPointer playbackFlags ].jlc_exists_in_tt_dom == 1, @"jlc_exists_in_tt_dom should be 0.");
 				//multi_or_random_pgc_title should be 0
-				STAssertTrue([tempPointer pb_ty ].multi_or_random_pgc_title == 0, @"multi_or_random_pgc_title should be 0.");
+				STAssertTrue([tempPointer playbackFlags ].multi_or_random_pgc_title == 0, @"multi_or_random_pgc_title should be 0.");
 				
 				//title_or_time_play should be 0
-				STAssertTrue([tempPointer pb_ty ].title_or_time_play == 0, @"title_or_time_play should be 0.");
+				STAssertTrue([tempPointer playbackFlags ].title_or_time_play == 0, @"title_or_time_play should be 0.");
 				break;
 			}
 			case 10:
@@ -1373,22 +1373,22 @@
 				//Title playback type checking
 				
 				//__zero_1 should be 0
-				STAssertTrue([tempPointer pb_ty ].__zero_1 == 0, @"__zero_1 should be 0.");
+				STAssertTrue([tempPointer playbackFlags ].__zero_1 == 0, @"__zero_1 should be 0.");
 				//chapter_search_or_play should be 0
-				STAssertTrue([tempPointer pb_ty ].chapter_search_or_play == 0, @"chapter_search_or_play should be 0.");
+				STAssertTrue([tempPointer playbackFlags ].chapter_search_or_play == 0, @"chapter_search_or_play should be 0.");
 				//jlc_exists_in_button_cmd should be 1
-				STAssertTrue([tempPointer pb_ty ].jlc_exists_in_button_cmd == 1, @"jlc_exists_in_button_cmd should be 1.");
+				STAssertTrue([tempPointer playbackFlags ].jlc_exists_in_button_cmd == 1, @"jlc_exists_in_button_cmd should be 1.");
 				//jlc_exists_in_cell_cmd should be 1
-				STAssertTrue([tempPointer pb_ty ].jlc_exists_in_cell_cmd == 1, @"jlc_exists_in_cell_cmd should be 1.");
+				STAssertTrue([tempPointer playbackFlags ].jlc_exists_in_cell_cmd == 1, @"jlc_exists_in_cell_cmd should be 1.");
 				//jlc_exists_in_prepost_cmd should be 0
-				STAssertTrue([tempPointer pb_ty ].jlc_exists_in_prepost_cmd == 1, @"jlc_exists_in_prepost_cmd should be 0.");
+				STAssertTrue([tempPointer playbackFlags ].jlc_exists_in_prepost_cmd == 1, @"jlc_exists_in_prepost_cmd should be 0.");
 				//jlc_exists_in_tt_dom should be 0
-				STAssertTrue([tempPointer pb_ty ].jlc_exists_in_tt_dom == 1, @"jlc_exists_in_tt_dom should be 0.");
+				STAssertTrue([tempPointer playbackFlags ].jlc_exists_in_tt_dom == 1, @"jlc_exists_in_tt_dom should be 0.");
 				//multi_or_random_pgc_title should be 0
-				STAssertTrue([tempPointer pb_ty ].multi_or_random_pgc_title == 0, @"multi_or_random_pgc_title should be 0.");
+				STAssertTrue([tempPointer playbackFlags ].multi_or_random_pgc_title == 0, @"multi_or_random_pgc_title should be 0.");
 				
 				//title_or_time_play should be 0
-				STAssertTrue([tempPointer pb_ty ].title_or_time_play == 0, @"title_or_time_play should be 0.");
+				STAssertTrue([tempPointer playbackFlags ].title_or_time_play == 0, @"title_or_time_play should be 0.");
 				break;
 			}
 			case 11:
@@ -1416,22 +1416,22 @@
 				//Title playback type checking
 				
 				//__zero_1 should be 0
-				STAssertTrue([tempPointer pb_ty ].__zero_1 == 0, @"__zero_1 should be 0.");
+				STAssertTrue([tempPointer playbackFlags ].__zero_1 == 0, @"__zero_1 should be 0.");
 				//chapter_search_or_play should be 0
-				STAssertTrue([tempPointer pb_ty ].chapter_search_or_play == 0, @"chapter_search_or_play should be 0.");
+				STAssertTrue([tempPointer playbackFlags ].chapter_search_or_play == 0, @"chapter_search_or_play should be 0.");
 				//jlc_exists_in_button_cmd should be 1
-				STAssertTrue([tempPointer pb_ty ].jlc_exists_in_button_cmd == 1, @"jlc_exists_in_button_cmd should be 1.");
+				STAssertTrue([tempPointer playbackFlags ].jlc_exists_in_button_cmd == 1, @"jlc_exists_in_button_cmd should be 1.");
 				//jlc_exists_in_cell_cmd should be 1
-				STAssertTrue([tempPointer pb_ty ].jlc_exists_in_cell_cmd == 1, @"jlc_exists_in_cell_cmd should be 1.");
+				STAssertTrue([tempPointer playbackFlags ].jlc_exists_in_cell_cmd == 1, @"jlc_exists_in_cell_cmd should be 1.");
 				//jlc_exists_in_prepost_cmd should be 0
-				STAssertTrue([tempPointer pb_ty ].jlc_exists_in_prepost_cmd == 1, @"jlc_exists_in_prepost_cmd should be 0.");
+				STAssertTrue([tempPointer playbackFlags ].jlc_exists_in_prepost_cmd == 1, @"jlc_exists_in_prepost_cmd should be 0.");
 				//jlc_exists_in_tt_dom should be 0
-				STAssertTrue([tempPointer pb_ty ].jlc_exists_in_tt_dom == 1, @"jlc_exists_in_tt_dom should be 0.");
+				STAssertTrue([tempPointer playbackFlags ].jlc_exists_in_tt_dom == 1, @"jlc_exists_in_tt_dom should be 0.");
 				//multi_or_random_pgc_title should be 0
-				STAssertTrue([tempPointer pb_ty ].multi_or_random_pgc_title == 0, @"multi_or_random_pgc_title should be 0.");
+				STAssertTrue([tempPointer playbackFlags ].multi_or_random_pgc_title == 0, @"multi_or_random_pgc_title should be 0.");
 				
 				//title_or_time_play should be 0
-				STAssertTrue([tempPointer pb_ty ].title_or_time_play == 0, @"title_or_time_play should be 0.");
+				STAssertTrue([tempPointer playbackFlags ].title_or_time_play == 0, @"title_or_time_play should be 0.");
 				break;
 			}
 			case 12:
@@ -1459,22 +1459,22 @@
 				//Title playback type checking
 				
 				//__zero_1 should be 0
-				STAssertTrue([tempPointer pb_ty ].__zero_1 == 0, @"__zero_1 should be 0.");
+				STAssertTrue([tempPointer playbackFlags ].__zero_1 == 0, @"__zero_1 should be 0.");
 				//chapter_search_or_play should be 0
-				STAssertTrue([tempPointer pb_ty ].chapter_search_or_play == 0, @"chapter_search_or_play should be 0.");
+				STAssertTrue([tempPointer playbackFlags ].chapter_search_or_play == 0, @"chapter_search_or_play should be 0.");
 				//jlc_exists_in_button_cmd should be 1
-				STAssertTrue([tempPointer pb_ty ].jlc_exists_in_button_cmd == 1, @"jlc_exists_in_button_cmd should be 1.");
+				STAssertTrue([tempPointer playbackFlags ].jlc_exists_in_button_cmd == 1, @"jlc_exists_in_button_cmd should be 1.");
 				//jlc_exists_in_cell_cmd should be 1
-				STAssertTrue([tempPointer pb_ty ].jlc_exists_in_cell_cmd == 1, @"jlc_exists_in_cell_cmd should be 1.");
+				STAssertTrue([tempPointer playbackFlags ].jlc_exists_in_cell_cmd == 1, @"jlc_exists_in_cell_cmd should be 1.");
 				//jlc_exists_in_prepost_cmd should be 0
-				STAssertTrue([tempPointer pb_ty ].jlc_exists_in_prepost_cmd == 1, @"jlc_exists_in_prepost_cmd should be 0.");
+				STAssertTrue([tempPointer playbackFlags ].jlc_exists_in_prepost_cmd == 1, @"jlc_exists_in_prepost_cmd should be 0.");
 				//jlc_exists_in_tt_dom should be 0
-				STAssertTrue([tempPointer pb_ty ].jlc_exists_in_tt_dom == 1, @"jlc_exists_in_tt_dom should be 0.");
+				STAssertTrue([tempPointer playbackFlags ].jlc_exists_in_tt_dom == 1, @"jlc_exists_in_tt_dom should be 0.");
 				//multi_or_random_pgc_title should be 0
-				STAssertTrue([tempPointer pb_ty ].multi_or_random_pgc_title == 0, @"multi_or_random_pgc_title should be 0.");
+				STAssertTrue([tempPointer playbackFlags ].multi_or_random_pgc_title == 0, @"multi_or_random_pgc_title should be 0.");
 				
 				//title_or_time_play should be 0
-				STAssertTrue([tempPointer pb_ty ].title_or_time_play == 0, @"title_or_time_play should be 0.");
+				STAssertTrue([tempPointer playbackFlags ].title_or_time_play == 0, @"title_or_time_play should be 0.");
 				break;
 			}
 			default:
