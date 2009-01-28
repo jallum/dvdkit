@@ -50,26 +50,42 @@ NSString* const kDKTitleSetInformationSection_VTS_TMAPT         = @"vts_tmapt";
 @end
 
 @implementation DKTitleSetInformation
-@synthesize index;
-@synthesize categoryAndMask;
-@synthesize partOfTitleSearchTable;
-
-@synthesize menuVideoAttributes;
-@synthesize menuAudioAttributes;
-@synthesize menuSubpictureAttributes;
-@synthesize menuProgramChainInformationTablesByLanguage;
-@synthesize menuCellAddressTable;
-@synthesize menuVobuAddressMap;
-
-@synthesize videoAttributes;
 @synthesize audioAttributes;
-@synthesize subpictureAttributes;
-@synthesize programChainInformationTable;
+@synthesize categoryAndMask;
 @synthesize cellAddressTable;
-
-@synthesize vobuAddressMap;
-@synthesize timeMapTable;
+@synthesize index;
+@synthesize menuAudioAttributes;
+@synthesize menuCellAddressTable;
+@synthesize menuProgramChainInformationTablesByLanguage;
+@synthesize menuSubpictureAttributes;
+@synthesize menuVideoAttributes;
+@synthesize menuVobuAddressMap;
+@synthesize partOfTitleSearchTable;
+@synthesize programChainInformationTable;
 @synthesize specificationVersion;
+@synthesize subpictureAttributes;
+@synthesize timeMapTable;
+@synthesize videoAttributes;
+@synthesize vobuAddressMap;
+
+- (void) dealloc
+{
+    [audioAttributes release];
+    [cellAddressTable release];
+    [menuAudioAttributes release];
+    [menuCellAddressTable release];
+    [menuProgramChainInformationTablesByLanguage release];
+    [menuSubpictureAttributes release];
+    [menuVideoAttributes release];
+    [(id)menuVobuAddressMap release];
+    [partOfTitleSearchTable release];
+    [programChainInformationTable release];
+    [subpictureAttributes release];
+    [timeMapTable release];
+    [videoAttributes release];
+    [(id)vobuAddressMap release];
+    [super dealloc];
+}
 
 - (BOOL) isEqual:(DKTitleSetInformation*)anObject
 {
@@ -174,7 +190,7 @@ NSString* const kDKTitleSetInformationSection_VTS_TMAPT         = @"vts_tmapt";
         
         /*  Menu Video/Audio/Subpicture Attributes
          */
-        menuVideoAttributes = [DKVideoAttributes videoAttributesWithData:[header subdataWithRange:NSMakeRange(offsetof(vts_mat_t, vtsm_video_attr), sizeof(video_attr_t))]];
+        menuVideoAttributes = [[DKVideoAttributes alloc] initWithData:[header subdataWithRange:NSMakeRange(offsetof(vts_mat_t, vtsm_video_attr), sizeof(video_attr_t))]];
         uint16_t nr_of_vtsm_audio_streams = OSReadBigInt16(&vts_mat->nr_of_vtsm_audio_streams, 0);
         if (nr_of_vtsm_audio_streams) {
             if (nr_of_vtsm_audio_streams > 8) {
@@ -196,13 +212,13 @@ NSString* const kDKTitleSetInformationSection_VTS_TMAPT         = @"vts_tmapt";
             nr_of_vtsm_subp_streams = 1;
         }
         if (nr_of_vtsm_subp_streams) {
-            menuSubpictureAttributes = [DKSubpictureAttributes subpictureAttributesWithData:[header subdataWithRange:NSMakeRange(offsetof(vts_mat_t, vtsm_subp_attr), sizeof(subp_attr_t))]];
+            menuSubpictureAttributes = [[DKSubpictureAttributes alloc] initWithData:[header subdataWithRange:NSMakeRange(offsetof(vts_mat_t, vtsm_subp_attr), sizeof(subp_attr_t))]];
         }
 
         
         /*  Video/Audio/Subpicture Attributes
          */
-        videoAttributes = [DKVideoAttributes videoAttributesWithData:[header subdataWithRange:NSMakeRange(offsetof(vts_mat_t, vts_video_attr), sizeof(video_attr_t))]];
+        videoAttributes = [[DKVideoAttributes alloc] initWithData:[header subdataWithRange:NSMakeRange(offsetof(vts_mat_t, vts_video_attr), sizeof(video_attr_t))]];
         uint16_t nr_of_vts_audio_streams = OSReadBigInt16(&vts_mat->nr_of_vts_audio_streams, 0);
         if (nr_of_vts_audio_streams) {
             if (nr_of_vts_audio_streams > 8) {
@@ -490,18 +506,6 @@ NSString* const kDKTitleSetInformationSection_VTS_TMAPT         = @"vts_tmapt";
     }
  
     return dictionary;
-}
-                                                           
-- (void) dealloc
-{
-    [(id)menuVobuAddressMap release];
-    [(id)vobuAddressMap release];
-    [menuProgramChainInformationTablesByLanguage release];
-    [programChainInformationTable release];
-    [menuCellAddressTable release];
-    [cellAddressTable release];
-    [partOfTitleSearchTable release];
-    [super dealloc];
 }
 
 - (NSArray*) menuProgramChainInformationTableForLanguageCode:(uint16_t)languageCode

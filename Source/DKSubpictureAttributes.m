@@ -8,6 +8,10 @@
 @synthesize lang_extension;
 @synthesize code_extension;
 
+- (void) dealloc
+{
+    [super dealloc];
+}
 
 + (id) subpictureAttributesWithData:(NSData*)data
 {

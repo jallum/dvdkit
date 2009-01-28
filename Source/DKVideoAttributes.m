@@ -17,10 +17,7 @@ static DKPictureSize PICTURE_SIZE_TABLE[4][4] = {
 
 @implementation DKVideoAttributes
 
-
 @synthesize mpeg_version;
-
-
 @synthesize video_format;
 @synthesize display_aspect_ratio;
 @synthesize film_mode;
@@ -30,6 +27,10 @@ static DKPictureSize PICTURE_SIZE_TABLE[4][4] = {
 @synthesize line21_cc_2;
 @synthesize line21_cc_1;
 
+- (void) dealloc
+{
+    [super dealloc];
+}
 
 + (id) videoAttributesWithData:(NSData*)data
 {
@@ -38,26 +39,20 @@ static DKPictureSize PICTURE_SIZE_TABLE[4][4] = {
 
 - (BOOL) isEqual:(DKVideoAttributes*)anObject
 {
-
 	if (self == anObject) {
         return YES;
-	}
-			else return
-				(
-					 [self class] == [anObject class]
-					 && (anObject->mpeg_version == mpeg_version)
-					 && (anObject->video_format == video_format)
-					 && (anObject->display_aspect_ratio == display_aspect_ratio)
-					 && (anObject->film_mode == film_mode)
-					 && (anObject->letterboxed == letterboxed)
-					 && (anObject->picture_size == picture_size)
-					 && (anObject->constantBitRate  == constantBitRate)
-					 && (anObject->line21_cc_1 == line21_cc_1)
-					 && (anObject->line21_cc_2 == line21_cc_2)
-					 );
-		  
-	   
-	
+	} else return (
+        [self class] == [anObject class]
+        && (anObject->mpeg_version == mpeg_version)
+        && (anObject->video_format == video_format)
+        && (anObject->display_aspect_ratio == display_aspect_ratio)
+        && (anObject->film_mode == film_mode)
+        && (anObject->letterboxed == letterboxed)
+        && (anObject->picture_size == picture_size)
+        && (anObject->constantBitRate  == constantBitRate)
+        && (anObject->line21_cc_1 == line21_cc_1)
+        && (anObject->line21_cc_2 == line21_cc_2)
+    );
 }
 
 - (id) initWithData:(NSData*)data

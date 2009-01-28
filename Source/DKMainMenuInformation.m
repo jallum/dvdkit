@@ -49,25 +49,41 @@ NSString* const kDKMainMenuInformationSection_VMGM_VOBU_ADMAP  = @"vmgm_vobu_adm
 @end
 
 @implementation DKMainMenuInformation
-@synthesize specificationVersion;
 @synthesize categoryAndMask;
-@synthesize numberOfVolumes;
-@synthesize volumeNumber;
-@synthesize side;
+@synthesize firstPlayProgramChain;
+@synthesize menuAudioAttributes;
+@synthesize menuCellAddressTable;
+@synthesize menuProgramChainInformationTablesByLanguage;
+@synthesize menuSubpictureAttributes;
+@synthesize menuVideoAttributes;
+@synthesize menuVobuAddressMap;
 @synthesize numberOfTitleSets;
+@synthesize numberOfVolumes;
 @synthesize pointOfSaleCode;
 @synthesize providerId;
-@synthesize menuVideoAttributes;
-@synthesize menuAudioAttributes;
-@synthesize menuSubpictureAttributes;
-
-@synthesize firstPlayProgramChain;
-@synthesize titleTrackSearchPointerTable;
-@synthesize menuProgramChainInformationTablesByLanguage;
-
-@synthesize menuCellAddressTable;
-@synthesize menuVobuAddressMap;
+@synthesize side;
+@synthesize specificationVersion;
 @synthesize titleSetAttributeTable;
+@synthesize titleTrackSearchPointerTable;
+@synthesize volumeNumber;
+
+- (void) dealloc
+{
+    [firstPlayProgramChain release];
+    [menuAudioAttributes release];
+    [menuCellAddressTable release];
+    [menuProgramChainInformationTablesByLanguage release];
+    [menuSubpictureAttributes release];
+    [menuVideoAttributes release];
+    [(id)menuVobuAddressMap release];
+    [parentalManagementInformationTable release];
+    [preferredSectionOrder release];
+    [providerId release];
+    [textData release];
+    [titleSetAttributeTable release];
+    [titleTrackSearchPointerTable release];
+    [super dealloc];
+}
 
 + (NSArray*) availableSections
 {
@@ -135,7 +151,7 @@ NSString* const kDKMainMenuInformationSection_VMGM_VOBU_ADMAP  = @"vmgm_vobu_adm
         side = OSReadBigInt8(&vmgi_mat->disc_side, 0);
         numberOfTitleSets = OSReadBigInt16(&vmgi_mat->vmg_nr_of_title_sets, 0);
         pointOfSaleCode = OSReadBigInt64(&vmgi_mat->vmg_pos_code, 0);
-        providerId = [NSString stringWithCString:(const char*)&vmgi_mat->provider_identifier length:sizeof(vmgi_mat->provider_identifier)];
+        providerId = [[NSString stringWithCString:(const char*)&vmgi_mat->provider_identifier length:sizeof(vmgi_mat->provider_identifier)] retain];
         
 //        uint32_t vmgm_vobs = OSReadBigInt32(&vmgi_mat->vmgm_vobs, 0);
         
@@ -176,7 +192,7 @@ NSString* const kDKMainMenuInformationSection_VMGM_VOBU_ADMAP  = @"vmgm_vobu_adm
         
         /*  Video/Audio/Subpicture Attributes
          */
-        menuVideoAttributes = [DKVideoAttributes videoAttributesWithData:[header subdataWithRange:NSMakeRange(offsetof(vmgi_mat_t, vmgm_video_attr), sizeof(video_attr_t))]];
+        menuVideoAttributes = [[DKVideoAttributes alloc] initWithData:[header subdataWithRange:NSMakeRange(offsetof(vmgi_mat_t, vmgm_video_attr), sizeof(video_attr_t))]];
         uint16_t nr_of_vmgm_audio_streams = OSReadBigInt16(&vmgi_mat->nr_of_vmgm_audio_streams, 0);
         if (nr_of_vmgm_audio_streams) {
             if (nr_of_vmgm_audio_streams > 8) {
@@ -199,7 +215,7 @@ NSString* const kDKMainMenuInformationSection_VMGM_VOBU_ADMAP  = @"vmgm_vobu_adm
             nr_of_vmgm_subp_streams = 1;
         }
         if (nr_of_vmgm_subp_streams) {
-            menuSubpictureAttributes = [DKSubpictureAttributes subpictureAttributesWithData:[header subdataWithRange:NSMakeRange(offsetof(vmgi_mat_t, vmgm_subp_attr), sizeof(subp_attr_t))]];
+            menuSubpictureAttributes = [[DKSubpictureAttributes alloc] initWithData:[header subdataWithRange:NSMakeRange(offsetof(vmgi_mat_t, vmgm_subp_attr), sizeof(subp_attr_t))]];
         }
         
         
@@ -222,7 +238,7 @@ NSString* const kDKMainMenuInformationSection_VMGM_VOBU_ADMAP  = @"vmgm_vobu_adm
         }
         NSError* firstPlayProgramChainError = nil;
         NSData* firstPlayProgramChainData = (vmgi_last_byte < [header length]) ? [header subdataWithRange:NSMakeRange(first_play_pgc, vmgi_last_byte - first_play_pgc)] : [dataSource requestDataOfLength:vmgi_last_byte - first_play_pgc fromOffset:first_play_pgc];
-        firstPlayProgramChain = [[DKProgramChain programChainWithData:firstPlayProgramChainData error:errors ? &firstPlayProgramChainError : NULL] retain];
+        firstPlayProgramChain = [[DKProgramChain alloc] initWithData:firstPlayProgramChainData error:errors ? &firstPlayProgramChainError : NULL];
         if (firstPlayProgramChainError) {
             if (firstPlayProgramChainError.code == kDKMultipleErrorsError) {
                 [errors addObjectsFromArray:[firstPlayProgramChainError.userInfo objectForKey:NSDetailedErrorsKey]];
@@ -484,20 +500,6 @@ NSString* const kDKMainMenuInformationSection_VMGM_VOBU_ADMAP  = @"vmgm_vobu_adm
     }
     
     return table;
-}
-
-- (void) dealloc
-{
-    [firstPlayProgramChain release];
-    [titleTrackSearchPointerTable release];
-    [parentalManagementInformationTable release];
-    [titleSetAttributeTable release];
-    [menuProgramChainInformationTablesByLanguage release];
-    [textData release];
-    [menuCellAddressTable release];
-    [(id)menuVobuAddressMap release];
-    [preferredSectionOrder release];
-    [super dealloc];
 }
 
 - (DKTitleTrackSearchPointer*) titleTrackSearchPointerForTitleSet:(uint16_t)vts track:(uint8_t)ttn;

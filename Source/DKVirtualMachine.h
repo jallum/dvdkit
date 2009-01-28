@@ -52,6 +52,7 @@
     DKTitleSetInformation* titleSet;
     DKProgramChain* programChain;
     DKPlaybackFlags playbackFlags;
+    DKUserOperationFlags prohibitedUserOperations;
     int programNumber;
     int instructionCounter;
     int cell;

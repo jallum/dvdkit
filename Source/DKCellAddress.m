@@ -28,6 +28,10 @@
 @synthesize start_sector;
 @synthesize last_sector;
 
+- (void) dealloc
+{
+    [super dealloc];
+}
 
 + (id) cellAddressWithData:(NSData*)data
 {

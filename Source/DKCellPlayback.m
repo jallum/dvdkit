@@ -81,6 +81,12 @@ NSString* const DVDCellPlaybackException = @"DVDCellPlayback";
     return self;
 }
 
+- (void) dealloc
+{
+    [userInfo release];
+    [super dealloc];
+}
+
 - (id) copyWithZone:(NSZone*)zone
 {
     return [self retain];

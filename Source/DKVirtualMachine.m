@@ -157,11 +157,6 @@ enum {
     return mainMenuInformation;
 }
 
-- (DKUserOperationFlags) prohibitedUserOperations
-{
-    return [programChain prohibitedUserOperations];
-}
-
 - (BOOL) trackingRegisterUsage
 {
     return SPRM_mask || GPRM_mask;
@@ -240,6 +235,7 @@ enum {
                 case PGC_CHANGED: {
                     [programChain release];
                     programChain = [[[[self pgcit] objectAtIndex:(SPRM[6] - 1)] programChain] retain];
+                    prohibitedUserOperations = programChain.prohibitedUserOperations;
                     if (delegateHasWillExecuteProgramChain) {
                         [delegate virtualMachine:self willExecuteProgramChain:programChain];
                     }

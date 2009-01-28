@@ -14,11 +14,15 @@
 @synthesize code_extension;
 @synthesize app_info_value;
 
+- (void) dealloc
+{
+    [super dealloc];
+}
+
 + (id) audioAttributesWithData:(NSData*)data
 {
     return [[[DKAudioAttributes alloc] initWithData:data] autorelease];
 }
-
 
 - (id) initWithData:(NSData*)data
 {
@@ -46,9 +50,7 @@
 {
 	if (self == anObject) {
         return YES;
-	}
-	else return
-		(
+	} else return (
 		 [self class] == [anObject class]
 		 && (anObject->audio_format == audio_format)
 		 && (anObject->has_multichannel_extension == has_multichannel_extension)
@@ -60,10 +62,7 @@
 		 && (anObject->lang_extension == lang_extension)
 		 && (anObject->code_extension == code_extension)
 		 && (anObject->app_info_value == app_info_value)	
-		 
-		 );
-	
-		
+    );
 }
 
 - (NSData*) saveAsData:(NSError**)_error

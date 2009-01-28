@@ -41,6 +41,18 @@ NSString* const DVDProgramChainException = @"DVDProgramChain";
 @synthesize cellPositionTable;
 @synthesize userInfo;
 
+- (void) dealloc
+{
+    [programMap release];
+    [preCommands release];
+    [postCommands release];
+    [cellCommands release];
+    [cellPlaybackTable release];
+    [cellPositionTable release];
+    [userInfo release];
+    [super dealloc];
+}
+
 static NSArray* NO_ELEMENTS;
 
 + (void) initialize
@@ -190,17 +202,6 @@ static NSArray* NO_ELEMENTS;
         }
     }
     return self;
-}
-
-- (void) dealloc
-{
-    [programMap release];
-    [preCommands release];
-    [postCommands release];
-    [cellCommands release];
-    [cellPlaybackTable release];
-    [cellPositionTable release];
-    [super dealloc];
 }
 
 - (BOOL) isEqual:(DKProgramChain*)anObject
