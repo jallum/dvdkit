@@ -83,7 +83,7 @@ NSString* const DVDCellPlaybackException = @"DVDCellPlayback";
 
 - (void) dealloc
 {
-    [userInfo release];
+    [userInfo release], userInfo = nil;
     [super dealloc];
 }
 

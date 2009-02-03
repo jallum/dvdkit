@@ -43,13 +43,13 @@ NSString* const DVDProgramChainException = @"DVDProgramChain";
 
 - (void) dealloc
 {
-    [programMap release];
-    [preCommands release];
-    [postCommands release];
-    [cellCommands release];
-    [cellPlaybackTable release];
-    [cellPositionTable release];
-    [userInfo release];
+    [programMap release], programMap = nil;
+    [preCommands release], preCommands = nil;
+    [postCommands release], postCommands = nil;
+    [cellCommands release], cellCommands = nil;
+    [cellPlaybackTable release], cellPlaybackTable = nil;
+    [cellPositionTable release], cellPositionTable = nil;
+    [userInfo release], userInfo = nil;
     [super dealloc];
 }
 

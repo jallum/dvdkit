@@ -43,7 +43,7 @@
 
 - (void) dealloc
 {
-    [programChain release];
+    [programChain release], programChain = nil;
     [super dealloc];
 }
 

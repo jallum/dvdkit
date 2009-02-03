@@ -112,12 +112,12 @@ enum {
 
 - (void) dealloc
 {
-    [dataSource release];
-    [mainMenuInformation release];
-    [titleSet release];
-    [programChain release];
-    [userInfo release];
-    [delegate release];
+    [dataSource release], dataSource = nil;
+    [mainMenuInformation release], mainMenuInformation = nil;
+    [titleSet release], titleSet = nil;
+    [programChain release], programChain = nil;
+    [userInfo release], userInfo = nil;
+    [delegate release], delegate = nil;
     [super dealloc];
 }
 
@@ -138,7 +138,7 @@ enum {
 - (void) setDelegate:(id)_delegate
 {
     if (delegate != _delegate) {
-        [delegate release];
+        [delegate release], delegate = nil;
         delegate = [_delegate retain];
 
         delegateHasWillExecuteProgramChain = [delegate respondsToSelector:@selector(virtualMachine:willExecuteProgramChain:)];
@@ -221,10 +221,8 @@ enum {
             switch (state) {
                 case FIRST_PLAY: {
                     domain = kDKDomainFirstPlay;
-                    [programChain release];
-                    programChain = [[[self mainMenuInformation] firstPlayProgramChain] retain];
-                    [titleSet release];
-                    titleSet = nil;
+                    [programChain release], programChain = [[[self mainMenuInformation] firstPlayProgramChain] retain];
+                    [titleSet release], titleSet = nil;
                     if (delegateHasWillExecuteProgramChain) {
                         [delegate virtualMachine:self willExecuteProgramChain:programChain];
                     }
@@ -233,8 +231,7 @@ enum {
                 }
                 
                 case PGC_CHANGED: {
-                    [programChain release];
-                    programChain = [[[[self pgcit] objectAtIndex:(SPRM[6] - 1)] programChain] retain];
+                    [programChain release], programChain = [[[[self pgcit] objectAtIndex:(SPRM[6] - 1)] programChain] retain];
                     prohibitedUserOperations = programChain.prohibitedUserOperations;
                     if (delegateHasWillExecuteProgramChain) {
                         [delegate virtualMachine:self willExecuteProgramChain:programChain];
@@ -426,8 +423,7 @@ enum {
     uint16_t vts = [titleInformation title_set_nr];
     uint16_t ttn = [titleInformation vts_ttn];
     if (!titleSet || [titleSet index] != vts) {
-        [titleSet release];
-        titleSet = [[dataSource titleSetInformationAtIndex:vts] retain];
+        [titleSet release], titleSet = [[dataSource titleSetInformationAtIndex:vts] retain];
         SPRM[5] = vts;
     }
     [self executeJumpVTS_TT:ttn];
@@ -485,8 +481,7 @@ enum {
 {
     if (vts) {
         if (!titleSet || [titleSet index] != vts) {
-            [titleSet release];
-            titleSet = [[dataSource titleSetInformationAtIndex:vts] retain];
+            [titleSet release], titleSet = [[dataSource titleSetInformationAtIndex:vts] retain];
         }
     } else {
         vts = [titleSet index];
@@ -539,8 +534,7 @@ enum {
     if (!foundSearchPointer) {
         state = STOP;
     } else {
-        [titleSet release];
-        titleSet = nil;
+        [titleSet release], titleSet = nil;
         /**/
         SPRM[4] = 0;
         SPRM[5] = 0;
@@ -564,8 +558,7 @@ enum {
 {
     resume.enabled &= (domain == kDKDomainVideoManagerMenu);
     domain = kDKDomainVideoManagerMenu;
-    [titleSet release];
-    titleSet = nil;
+    [titleSet release], titleSet = nil;
     /**/
     SPRM[4] = 0;
     SPRM[5] = 0;
@@ -743,15 +736,12 @@ enum {
         }
         domain = resume.domain;
         if (SPRM[5] != [titleSet index]) {
-            [titleSet release];
+            [titleSet release], titleSet = nil;
             if (domain == kDKDomainVideoTitleSet) {
                 titleSet = [[dataSource titleSetInformationAtIndex:SPRM[5]] retain];
-            } else {
-                titleSet = nil;
             }
         }
-        [programChain release];
-        programChain = [[[[self pgcit] objectAtIndex:(SPRM[6] - 1)] programChain] retain];
+        [programChain release], programChain = [[[[self pgcit] objectAtIndex:(SPRM[6] - 1)] programChain] retain];
         if (resume.cell) {
             cell = resume.cell;
             programNumber = [DKVirtualMachine programNumberForCell:cell usingMap:[programChain programMap]];

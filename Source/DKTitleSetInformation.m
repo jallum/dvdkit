@@ -70,20 +70,20 @@ NSString* const kDKTitleSetInformationSection_VTS_TMAPT         = @"vts_tmapt";
 
 - (void) dealloc
 {
-    [audioAttributes release];
-    [cellAddressTable release];
-    [menuAudioAttributes release];
-    [menuCellAddressTable release];
-    [menuProgramChainInformationTablesByLanguage release];
-    [menuSubpictureAttributes release];
-    [menuVideoAttributes release];
-    [(id)menuVobuAddressMap release];
-    [partOfTitleSearchTable release];
-    [programChainInformationTable release];
-    [subpictureAttributes release];
-    [timeMapTable release];
-    [videoAttributes release];
-    [(id)vobuAddressMap release];
+    [audioAttributes release], audioAttributes = nil;
+    [cellAddressTable release], cellAddressTable = nil;
+    [menuAudioAttributes release], menuAudioAttributes = nil;
+    [menuCellAddressTable release], menuCellAddressTable = nil;
+    [menuProgramChainInformationTablesByLanguage release], menuProgramChainInformationTablesByLanguage = nil;
+    [menuSubpictureAttributes release], menuSubpictureAttributes = nil;
+    [menuVideoAttributes release], menuVideoAttributes = nil;
+    [(id)menuVobuAddressMap release], menuVobuAddressMap = nil;
+    [partOfTitleSearchTable release], partOfTitleSearchTable = nil;
+    [programChainInformationTable release], programChainInformationTable = nil;
+    [subpictureAttributes release], subpictureAttributes = nil;
+    [timeMapTable release], timeMapTable = nil;
+    [videoAttributes release], videoAttributes = nil;
+    [(id)vobuAddressMap release], vobuAddressMap = nil;
     [super dealloc];
 }
 
@@ -502,7 +502,7 @@ NSString* const kDKTitleSetInformationSection_VTS_TMAPT         = @"vts_tmapt";
             }
         }
         [dictionary setObject:table forKey:[NSNumber numberWithShort:lang_code]];
-        [table release];
+        [table release], table = nil;
     }
  
     return dictionary;
@@ -882,8 +882,6 @@ NSString* const kDKTitleSetInformationSection_VTS_TMAPT         = @"vts_tmapt";
 {
     uint16_t nr_of_vob_ids = 0;
     uint16_t nr_of_entries = [cellAddressTable count];
-    for (DKCellAddress* cellAddress in cellAddressTable) {
-    }
     uint32_t last_byte = sizeof(c_adt_t) + (nr_of_entries * sizeof(cell_adr_t));
     NSMutableData* data = [NSMutableData dataWithLength:last_byte];
     c_adt_t* c_adt = [data mutableBytes];
