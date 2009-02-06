@@ -20,7 +20,7 @@
  *
  */
 
-@interface DKCellPlayback : NSObject <NSCopying> {
+@interface DKCellPlayback : NSObject {
     BOOL seamless_angle;
     BOOL stc_discontinuity;
     BOOL interleaved;
