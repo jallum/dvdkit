@@ -1,6 +1,6 @@
 INTRODUCTION
 
-Hello and thanks for checking out DVDKit.
+Hello and thanks for checking out DVDKit, 1.1.
 
 DVDKit was originally part of RipIt, the simplest DVD ripper available for the 
 Macintosh, and is now available to the public.
@@ -10,7 +10,7 @@ documentation on how they work and why they do what they do.  DVDKit was my
 attempt at gathering this mess into a coherent set of classes that could be 
 used to properly simulate a DVD player during normal operation.
 
-As part of RipIt, DVDKit has been extensively tested against more than 25,000
+As part of RipIt, DVDKit has been extensively tested against more than 50,000
 different discs, with compatibility in excess of 99.97%.
 
 
