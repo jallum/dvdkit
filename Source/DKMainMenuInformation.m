@@ -286,7 +286,7 @@ NSString* const kDKMainMenuInformationSection_VMGM_VOBU_ADMAP  = @"vmgm_vobu_adm
         uint32_t offset_of_vmgm_vobu_admap = OSReadBigInt32(&vmgi_mat->vmgm_vobu_admap, 0);
         if (offset_of_vmgm_vobu_admap && (offset_of_vmgm_vobu_admap <= vmgi_last_sector)) {
             [sectionOrdering setObject:kDKMainMenuInformationSection_VMGM_VOBU_ADMAP forKey:[NSNumber numberWithUnsignedInt:offset_of_vmgm_vobu_admap]];
-            menuVobuAddressMap = (CFBitVectorRef)[(id)[DKMainMenuInformation _readVobuAddressMapFromDataSource:dataSource offset:offset_of_vmgm_vobu_admap errors:errors] retain];
+            menuVobuAddressMap = (CFMutableBitVectorRef)[(id)[DKMainMenuInformation _readVobuAddressMapFromDataSource:dataSource offset:offset_of_vmgm_vobu_admap errors:errors] retain];
         }
         
         
@@ -522,7 +522,7 @@ NSString* const kDKMainMenuInformationSection_VMGM_VOBU_ADMAP  = @"vmgm_vobu_adm
     return table;
 }
 
-- (void) setMenuVobuAddressMap:(CFBitVectorRef)_menuVobuAddressMap
+- (void) setMenuVobuAddressMap:(CFMutableBitVectorRef)_menuVobuAddressMap
 {
     if (menuVobuAddressMap != _menuVobuAddressMap) {
         if (menuVobuAddressMap) {

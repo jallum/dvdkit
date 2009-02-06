@@ -36,7 +36,7 @@
     NSString* providerId;
     /**/
     DKVideoAttributes* menuVideoAttributes;
-    NSArray* menuAudioAttributes;
+    NSMutableArray* menuAudioAttributes;
     DKSubpictureAttributes* menuSubpictureAttributes; 
     /**/
     DKProgramChain* firstPlayProgramChain;
@@ -46,7 +46,7 @@
     NSMutableDictionary* menuProgramChainInformationTablesByLanguage;
     NSMutableData* textData;
     NSMutableArray* menuCellAddressTable;
-    CFBitVectorRef menuVobuAddressMap;
+    CFMutableBitVectorRef menuVobuAddressMap;
     /**/
     NSArray* preferredSectionOrder;
 }
@@ -60,15 +60,15 @@
 @property (assign) uint64_t pointOfSaleCode;
 @property (retain) NSString* providerId;
 @property (retain) DKVideoAttributes* menuVideoAttributes;
-@property (retain) NSArray* menuAudioAttributes;
+@property (retain) NSMutableArray* menuAudioAttributes;
 @property (retain) DKSubpictureAttributes* menuSubpictureAttributes;
 @property (retain) DKProgramChain* firstPlayProgramChain;
-@property (retain) NSArray* titleTrackSearchPointerTable;
-@property (retain) NSDictionary* menuProgramChainInformationTablesByLanguage;
+@property (retain) NSMutableArray* titleTrackSearchPointerTable;
+@property (retain) NSMutableDictionary* menuProgramChainInformationTablesByLanguage;
 @property (readonly) uint16_t regionMask;
-@property (retain) NSArray* menuCellAddressTable;
-@property (assign) CFBitVectorRef menuVobuAddressMap;
-@property (retain) NSData* titleSetAttributeTable;
+@property (retain) NSMutableArray* menuCellAddressTable;
+@property (assign) CFMutableBitVectorRef menuVobuAddressMap;
+@property (retain) NSMutableData* titleSetAttributeTable;
 
 + (id) mainMenuInformationWithDataSource:(id<DKDataSource>)dataSource error:(NSError**)error;
 - (id) initWithDataSource:(id<DKDataSource>)dataSource error:(NSError**)error;

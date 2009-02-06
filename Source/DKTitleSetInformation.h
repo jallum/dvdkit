@@ -31,14 +31,14 @@
     DKSubpictureAttributes* menuSubpictureAttributes; 
     NSMutableDictionary* menuProgramChainInformationTablesByLanguage;
     NSMutableArray* menuCellAddressTable;
-    CFBitVectorRef menuVobuAddressMap;
+    CFMutableBitVectorRef menuVobuAddressMap;
     /**/
     DKVideoAttributes* videoAttributes;
     NSMutableArray* audioAttributes;
     NSMutableArray* subpictureAttributes; 
     NSMutableArray* programChainInformationTable;
     NSMutableArray* cellAddressTable;
-    CFBitVectorRef vobuAddressMap;
+    CFMutableBitVectorRef vobuAddressMap;
     /**/
     NSData* timeMapTable;
     NSMutableArray* partOfTitleSearchTable;
@@ -53,22 +53,22 @@
 @property (readonly) NSInteger index;
 @property (assign) uint16_t specificationVersion;
 @property (assign) uint32_t categoryAndMask;
-@property (retain) NSArray* partOfTitleSearchTable;
+@property (retain) NSMutableArray* partOfTitleSearchTable;
 
 @property (retain) DKVideoAttributes* menuVideoAttributes;
-@property (retain) NSArray* menuAudioAttributes;
+@property (retain) NSMutableArray* menuAudioAttributes;
 @property (retain) DKSubpictureAttributes* menuSubpictureAttributes;
-@property (retain) NSDictionary* menuProgramChainInformationTablesByLanguage;
-@property (retain) NSArray* menuCellAddressTable;   
-@property (assign) CFBitVectorRef menuVobuAddressMap;// RETAINED
+@property (retain) NSMutableDictionary* menuProgramChainInformationTablesByLanguage;
+@property (retain) NSMutableArray* menuCellAddressTable;   
+@property (assign) CFMutableBitVectorRef menuVobuAddressMap;// RETAINED
 
 @property (retain) DKVideoAttributes* videoAttributes;
-@property (retain) NSArray* audioAttributes;
-@property (retain) NSArray* subpictureAttributes;
-@property (retain) NSArray* programChainInformationTable;
-@property (retain) NSArray* cellAddressTable;
+@property (retain) NSMutableArray* audioAttributes;
+@property (retain) NSMutableArray* subpictureAttributes;
+@property (retain) NSMutableArray* programChainInformationTable;
+@property (retain) NSMutableArray* cellAddressTable;
 
-@property (assign) CFBitVectorRef vobuAddressMap;   // RETAINED
+@property (assign) CFMutableBitVectorRef vobuAddressMap;   // RETAINED
 @property (retain) NSData* timeMapTable;            
 
 

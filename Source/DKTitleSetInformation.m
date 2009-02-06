@@ -112,7 +112,7 @@ NSString* const kDKTitleSetInformationSection_VTS_TMAPT         = @"vts_tmapt";
     );
 }
 
-- (void) setMenuVobuAddressMap:(CFBitVectorRef)_menuVobuAddressMap
+- (void) setMenuVobuAddressMap:(CFMutableBitVectorRef)_menuVobuAddressMap
 {
     if (menuVobuAddressMap != _menuVobuAddressMap) {
         if (menuVobuAddressMap) {
@@ -125,7 +125,7 @@ NSString* const kDKTitleSetInformationSection_VTS_TMAPT         = @"vts_tmapt";
     }
 }
 
-- (void) setVobuAddressMap:(CFBitVectorRef)_vobuAddressMap
+- (void) setVobuAddressMap:(CFMutableBitVectorRef)_vobuAddressMap
 {
     if (vobuAddressMap != _vobuAddressMap) {
         if (vobuAddressMap) {
@@ -267,12 +267,12 @@ NSString* const kDKTitleSetInformationSection_VTS_TMAPT         = @"vts_tmapt";
         uint32_t offset_of_vtsm_vobu_admap = OSReadBigInt32(&vts_mat->vtsm_vobu_admap, 0);
         if (offset_of_vtsm_vobu_admap && (offset_of_vtsm_vobu_admap <= vtsi_last_sector)) {
             [sectionOrdering setObject:kDKTitleSetInformationSection_VTSM_VOBU_ADMAP forKey:[NSNumber numberWithUnsignedInt:offset_of_vtsm_vobu_admap]];
-            menuVobuAddressMap = (CFBitVectorRef)[(id)[DKTitleSetInformation _readVobuAddressMapFromDataSource:dataSource offset:offset_of_vtsm_vobu_admap errors:errors] retain];
+            menuVobuAddressMap = (CFMutableBitVectorRef)[(id)[DKTitleSetInformation _readVobuAddressMapFromDataSource:dataSource offset:offset_of_vtsm_vobu_admap errors:errors] retain];
         }
         uint32_t offset_of_vts_vobu_admap = OSReadBigInt32(&vts_mat->vts_vobu_admap, 0);
         if (offset_of_vts_vobu_admap && (offset_of_vts_vobu_admap <= vtsi_last_sector)) {
             [sectionOrdering setObject:kDKTitleSetInformationSection_VTS_VOBU_ADMAP forKey:[NSNumber numberWithUnsignedInt:offset_of_vts_vobu_admap]];
-            vobuAddressMap = (CFBitVectorRef)[(id)[DKTitleSetInformation _readVobuAddressMapFromDataSource:dataSource offset:offset_of_vts_vobu_admap errors:errors] retain];
+            vobuAddressMap = (CFMutableBitVectorRef)[(id)[DKTitleSetInformation _readVobuAddressMapFromDataSource:dataSource offset:offset_of_vts_vobu_admap errors:errors] retain];
         }
         uint32_t offset_of_vts_pgcit = OSReadBigInt32(&vts_mat->vts_pgcit, 0);
         if (offset_of_vts_pgcit && (offset_of_vts_pgcit <= vtsi_last_sector)) {

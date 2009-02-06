@@ -97,7 +97,7 @@ static inline uint64_t extractBits(uint64_t bits, int location, int length)
 - (void) executeAgainstVirtualMachine:(DKVirtualMachine*)virtualMachine
 {
 #ifdef DEBUG
-    NSLog(@"%@", self);
+//    NSLog(@"%@", self);
 #endif
     uint8_t type = extractBits(bits, 63, 3);
     if (type > 6) {
