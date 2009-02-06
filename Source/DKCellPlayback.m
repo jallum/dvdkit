@@ -87,11 +87,6 @@ NSString* const DVDCellPlaybackException = @"DVDCellPlayback";
     [super dealloc];
 }
 
-- (id) copyWithZone:(NSZone*)zone
-{
-    return [self retain];
-}
-
 - (NSData*) saveAsData:(NSError**)error
 {
     NSMutableData* data = [NSMutableData dataWithLength:sizeof(cell_playback_t)];
