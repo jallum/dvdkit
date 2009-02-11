@@ -22,6 +22,8 @@
 #import "DVDKit.h"
 #import "DVDKit+Private.h"
 
+#undef DEBUG
+
 NSString* const DKCommandException = @"DKCommand";
 
 static inline uint64_t extractBits(uint64_t bits, int location, int length)
@@ -97,7 +99,7 @@ static inline uint64_t extractBits(uint64_t bits, int location, int length)
 - (void) executeAgainstVirtualMachine:(DKVirtualMachine*)virtualMachine
 {
 #ifdef DEBUG
-//    NSLog(@"%@", self);
+    NSLog(@"%@", self);
 #endif
     uint8_t type = extractBits(bits, 63, 3);
     if (type > 6) {
@@ -1136,6 +1138,11 @@ void appendMnemonic(DKCommand* command, NSMutableString* string)
 - (void) executeLinkSubset:(uint8_t)code
 {
     switch (code) {
+        case 0x00: {
+            [self executeLinkNoLink];
+            break;
+        }
+
         case 0x01: {
             [self executeLinkTopCell];
             break;

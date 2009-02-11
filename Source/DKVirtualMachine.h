@@ -115,6 +115,7 @@
 - (void) executeLinkPTTN:(uint16_t)pttn;
 - (void) executeLinkPGN:(uint8_t)pgn;
 - (void) executeLinkCell:(uint8_t)cn;
+- (void) executeLinkNoLink;
 - (void) executeLinkTopCell;
 - (void) executeLinkNextCell;
 - (void) executeLinkPrevCell;

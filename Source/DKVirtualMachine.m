@@ -29,6 +29,7 @@ NSString* const DVDVirtualMachineException = @"DVDVirtualMachine";
 #endif
 
 enum {
+    INIT,
     STOP,
     FIRST_PLAY,
     PGC_CHANGED,
@@ -89,23 +90,9 @@ enum {
     NSAssert(_dataSource, @"Shouldn't be nil");
     if (self = [super init]) {
         dataSource = [_dataSource retain];
-
-        bzero(SPRM, sizeof(SPRM));
-        bzero(GPRM, sizeof(GPRM));
-
-        SPRM[0]  = 0x656E;          /* Player Menu Languange code */
-        SPRM[1]  = 15;              /* 15 == NONE */
-        SPRM[2]  = 62;              /* 62 == NONE */
-        SPRM[3]  = 1;
-        SPRM[7]  = 1;
-        SPRM[8]  = 1 << 10;
+        SPRM[0]  = 0x656E;          /* Player Menu Languange code "en" */
         SPRM[12] = ('U'<<8)|'S';    /* Parental Management Country Code */
-        SPRM[13] = 15;              /* Parental Level */
-        SPRM[14] = 0x0C00;          /* Try Pan&Scan */
-        SPRM[16] = 0x656E;          /* Initial Language Code for Audio */
-        SPRM[18] = 0x656E;          /* Initial Language Code for Spu */
-
-        state = FIRST_PLAY;
+        state = INIT;
     }
     return self;
 }
@@ -182,7 +169,7 @@ enum {
 
 - (id) state
 {
-    NSMutableData* data = [NSMutableData dataWithLength:(3 * 4) + (16 * 2) + (4 * 2) + (2 * 2) + (5 * 2)];
+    NSMutableData* data = [NSMutableData dataWithLength:(3 * 4) + (16 * 2) + (5 * 2) + (2 * 2) + (5 * 2)];
     uint8_t* bytes = [data mutableBytes];
     
     OSWriteBigInt32(bytes, 0, SPRM_mask);
@@ -194,11 +181,12 @@ enum {
         OSWriteBigInt16(bytes, 0, GPRM[i]);
     }
 
-    OSWriteBigInt16(bytes, 0, SPRM[7]);
-    OSWriteBigInt16(bytes, 2, SPRM[8]);
-    OSWriteBigInt16(bytes, 4, SPRM[14]);
-    OSWriteBigInt16(bytes, 6, SPRM[20]);
-    bytes += 4 * 2;
+    OSWriteBigInt16(bytes, 0, SPRM[0]);
+    OSWriteBigInt16(bytes, 2, SPRM[7]);
+    OSWriteBigInt16(bytes, 4, SPRM[8]);
+    OSWriteBigInt16(bytes, 6, SPRM[14]);
+    OSWriteBigInt16(bytes, 8, SPRM[20]);
+    bytes += 5 * 2;
 
     OSWriteBigInt16(bytes, 0, resume.enabled);
     OSWriteBigInt16(bytes, 2, resume.cell);
@@ -219,13 +207,31 @@ enum {
         GPRM_read = GPRM_write = 0;
         while (state != STOP) {
             switch (state) {
+                case INIT: {
+                    SPRM[1]  = 16;              /* 16 == NONE */
+                    SPRM[2]  = 62;              /* 62 == NONE */
+                    SPRM[3]  = 1;
+                    SPRM[4]  = 1;
+
+                    DKMainMenuInformation* vmgi = [self mainMenuInformation]; 
+                    DKTitleTrackSearchPointer* ttsp = [vmgi.titleTrackSearchPointerTable objectAtIndex:SPRM[4] - 1];
+                    SPRM[5] = ttsp.title_set_nr;
+                    SPRM[7] = 1;
+                    
+                    SPRM[8]  = 1 << 10;
+                    SPRM[13] = 15;              /* Parental Level */
+                    SPRM[14] = 0x0C00;          /* Try Pan&Scan */
+                    SPRM[16] = 0xFFFF;          /* Preferred Language Code for Audio */
+                    SPRM[18] = 0xFFFF;          /* Preferred Language Code for Spu */
+
+                    state = FIRST_PLAY;
+                    break;
+                }
+                    
                 case FIRST_PLAY: {
                     domain = kDKDomainFirstPlay;
                     [programChain release], programChain = [[[self mainMenuInformation] firstPlayProgramChain] retain];
                     [titleSet release], titleSet = nil;
-                    if (delegateHasWillExecuteProgramChain) {
-                        [delegate virtualMachine:self willExecuteProgramChain:programChain];
-                    }
                     state = PGC_START;
                     break;
                 }
@@ -233,14 +239,14 @@ enum {
                 case PGC_CHANGED: {
                     [programChain release], programChain = [[[[self pgcit] objectAtIndex:(SPRM[6] - 1)] programChain] retain];
                     prohibitedUserOperations = programChain.prohibitedUserOperations;
-                    if (delegateHasWillExecuteProgramChain) {
-                        [delegate virtualMachine:self willExecuteProgramChain:programChain];
-                    }
                     state = PGC_START;
                     break;
                 }
                 
                 case PGC_START: {
+                    if (delegateHasWillExecuteProgramChain) {
+                        [delegate virtualMachine:self willExecuteProgramChain:programChain];
+                    }
                     state = PGC_PRE_COMMANDS;
                     break;
                 }
@@ -664,6 +670,11 @@ enum {
     state = PGC_CELL;
 }
 
+- (void) executeLinkNoLink
+{
+    /* DO NOTHING */
+}
+
 - (void) executeLinkTopCell
 {
     state = PGC_CELL;
@@ -771,11 +782,11 @@ enum {
             return [titleSet programChainInformationTable];
         }
         case kDKDomainVideoTitleSetMenu: {
-            return [titleSet menuProgramChainInformationTableForLanguageCode:SPRM[0]];
+            return [titleSet menuProgramChainInformationTableForLanguageCode:[self systemParameterRegister:0]];
         }
         case kDKDomainVideoManagerMenu:
         case kDKDomainFirstPlay: {
-            return [[self mainMenuInformation] menuProgramChainInformationTableForLanguageCode:SPRM[0]];
+            return [[self mainMenuInformation] menuProgramChainInformationTableForLanguageCode:[self systemParameterRegister:0]];
         }
     }
     [NSException raise:DVDVirtualMachineException format:@"%s (%d)", __FILE__, __LINE__];
