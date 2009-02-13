@@ -230,9 +230,15 @@ enum {
                 }
                 
                 case PGC_CHANGED: {
-                    [programChain release], programChain = [[[[self pgcit] objectAtIndex:(SPRM[6] - 1)] programChain] retain];
-                    prohibitedUserOperations = programChain.prohibitedUserOperations;
-                    state = PGC_START;
+                    NSArray* programChainInformationTable = [self pgcit];
+                    int pgcn = SPRM[6];
+                    if (pgcn && pgcn <= [programChainInformationTable count]) {
+                        [programChain release], programChain = [[[programChainInformationTable objectAtIndex:pgcn - 1] programChain] retain];
+                        prohibitedUserOperations = programChain.prohibitedUserOperations;
+                        state = PGC_START;
+                    } else {
+                        state = STOP;
+                    }
                     break;
                 }
                 

@@ -219,7 +219,7 @@ static inline uint64_t extractBits(uint64_t bits, int location, int length)
                     }
                         
                     case 4: {
-                        [virtualMachine executeLinkPGCN:extractBits(bits, 15, 16)];
+                        [virtualMachine executeLinkPGCN:extractBits(bits, 14, 15)];
                         break;
                     }
                         
@@ -305,7 +305,7 @@ static inline uint64_t extractBits(uint64_t bits, int location, int length)
                     }
                         
                     case 4: {
-                        [virtualMachine executeLinkPGCN:extractBits(bits, 15, 16)];
+                        [virtualMachine executeLinkPGCN:extractBits(bits, 14, 15)];
                         break;
                     }
                         
@@ -363,7 +363,7 @@ static inline uint64_t extractBits(uint64_t bits, int location, int length)
                         }
                             
                         case 4: {
-                            [virtualMachine executeLinkPGCN:extractBits(bits, 15, 16)];
+                            [virtualMachine executeLinkPGCN:extractBits(bits, 14, 15)];
                             break;
                         }
                             
