@@ -91,7 +91,8 @@ enum {
     if (self = [super init]) {
         dataSource = [_dataSource retain];
         SPRM[0]  = 0x656E;          /* Player Menu Languange code "en" */
-        SPRM[12] = ('U'<<8)|'S';    /* Parental Management Country Code */
+        SPRM[16] = 0x656E;          /* Audio Languange code "en" */
+        SPRM[18] = 0x656E;          /* Subtitle Languange code "en" */
         state = INIT;
     }
     return self;
@@ -208,21 +209,13 @@ enum {
         while (state != STOP) {
             switch (state) {
                 case INIT: {
-                    SPRM[1]  = 16;              /* 16 == NONE */
+                    SPRM[1]  = 15;              /* 15 == NONE */
                     SPRM[2]  = 62;              /* 62 == NONE */
                     SPRM[3]  = 1;
-                    SPRM[4]  = 1;
-
-                    DKMainMenuInformation* vmgi = [self mainMenuInformation]; 
-                    DKTitleTrackSearchPointer* ttsp = [vmgi.titleTrackSearchPointerTable objectAtIndex:SPRM[4] - 1];
-                    SPRM[5] = ttsp.title_set_nr;
-                    SPRM[7] = 1;
-                    
                     SPRM[8]  = 1 << 10;
                     SPRM[13] = 15;              /* Parental Level */
                     SPRM[14] = 0x0C00;          /* Try Pan&Scan */
-                    SPRM[16] = 0xFFFF;          /* Preferred Language Code for Audio */
-                    SPRM[18] = 0xFFFF;          /* Preferred Language Code for Spu */
+                    SPRM[15] = 0x4000;
 
                     state = FIRST_PLAY;
                     break;
@@ -411,6 +404,8 @@ enum {
 
 - (void) setTmpPML:(uint8_t)pml line:(uint8_t)line
 {
+    [self setValue:pml forSystemParameterRegister:13];
+    [self executeGoto:line];
 }
 
 - (void) executeGoto:(uint8_t)_line
@@ -497,7 +492,9 @@ enum {
     DKProgramChainSearchPointer* foundSearchPointer = nil;
     uint8_t entryId = 0x80 | menu;
     NSArray* pgcit = [self pgcit];
+    uint8_t pgcn = 0;
     for (DKProgramChainSearchPointer* pcsp in pgcit) {
+        pgcn++;
         if ([pcsp entryId] == entryId) {
             foundSearchPointer = pcsp;
             break;
@@ -508,7 +505,7 @@ enum {
     } else {
         SPRM[4] = ttn;
         SPRM[5] = vts;
-        SPRM[6] = 1 + [pgcit indexOfObject:foundSearchPointer];
+        SPRM[6] = pgcn;
         SPRM[7] = 0;
         /**/
         state = PGC_CHANGED;

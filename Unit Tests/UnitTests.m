@@ -474,45 +474,45 @@
     command = [DKCommand commandWith64Bits:0x3025001500010001L];
     STAssertTrue([[command description] isEqualTo:@"      3025001500010001 | if (g[0] == g[1]) JumpVTS_PTT 1:21"], @"Instruction not decoded properly.");
     
-    //4100000081000000 | Sub-picture Stream Number (SRPM:2) = g[1]
+    //4100000081000000 | Sub-picture Stream Number (SPRM:2) = g[1]
     command = [DKCommand commandWith64Bits:0x4100000081000000L];
-    STAssertTrue([[command description] isEqualTo:@"      4100000081000000 | Sub-picture Stream Number (SRPM:2) = g[1]"], @"Instruction not decoded properly.");
+    STAssertTrue([[command description] isEqualTo:@"      4100000081000000 | Sub-picture Stream Number (SPRM:2) = g[1]"], @"Instruction not decoded properly.");
     
-    //410000008f000000 | Sub-picture Stream Number (SRPM:2) = g[15]
+    //410000008f000000 | Sub-picture Stream Number (SPRM:2) = g[15]
     command = [DKCommand commandWith64Bits:0x410000008f000000L];
-    STAssertTrue([[command description] isEqualTo:@"      410000008f000000 | Sub-picture Stream Number (SRPM:2) = g[15]"], @"Instruction not decoded properly.");
+    STAssertTrue([[command description] isEqualTo:@"      410000008f000000 | Sub-picture Stream Number (SPRM:2) = g[15]"], @"Instruction not decoded properly.");
     
-    //4100008e00000000 | Audio Stream Number (SRPM:1) = g[14]
+    //4100008e00000000 | Audio Stream Number (SPRM:1) = g[14]
     command = [DKCommand commandWith64Bits:0x4100008e00000000L];
-    STAssertTrue([[command description] isEqualTo:@"      4100008e00000000 | Audio Stream Number (SRPM:1) = g[14]"], @"Instruction not decoded properly.");
+    STAssertTrue([[command description] isEqualTo:@"      4100008e00000000 | Audio Stream Number (SPRM:1) = g[14]"], @"Instruction not decoded properly.");
     
-    //5600000008000000 | Highlighted Button Number (SRPM:8) = 0x800 (button 2)
+    //5600000008000000 | Highlighted Button Number (SPRM:8) = 0x800 (button 2)
     command = [DKCommand commandWith64Bits:0x5600000008000000L];
-    STAssertTrue([[command description] isEqualTo:@"      5600000008000000 | Highlighted Button Number (SRPM:8) = 0x800 (button 2)"], @"Instruction not decoded properly.");
+    STAssertTrue([[command description] isEqualTo:@"      5600000008000000 | Highlighted Button Number (SPRM:8) = 0x800 (button 2)"], @"Instruction not decoded properly.");
     
-    //5604000004000002 | Highlighted Button Number (SRPM:8) = 0x400 (button 1), LinkPGCN 2
+    //5604000004000002 | Highlighted Button Number (SPRM:8) = 0x400 (button 1), LinkPGCN 2
     command = [DKCommand commandWith64Bits:0x5604000004000002L];
-    STAssertTrue([[command description] isEqualTo:@"      5604000004000002 | Highlighted Button Number (SRPM:8) = 0x400 (button 1), LinkPGCN 2"], @"Instruction not decoded properly.");
+    STAssertTrue([[command description] isEqualTo:@"      5604000004000002 | Highlighted Button Number (SPRM:8) = 0x400 (button 1), LinkPGCN 2"], @"Instruction not decoded properly.");
     
-    //6100000000820000 | g[0] = Sub-picture Stream Number (SRPM:2)
+    //6100000000820000 | g[0] = Sub-picture Stream Number (SPRM:2)
     command = [DKCommand commandWith64Bits:0x6100000000820000L];
-    STAssertTrue([[command description] isEqualTo:@"      6100000000820000 | g[0] = Sub-picture Stream Number (SRPM:2)"], @"Instruction not decoded properly.");
+    STAssertTrue([[command description] isEqualTo:@"      6100000000820000 | g[0] = Sub-picture Stream Number (SPRM:2)"], @"Instruction not decoded properly.");
     
-    //6100000100850000 | g[1] = VTS Title Track Number (SRPM:5)
+    //6100000100850000 | g[1] = VTS Title Track Number (SPRM:5)
     command = [DKCommand commandWith64Bits:0x6100000100850000L];
-    STAssertTrue([[command description] isEqualTo:@"      6100000100850000 | g[1] = VTS Title Track Number (SRPM:5)"], @"Instruction not decoded properly.");
+    STAssertTrue([[command description] isEqualTo:@"      6100000100850000 | g[1] = VTS Title Track Number (SPRM:5)"], @"Instruction not decoded properly.");
     
-    //6100000200820000 | g[2] = Sub-picture Stream Number (SRPM:2)
+    //6100000200820000 | g[2] = Sub-picture Stream Number (SPRM:2)
     command = [DKCommand commandWith64Bits:0x6100000200820000L];
-    STAssertTrue([[command description] isEqualTo:@"      6100000200820000 | g[2] = Sub-picture Stream Number (SRPM:2)"], @"Instruction not decoded properly.");
+    STAssertTrue([[command description] isEqualTo:@"      6100000200820000 | g[2] = Sub-picture Stream Number (SPRM:2)"], @"Instruction not decoded properly.");
     
     //61000004000a0000 | g[4] = g[10]
     command = [DKCommand commandWith64Bits:0x61000004000a0000L];
     STAssertTrue([[command description] isEqualTo:@"      61000004000a0000 | g[4] = g[10]"], @"Instruction not decoded properly.");
     
-    //6100000600870000 | g[6] = PTT Number for One_Sequential_PGC_Title (SRPM:7)
+    //6100000600870000 | g[6] = PTT Number for One_Sequential_PGC_Title (SPRM:7)
     command = [DKCommand commandWith64Bits:0x6100000600870000L];
-    STAssertTrue([[command description] isEqualTo:@"      6100000600870000 | g[6] = PTT Number for One_Sequential_PGC_Title (SRPM:7)"], @"Instruction not decoded properly.");
+    STAssertTrue([[command description] isEqualTo:@"      6100000600870000 | g[6] = PTT Number for One_Sequential_PGC_Title (SPRM:7)"], @"Instruction not decoded properly.");
     
     //6100000900020000 | g[9] = g[2]
     command = [DKCommand commandWith64Bits:0x6100000900020000L];

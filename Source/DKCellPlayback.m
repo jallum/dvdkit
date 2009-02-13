@@ -29,6 +29,8 @@ NSString* const DVDCellPlaybackException = @"DVDCellPlayback";
 @synthesize blockMode;
 @synthesize firstSector;
 @synthesize lastSector;
+@synthesize firstInterleavingUnitSector;
+@synthesize lastVideoObjectUnitStartSector;
 @synthesize postCommandIndex;
 @synthesize playbackTime;
 @synthesize stillTime;

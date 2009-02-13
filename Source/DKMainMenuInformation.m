@@ -153,8 +153,6 @@ NSString* const kDKMainMenuInformationSection_VMGM_VOBU_ADMAP  = @"vmgm_vobu_adm
         pointOfSaleCode = OSReadBigInt64(&vmgi_mat->vmg_pos_code, 0);
         providerId = [[NSString stringWithCString:(const char*)&vmgi_mat->provider_identifier length:sizeof(vmgi_mat->provider_identifier)] retain];
         
-//        uint32_t vmgm_vobs = OSReadBigInt32(&vmgi_mat->vmgm_vobs, 0);
-        
         
         /*  Sanity checks / Data Repair
          */
@@ -797,10 +795,19 @@ NSString* const kDKMainMenuInformationSection_VMGM_VOBU_ADMAP  = @"vmgm_vobu_adm
         uint16_t nr_of_pgci_srp = [table count];
         [data increaseLengthBy:sizeof(vmgm_pgc_t) + (nr_of_pgci_srp * sizeof(pgci_srp_t))];
         int j = 0;
+        uint8_t exists = 0;
         for (DKProgramChainSearchPointer* programChainSearchPointer in table) {
             pgci_srp_t pgci_srp;
             bzero(&pgci_srp, sizeof(pgci_srp_t));
-            OSWriteBigInt8(&pgci_srp.entry_id, 0, [programChainSearchPointer entryId]);
+            uint8_t entryId = [programChainSearchPointer entryId];
+            switch (entryId) {
+                case 0x83: exists |= 0x80; break;
+                case 0x84: exists |= 0x40; break;
+                case 0x85: exists |= 0x20; break;
+                case 0x86: exists |= 0x10; break;
+                case 0x87: exists |= 0x08; break;
+            }
+            OSWriteBigInt8(&pgci_srp.entry_id, 0, entryId);
             OSWriteBigInt16(&pgci_srp.ptl_id_mask, 0, [programChainSearchPointer ptl_id_mask]);
             OSWriteBigInt32(&pgci_srp.pgc_start_byte, 0, [data length] - vmgm_pgc_start_byte);
             [data replaceBytesInRange:NSMakeRange(vmgm_pgc_start_byte + sizeof(vmgm_pgc_t) + (j * sizeof(pgci_srp_t)), sizeof(pgci_srp_t)) withBytes:&pgci_srp];
@@ -829,7 +836,7 @@ NSString* const kDKMainMenuInformationSection_VMGM_VOBU_ADMAP  = @"vmgm_vobu_adm
         vmgm_lu_t vmgm_lu;
         bzero(&vmgm_lu, sizeof(vmgm_lu_t));
         OSWriteBigInt16(&vmgm_lu.lang_code, 0, [languageCode unsignedShortValue]);
-        OSWriteBigInt8(&vmgm_lu.exists, 0, 0x80);
+        OSWriteBigInt8(&vmgm_lu.exists, 0, exists);
         OSWriteBigInt32(&vmgm_lu.pgcit_start_byte, 0, vmgm_pgc_start_byte);
         [data replaceBytesInRange:NSMakeRange(vmgm_lu_start_byte, sizeof(vmgm_lu_t)) withBytes:&vmgm_lu];
         i++;

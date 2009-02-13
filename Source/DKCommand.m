@@ -617,7 +617,7 @@ static const char *system_reg_table[] = {
 
 static void appendSystemRegister(uint16_t reg, NSMutableString* string) 
 {
-    [string appendFormat:@"%s (SRPM:%d)", system_reg_table[reg], reg];
+    [string appendFormat:@"%s (SPRM:%d)", system_reg_table[reg], reg];
 }
 
 static void appendGeneralRegister(uint8_t reg, NSMutableString* string) 
