@@ -430,6 +430,10 @@ enum {
     uint16_t vts = [titleInformation title_set_nr];
     uint16_t ttn = [titleInformation vts_ttn];
     if (!titleSet || [titleSet index] != vts) {
+        if (vts > [[self mainMenuInformation] numberOfTitleSets]) {
+            state = STOP;
+            return;
+        }
         [titleSet release], titleSet = [[dataSource titleSetInformationAtIndex:vts] retain];
         SPRM[5] = vts;
     }
@@ -488,6 +492,10 @@ enum {
 {
     if (vts) {
         if (!titleSet || [titleSet index] != vts) {
+            if (vts > [[self mainMenuInformation] numberOfTitleSets]) {
+                state = STOP;
+                return;
+            }
             [titleSet release], titleSet = [[dataSource titleSetInformationAtIndex:vts] retain];
         }
     } else {
