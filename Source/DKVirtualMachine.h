@@ -68,14 +68,14 @@
 
 - (id) initWithDataSource:(id)delegate;
 
-@property (readonly) DKUserOperationFlags prohibitedUserOperations;
-@property (readonly) DKTitleSetInformation* titleSet;
-@property (readonly) DKDomain domain;
-@property (readonly) BOOL resumeEnabled;
-@property (readonly) DKProgramChain* programChain;
-@property (readonly) BOOL trackingRegisterUsage;
-@property (retain) id delegate;
-@property (retain) id userInfo;
+@property (readonly, nonatomic) DKUserOperationFlags prohibitedUserOperations;
+@property (readonly, nonatomic) DKTitleSetInformation* titleSet;
+@property (readonly, nonatomic) DKDomain domain;
+@property (readonly, nonatomic) BOOL resumeEnabled;
+@property (readonly, nonatomic) DKProgramChain* programChain;
+@property (readonly, nonatomic) BOOL trackingRegisterUsage;
+@property (retain, nonatomic) id delegate;
+@property (retain, nonatomic) id userInfo;
 
 - (id) state;
 

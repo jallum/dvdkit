@@ -47,16 +47,16 @@
 
 - (NSData*) saveAsData:(NSError**)error;
 
-@property (readwrite) uint32_t firstSector;
-@property (readwrite) uint32_t lastSector;
-@property (readwrite) uint32_t firstInterleavingUnitSector;
-@property (readwrite) uint32_t lastVideoObjectUnitStartSector;
-@property (readwrite) uint8_t postCommandIndex;
-@property (readwrite) DKBlockType blockType;
-@property (readwrite) DKBlockMode blockMode;
-@property (readwrite) DKTime playbackTime;
-@property (readwrite) uint8_t stillTime;
-@property (retain) id userInfo;
+@property (readwrite, nonatomic) uint32_t firstSector;
+@property (readwrite, nonatomic) uint32_t lastSector;
+@property (readwrite, nonatomic) uint32_t firstInterleavingUnitSector;
+@property (readwrite, nonatomic) uint32_t lastVideoObjectUnitStartSector;
+@property (readwrite, nonatomic) uint8_t postCommandIndex;
+@property (readwrite, nonatomic) DKBlockType blockType;
+@property (readwrite, nonatomic) DKBlockMode blockMode;
+@property (readwrite, nonatomic) DKTime playbackTime;
+@property (readwrite, nonatomic) uint8_t stillTime;
+@property (retain, nonatomic) id userInfo;
 
 @end
 

@@ -31,7 +31,7 @@
 
 - (NSData*) saveAsData:(NSError**)error;
 
-@property (assign) uint16_t programChainNumber;
-@property (assign) uint16_t programNumber;
+@property (assign, nonatomic) uint16_t programChainNumber;
+@property (assign, nonatomic) uint16_t programNumber;
 
 @end

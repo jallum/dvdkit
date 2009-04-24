@@ -36,13 +36,13 @@
 
 - (id) initWithData:(NSData*)data index:(uint16_t)index;
 
-@property (readwrite) DKPlaybackFlags playbackFlags;
-@property (assign) uint16_t nr_of_ptts;
-@property (assign) uint16_t parental_id;
-@property (assign) uint32_t title_set_sector;
-@property (assign) uint8_t title_set_nr;
-@property (assign) uint8_t vts_ttn;
-@property (assign) uint8_t nr_of_angles;
-@property (assign) uint16_t index;
+@property (readwrite, nonatomic) DKPlaybackFlags playbackFlags;
+@property (assign, nonatomic) uint16_t nr_of_ptts;
+@property (assign, nonatomic) uint16_t parental_id;
+@property (assign, nonatomic) uint32_t title_set_sector;
+@property (assign, nonatomic) uint8_t title_set_nr;
+@property (assign, nonatomic) uint8_t vts_ttn;
+@property (assign, nonatomic) uint8_t nr_of_angles;
+@property (assign, nonatomic) uint16_t index;
 
 @end

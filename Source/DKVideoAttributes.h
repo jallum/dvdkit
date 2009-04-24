@@ -16,15 +16,15 @@
     BOOL line21_cc_1;
 }
 
-@property (assign) DKMPEGVersion mpeg_version;
-@property (assign) DKVideoFormat video_format;
-@property (assign) DKAspectRatio display_aspect_ratio;
-@property (assign) BOOL film_mode;
-@property (assign) BOOL letterboxed;
-@property (assign) DKPictureSize picture_size;
-@property (assign) BOOL constantBitRate;
-@property (assign) BOOL line21_cc_2;
-@property (assign) BOOL line21_cc_1;
+@property (assign, nonatomic) DKMPEGVersion mpeg_version;
+@property (assign, nonatomic) DKVideoFormat video_format;
+@property (assign, nonatomic) DKAspectRatio display_aspect_ratio;
+@property (assign, nonatomic) BOOL film_mode;
+@property (assign, nonatomic) BOOL letterboxed;
+@property (assign, nonatomic) DKPictureSize picture_size;
+@property (assign, nonatomic) BOOL constantBitRate;
+@property (assign, nonatomic) BOOL line21_cc_2;
+@property (assign, nonatomic) BOOL line21_cc_1;
 
 + (id) videoAttributesWithData:(NSData*)data;
 

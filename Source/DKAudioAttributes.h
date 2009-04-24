@@ -13,16 +13,16 @@
     uint8_t app_info_value;
 }
 
-@property (assign) DKAudioFormat audio_format;
-@property (assign) BOOL has_multichannel_extension;
-@property (assign) DKAudioApplicationMode application_mode;
-@property (assign) int quantization;
-@property (assign) DKAudioSamplingRate sample_frequency;
-@property (assign) int channels;
-@property (assign) uint16_t lang_code;
-@property (assign) uint8_t lang_extension;
-@property (assign) uint8_t code_extension;
-@property (assign) uint8_t app_info_value;
+@property (assign, nonatomic) DKAudioFormat audio_format;
+@property (assign, nonatomic) BOOL has_multichannel_extension;
+@property (assign, nonatomic) DKAudioApplicationMode application_mode;
+@property (assign, nonatomic) int quantization;
+@property (assign, nonatomic) DKAudioSamplingRate sample_frequency;
+@property (assign, nonatomic) int channels;
+@property (assign, nonatomic) uint16_t lang_code;
+@property (assign, nonatomic) uint8_t lang_extension;
+@property (assign, nonatomic) uint8_t code_extension;
+@property (assign, nonatomic) uint8_t app_info_value;
 
 + (id) audioAttributesWithData:(NSData*)data;
 

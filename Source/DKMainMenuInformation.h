@@ -51,24 +51,24 @@
     NSArray* preferredSectionOrder;
 }
 
-@property (assign) uint16_t specificationVersion;
-@property (assign) uint32_t categoryAndMask;
-@property (assign) uint16_t numberOfVolumes;
-@property (assign) uint16_t volumeNumber;
-@property (assign) uint8_t side;
-@property (assign) uint16_t numberOfTitleSets;
-@property (assign) uint64_t pointOfSaleCode;
-@property (retain) NSString* providerId;
-@property (retain) DKVideoAttributes* menuVideoAttributes;
-@property (retain) NSMutableArray* menuAudioAttributes;
-@property (retain) DKSubpictureAttributes* menuSubpictureAttributes;
-@property (retain) DKProgramChain* firstPlayProgramChain;
-@property (retain) NSMutableArray* titleTrackSearchPointerTable;
-@property (retain) NSMutableDictionary* menuProgramChainInformationTablesByLanguage;
-@property (readonly) uint16_t regionMask;
-@property (retain) NSMutableArray* menuCellAddressTable;
-@property (assign) CFMutableBitVectorRef menuVobuAddressMap;
-@property (retain) NSMutableData* titleSetAttributeTable;
+@property (assign, nonatomic) uint16_t specificationVersion;
+@property (assign, nonatomic) uint32_t categoryAndMask;
+@property (assign, nonatomic) uint16_t numberOfVolumes;
+@property (assign, nonatomic) uint16_t volumeNumber;
+@property (assign, nonatomic) uint8_t side;
+@property (assign, nonatomic) uint16_t numberOfTitleSets;
+@property (assign, nonatomic) uint64_t pointOfSaleCode;
+@property (retain, nonatomic) NSString* providerId;
+@property (retain, nonatomic) DKVideoAttributes* menuVideoAttributes;
+@property (retain, nonatomic) NSMutableArray* menuAudioAttributes;
+@property (retain, nonatomic) DKSubpictureAttributes* menuSubpictureAttributes;
+@property (retain, nonatomic) DKProgramChain* firstPlayProgramChain;
+@property (retain, nonatomic) NSMutableArray* titleTrackSearchPointerTable;
+@property (retain, nonatomic) NSMutableDictionary* menuProgramChainInformationTablesByLanguage;
+@property (readonly, nonatomic) uint16_t regionMask;
+@property (retain, nonatomic) NSMutableArray* menuCellAddressTable;
+@property (assign, nonatomic) CFMutableBitVectorRef menuVobuAddressMap;
+@property (retain, nonatomic) NSMutableData* titleSetAttributeTable;
 
 + (id) mainMenuInformationWithDataSource:(id<DKDataSource>)dataSource error:(NSError**)error;
 - (id) initWithDataSource:(id<DKDataSource>)dataSource error:(NSError**)error;

@@ -27,10 +27,10 @@
     uint32_t last_sector;
 }
 
-@property (readwrite) uint16_t vob_id;
-@property (readwrite) uint8_t cell_id;
-@property (readwrite) uint32_t start_sector;
-@property (readwrite) uint32_t last_sector;
+@property (readwrite, nonatomic) uint16_t vob_id;
+@property (readwrite, nonatomic) uint8_t cell_id;
+@property (readwrite, nonatomic) uint32_t start_sector;
+@property (readwrite, nonatomic) uint32_t last_sector;
 
 + (id) cellAddressWithData:(NSData*)data;
 

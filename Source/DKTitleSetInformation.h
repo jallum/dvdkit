@@ -50,26 +50,26 @@
 
 - (id) initWithDataSource:(id<DKDataSource>)dataSource index:(uint16_t)index error:(NSError**)error;
 
-@property (readonly) NSInteger index;
-@property (assign) uint16_t specificationVersion;
-@property (assign) uint32_t categoryAndMask;
-@property (retain) NSMutableArray* partOfTitleSearchTable;
+@property (readonly, nonatomic) NSInteger index;
+@property (assign, nonatomic) uint16_t specificationVersion;
+@property (assign, nonatomic) uint32_t categoryAndMask;
+@property (retain, nonatomic) NSMutableArray* partOfTitleSearchTable;
 
-@property (retain) DKVideoAttributes* menuVideoAttributes;
-@property (retain) NSMutableArray* menuAudioAttributes;
-@property (retain) DKSubpictureAttributes* menuSubpictureAttributes;
-@property (retain) NSMutableDictionary* menuProgramChainInformationTablesByLanguage;
-@property (retain) NSMutableArray* menuCellAddressTable;   
-@property (assign) CFMutableBitVectorRef menuVobuAddressMap;// RETAINED
+@property (retain, nonatomic) DKVideoAttributes* menuVideoAttributes;
+@property (retain, nonatomic) NSMutableArray* menuAudioAttributes;
+@property (retain, nonatomic) DKSubpictureAttributes* menuSubpictureAttributes;
+@property (retain, nonatomic) NSMutableDictionary* menuProgramChainInformationTablesByLanguage;
+@property (retain, nonatomic) NSMutableArray* menuCellAddressTable;   
+@property (assign, nonatomic) CFMutableBitVectorRef menuVobuAddressMap;// RETAINED
 
-@property (retain) DKVideoAttributes* videoAttributes;
-@property (retain) NSMutableArray* audioAttributes;
-@property (retain) NSMutableArray* subpictureAttributes;
-@property (retain) NSMutableArray* programChainInformationTable;
-@property (retain) NSMutableArray* cellAddressTable;
+@property (retain, nonatomic) DKVideoAttributes* videoAttributes;
+@property (retain, nonatomic) NSMutableArray* audioAttributes;
+@property (retain, nonatomic) NSMutableArray* subpictureAttributes;
+@property (retain, nonatomic) NSMutableArray* programChainInformationTable;
+@property (retain, nonatomic) NSMutableArray* cellAddressTable;
 
-@property (assign) CFMutableBitVectorRef vobuAddressMap;   // RETAINED
-@property (retain) NSData* timeMapTable;            
+@property (assign, nonatomic) CFMutableBitVectorRef vobuAddressMap;   // RETAINED
+@property (retain, nonatomic) NSData* timeMapTable;            
 
 
 - (NSArray*) menuProgramChainInformationTableForLanguageCode:(uint16_t)languageCode;
