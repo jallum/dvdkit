@@ -74,11 +74,14 @@ NSString* const DVDCellPlaybackException = @"DVDCellPlayback";
 
         /*  Sanity checking.
          */
-        if (lastVideoObjectUnitStartSector > lastVideoObjectUnitStartSector) {
+        // TODO: Replace the exceptions with error objects.
+#if 0
+        if (firstInterleavingUnitSector > lastVideoObjectUnitStartSector) {
             [NSException raise:DVDCellPlaybackException format:@"%s(%d)", __FILE__, __LINE__];
         } else if (lastVideoObjectUnitStartSector > lastSector) {
             [NSException raise:DVDCellPlaybackException format:@"%s(%d)", __FILE__, __LINE__];
         }
+#endif
     }
     return self;
 }

@@ -200,6 +200,16 @@ enum {
     return data;
 }
 
+- (void) _setProgramChain:(DKProgramChain*)_programChain
+{
+    NSAssert(_programChain, @"wtf?");
+    [programChain release], programChain = [_programChain retain];
+    prohibitedUserOperations = programChain.prohibitedUserOperations;
+    if (delegateHasWillExecuteProgramChain) {
+        [delegate virtualMachine:self willExecuteProgramChain:programChain];
+    }
+}
+
 - (DKCellPlayback*) nextCellPlayback
 {
     @try {
@@ -223,7 +233,7 @@ enum {
                     
                 case FIRST_PLAY: {
                     domain = kDKDomainFirstPlay;
-                    [programChain release], programChain = [[[self mainMenuInformation] firstPlayProgramChain] retain];
+                    [self _setProgramChain:[[self mainMenuInformation] firstPlayProgramChain]];
                     [titleSet release], titleSet = nil;
                     state = PGC_START;
                     break;
@@ -233,8 +243,7 @@ enum {
                     NSArray* programChainInformationTable = [self pgcit];
                     int pgcn = SPRM[6];
                     if (pgcn && pgcn <= [programChainInformationTable count]) {
-                        [programChain release], programChain = [[[programChainInformationTable objectAtIndex:pgcn - 1] programChain] retain];
-                        prohibitedUserOperations = programChain.prohibitedUserOperations;
+                        [self _setProgramChain:[[programChainInformationTable objectAtIndex:pgcn - 1] programChain]];
                         state = PGC_START;
                     } else {
                         state = STOP;
@@ -243,9 +252,6 @@ enum {
                 }
                 
                 case PGC_START: {
-                    if (delegateHasWillExecuteProgramChain) {
-                        [delegate virtualMachine:self willExecuteProgramChain:programChain];
-                    }
                     state = PGC_PRE_COMMANDS;
                     break;
                 }
@@ -296,7 +302,14 @@ enum {
                             bzero(&playbackFlags, sizeof(playbackFlags));
                         }
                         if (domain == kDKDomainVideoTitleSet) {
-//                            SPRM[7] = [DKVirtualMachine partOfTitleForProgramNumber:programNumber usingSearchTable:[[titleSet partOfTitleSearchTable] objectAtIndex:SPRM[5] - 1]];
+                            NSArray* partOfTitleSearchTable = [titleSet partOfTitleSearchTable];
+                            if ([partOfTitleSearchTable count] >= SPRM[5]) {
+                                SPRM[7] = [DKVirtualMachine partOfTitleForProgramNumber:programNumber usingSearchTable:[partOfTitleSearchTable objectAtIndex:SPRM[5] - 1]];
+                            } else {
+                                SPRM[7] = 0;
+                            }
+                        } else {
+                            SPRM[7] = 0;
                         }
                         state = PGC_CELL_POST;
                         return [[[cellPlaybackTable objectAtIndex:(cell - 1)] retain] autorelease];
@@ -506,7 +519,7 @@ enum {
     } else {
         vts = [titleSet index];
     }
-    resume.enabled &= (domain == kDKDomainVideoTitleSetMenu);
+    resume.enabled &= (domain == kDKDomainVideoTitleSetMenu || domain == kDKDomainVideoManagerMenu);
     domain = kDKDomainVideoTitleSetMenu;
     DKProgramChainSearchPointer* foundSearchPointer = nil;
     uint8_t entryId = 0x80 | menu;
@@ -542,7 +555,7 @@ enum {
 
 - (void) _doJumpSS_VMGM_menu:(uint8_t)menu
 {
-    resume.enabled &= (domain == kDKDomainVideoManagerMenu);
+    resume.enabled &= (domain == kDKDomainVideoTitleSetMenu || domain == kDKDomainVideoManagerMenu);
     domain = kDKDomainVideoManagerMenu;
     DKProgramChainSearchPointer* foundSearchPointer = nil;
     uint8_t entryId = 0x80 | menu;
@@ -669,8 +682,9 @@ enum {
         SPRM[6] = [partOfTitle programChainNumber];
         SPRM[7] = pttn;
         /**/
-        nextProgramNumber = [partOfTitle programNumber];
-        state = PGC_CHANGED;
+        [self _setProgramChain:[[[self pgcit] objectAtIndex:(SPRM[6] - 1)] programChain]];
+        programNumber = [partOfTitle programNumber];
+        state = PGC_PGN_SET;
     }
 }
 
@@ -768,7 +782,7 @@ enum {
                 titleSet = [[dataSource titleSetInformationAtIndex:SPRM[5]] retain];
             }
         }
-        [programChain release], programChain = [[[[self pgcit] objectAtIndex:(SPRM[6] - 1)] programChain] retain];
+        [self _setProgramChain:[[[self pgcit] objectAtIndex:(SPRM[6] - 1)] programChain]];
         if (resume.cell) {
             cell = resume.cell;
             programNumber = [DKVirtualMachine programNumberForCell:cell usingMap:[programChain programMap]];
