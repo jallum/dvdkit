@@ -254,8 +254,13 @@ enum {
                     [self executeCommands:[programChain preCommands] withState:PGC_PRE_COMMANDS];
                     if (state == PGC_PRE_COMMANDS || state == PGC_BREAK) {
                         state = PGC_PGN_SET;
-                        programNumber = 1;
+                        if (nextProgramNumber) {
+                            programNumber = nextProgramNumber;
+                        } else {
+                            programNumber = 1;
+                        }
                     }
+                    nextProgramNumber = 0;
                     break;
                 }
                 
@@ -664,8 +669,8 @@ enum {
         SPRM[6] = [partOfTitle programChainNumber];
         SPRM[7] = pttn;
         /**/
-        programNumber = [partOfTitle programNumber];
-        state = PGC_PGN_SET;
+        nextProgramNumber = [partOfTitle programNumber];
+        state = PGC_CHANGED;
     }
 }
 

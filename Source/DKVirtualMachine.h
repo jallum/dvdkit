@@ -54,6 +54,7 @@
     DKPlaybackFlags playbackFlags;
     DKUserOperationFlags prohibitedUserOperations;
     int programNumber;
+    int nextProgramNumber;
     int instructionCounter;
     int cell;
     /**/
