@@ -729,7 +729,7 @@ NSString* const kDKMainMenuInformationSection_VMGM_VOBU_ADMAP  = @"vmgm_vobu_adm
     NSAssert(([data length] & 0x07FF) == 0, @"Sections not sector-aligned?");
     uint32_t vmgiSectors = [data length] >> 11;
     OSWriteBigInt32(&vmgi_mat.vmgi_last_sector, 0, vmgiSectors - 1);
-    OSWriteBigInt32(&vmgi_mat.vmgm_vobs, 0, lengthOfMenuVOB ? vmgiSectors : 0);
+    OSWriteBigInt32(&vmgi_mat.vmgm_vobs, 0, vmgiSectors);
     OSWriteBigInt32(&vmgi_mat.vmg_last_sector, 0, vmgiSectors + lengthOfMenuVOB + vmgiSectors - 1);
     
     

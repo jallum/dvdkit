@@ -752,7 +752,7 @@ NSString* const kDKTitleSetInformationSection_VTS_TMAPT         = @"vts_tmapt";
     NSAssert(([data length] & 0x07FF) == 0, @"Sections not sector-aligned?");
     uint32_t vtsiSectors = [data length] >> 11;
     OSWriteBigInt32(&vts_mat.vtsi_last_sector, 0, vtsiSectors - 1);
-    OSWriteBigInt32(&vts_mat.vtsm_vobs, 0, lengthOfMenuVOB ? vtsiSectors : 0);
+    OSWriteBigInt32(&vts_mat.vtsm_vobs, 0, vtsiSectors);
     OSWriteBigInt32(&vts_mat.vtstt_vobs, 0, vtsiSectors + lengthOfMenuVOB);
     OSWriteBigInt32(&vts_mat.vts_last_sector, 0, vtsiSectors + lengthOfMenuVOB + lengthOfVideoVOB + vtsiSectors - 1);
     
