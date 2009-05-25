@@ -151,7 +151,7 @@ NSString* const kDKMainMenuInformationSection_VMGM_VOBU_ADMAP  = @"vmgm_vobu_adm
         side = OSReadBigInt8(&vmgi_mat->disc_side, 0);
         numberOfTitleSets = OSReadBigInt16(&vmgi_mat->vmg_nr_of_title_sets, 0);
         pointOfSaleCode = OSReadBigInt64(&vmgi_mat->vmg_pos_code, 0);
-        providerId = [[NSString stringWithCString:(const char*)&vmgi_mat->provider_identifier length:sizeof(vmgi_mat->provider_identifier)] retain];
+        providerId = [[NSString alloc] initWithBytes:(const char*)&vmgi_mat->provider_identifier length:sizeof(vmgi_mat->provider_identifier) encoding:NSUTF8StringEncoding];
         
         
         /*  Sanity checks / Data Repair
