@@ -375,11 +375,14 @@ NSString* const kDKTitleSetInformationSection_VTS_TMAPT         = @"vts_tmapt";
     }
     
     /*  Parse the table  */
+#if 0
     NSMutableSet* vobCellIdTags = [NSMutableSet set];
+#endif
     NSMutableArray* table = [NSMutableArray arrayWithCapacity:nr_of_vob_ids];
     uint32_t nr_of_entries = (last_byte - sizeof(c_adt_t)) / sizeof(cell_adr_t);
     for (int i = 1, p = sizeof(c_adt_t); i <= nr_of_entries; i++, p += sizeof(cell_adr_t)) {
         DKCellAddress* cellAddress = [DKCellAddress cellAddressWithData:[data subdataWithRange:NSMakeRange(p, sizeof(cell_adr_t))]];
+#if 0
         NSNumber* tag = [NSNumber numberWithInt:(cellAddress.cell_id << 0x10) | cellAddress.vob_id];
         if ([vobCellIdTags containsObject:tag]) {
             [errors addObject:DKErrorWithCode(kDKCellAddressTableError, [NSString stringWithFormat:DKLocalizedString(@"Duplicate VOB/Cell detected (%d.%d), skipping.", nil), cellAddress.vob_id, cellAddress.cell_id], NSLocalizedDescriptionKey, nil)];
@@ -387,6 +390,9 @@ NSString* const kDKTitleSetInformationSection_VTS_TMAPT         = @"vts_tmapt";
             [vobCellIdTags addObject:tag];
             [table addObject:cellAddress];
         }
+#else 
+        [table addObject:cellAddress];
+#endif
     }
     
     return table;
